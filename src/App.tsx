@@ -1,5 +1,6 @@
 import NavBar from "./components/NavBar";
 import { Grid, GridItem } from "@chakra-ui/react";
+import SearchBar from "./components/SearchBar";
 
 function App() {
   return (
@@ -10,8 +11,9 @@ function App() {
       gridTemplateColumns={"150px 1fr"}
       color="blackAlpha.700"
     >
-      <GridItem pl="2" area={"header"} bg="#032440">
+      <GridItem area={"header"} bg="#032440">
         <NavBar />
+        <SearchBar />
       </GridItem>
       <GridItem pl="2" bg="pink.300" area={"nav"}>
         Nav
