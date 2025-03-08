@@ -1,30 +1,74 @@
-import { HStack, Image, Text, Box, Button, Link } from "@chakra-ui/react";
-import { FiRefreshCw, FiSearch } from "react-icons/fi";
+import {
+  HStack,
+  Image,
+  Box,
+  Button,
+  Link,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import logo from "../assets/logo.svg";
 
 const NavBar = () => {
-  return (
-    <HStack h="65px" margin="10px" w="100%" justifyContent="center">
-      <HStack justifyContent="space-between" w="100%" maxWidth="1300px">
-        <HStack spacing="24px">
-          <Image src={logo} alt="logo" boxSize="150px" />
+  const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
+  const displayIcons = useBreakpointValue({ base: "flex", md: "none" });
 
-          <Link href="#" fontSize="1em" color="white" fontWeight="500">
-            Film
-          </Link>
-          <Link href="#" fontSize="1em" color="white" fontWeight="500">
-            TV-serier
-          </Link>
-          <Link href="#" fontSize="1em" color="white" fontWeight="500">
-            Personer
-          </Link>
-          <Link href="#" fontSize="1em" color="white" fontWeight="500">
-            Mere
-          </Link>
+  return (
+    <HStack h="65px" margin="10px" justifyContent="center">
+      <HStack justifyContent="space-between" w="100%" maxWidth="1300px">
+        <Box boxSize="1.5em" display={displayIcons}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 448 512"
+            fill="white"
+          >
+            <path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z" />
+          </svg>
+        </Box>
+        <HStack width={"40%"} justifyContent="center">
+          <Image src={logo} alt="logo" maxWidth="150px" />
+
+          <HStack display={displayLinks}>
+            <Link
+              href="#"
+              fontSize="1em"
+              color="white"
+              fontWeight="500"
+              px="10px"
+            >
+              Film
+            </Link>
+            <Link
+              href="#"
+              fontSize="1em"
+              color="white"
+              fontWeight="500"
+              px="10px"
+            >
+              TV-serier
+            </Link>
+            <Link
+              href="#"
+              fontSize="1em"
+              color="white"
+              fontWeight="500"
+              px="10px"
+            >
+              Personer
+            </Link>
+            <Link
+              href="#"
+              fontSize="1em"
+              color="white"
+              fontWeight="500"
+              px="10px"
+            >
+              Mere
+            </Link>
+          </HStack>
         </HStack>
 
-        <HStack spacing="24px">
-          <Box boxSize="24px">
+        <HStack height={"2em"} display={"flex"}>
+          <Box boxSize="24px" mr={"10px"} display={displayLinks}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 448 512"
@@ -33,14 +77,47 @@ const NavBar = () => {
               <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" />
             </svg>
           </Box>
-          <Button>DA</Button>
-          <Link href="#" fontSize="1em" color="white" fontWeight="500">
-            Log ind
-          </Link>
-          <Link href="#" fontSize="1em" color="white" fontWeight="500">
-            Bliv medlem af TMDB
-          </Link>
-          <Box boxSize="24px">
+
+          <HStack display={displayLinks}>
+            <Button
+              border="1px solid white"
+              bg="transparent"
+              padding="0px"
+              h="100%"
+              px="10px"
+              p={"5px"}
+            >
+              DA
+            </Button>
+            <Link
+              href="#"
+              fontSize="1em"
+              color="white"
+              fontWeight="500"
+              px="10px"
+            >
+              Log ind
+            </Link>
+            <Link
+              href="#"
+              fontSize="1em"
+              color="white"
+              fontWeight="500"
+              px="10px"
+            >
+              Bliv medlem af TMDB
+            </Link>
+          </HStack>
+          <Box boxSize="1.5em" display={displayIcons} mr={"10px"}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 448 512"
+              fill="white"
+            >
+              <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z" />
+            </svg>
+          </Box>
+          <Box boxSize="1.5em">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 512 512"
