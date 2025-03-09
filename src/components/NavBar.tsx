@@ -5,6 +5,8 @@ import {
   Button,
   Link,
   useBreakpointValue,
+  UnorderedList,
+  ListItem,
 } from "@chakra-ui/react";
 import logo from "../assets/logo.svg";
 
@@ -27,44 +29,52 @@ const NavBar = () => {
         <HStack width={"40%"} justifyContent="center">
           <Image src={logo} alt="logo" maxWidth="150px" />
 
-          <HStack display={displayLinks}>
-            <Link
-              href="#"
-              fontSize="1em"
-              color="white"
-              fontWeight="500"
-              px="10px"
-            >
-              Film
-            </Link>
-            <Link
-              href="#"
-              fontSize="1em"
-              color="white"
-              fontWeight="500"
-              px="10px"
-            >
-              TV-serier
-            </Link>
-            <Link
-              href="#"
-              fontSize="1em"
-              color="white"
-              fontWeight="500"
-              px="10px"
-            >
-              Personer
-            </Link>
-            <Link
-              href="#"
-              fontSize="1em"
-              color="white"
-              fontWeight="500"
-              px="10px"
-            >
-              Mere
-            </Link>
-          </HStack>
+          <UnorderedList display={displayLinks} styleType="none" m={0} p={0}>
+            <ListItem>
+              <Link
+                href="#"
+                fontSize="1em"
+                color="white"
+                fontWeight="500"
+                px="10px"
+              >
+                Film
+              </Link>
+            </ListItem>
+            <ListItem>
+              <Link
+                href="#"
+                fontSize="1em"
+                color="white"
+                fontWeight="500"
+                px="10px"
+              >
+                TV-serier
+              </Link>
+            </ListItem>
+            <ListItem>
+              <Link
+                href="#"
+                fontSize="1em"
+                color="white"
+                fontWeight="500"
+                px="10px"
+              >
+                Personer
+              </Link>
+            </ListItem>
+            <ListItem>
+              <Link
+                href="#"
+                fontSize="1em"
+                color="white"
+                fontWeight="500"
+                px="10px"
+              >
+                Mere
+              </Link>
+            </ListItem>
+          </UnorderedList>
         </HStack>
 
         <HStack height={"2em"} display={"flex"}>
@@ -78,36 +88,43 @@ const NavBar = () => {
             </svg>
           </Box>
 
-          <HStack display={displayLinks}>
-            <Button
-              border="1px solid white"
-              bg="transparent"
-              padding="0px"
-              h="100%"
-              px="10px"
-              p={"5px"}
-            >
-              DA
-            </Button>
-            <Link
-              href="#"
-              fontSize="1em"
-              color="white"
-              fontWeight="500"
-              px="10px"
-            >
-              Log ind
-            </Link>
-            <Link
-              href="#"
-              fontSize="1em"
-              color="white"
-              fontWeight="500"
-              px="10px"
-            >
-              Bliv medlem af TMDB
-            </Link>
-          </HStack>
+          <UnorderedList display={displayLinks} styleType="none" m={0} p={0}>
+            <ListItem>
+              <Button
+                border="1px solid white"
+                bg="transparent"
+                padding="0px"
+                h="100%"
+                px="10px"
+                p={"5px"}
+              >
+                DA
+              </Button>
+            </ListItem>
+            <ListItem>
+              <Link
+                href="#"
+                fontSize="1em"
+                color="white"
+                fontWeight="500"
+                px="10px"
+              >
+                Log ind
+              </Link>
+            </ListItem>
+            <ListItem>
+              <Link
+                href="#"
+                fontSize="1em"
+                color="white"
+                fontWeight="500"
+                px="10px"
+              >
+                Bliv medlem af TMDB
+              </Link>
+            </ListItem>
+          </UnorderedList>
+
           <Box boxSize="1.5em" display={displayIcons} mr={"10px"}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
