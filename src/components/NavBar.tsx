@@ -7,18 +7,33 @@ import {
   useBreakpointValue,
   UnorderedList,
   ListItem,
+  Drawer,
+  DrawerBody,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import logo from "../assets/logo.svg";
 
 const NavBar = () => {
   const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
   const displayIcons = useBreakpointValue({ base: "flex", md: "none" });
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const headerSize = "65px";
 
   return (
-    <HStack h="65px" margin="10px" justifyContent="center">
+    <HStack h="{headerSize}" margin="10px" justifyContent="center">
       <HStack justifyContent="space-between" w="100%" maxWidth="1300px">
-        <Box boxSize="1.5em" display={displayIcons}>
+        <Box
+          boxSize="1.5em"
+          display={displayIcons}
+          onClick={onOpen}
+          cursor="pointer"
+        >
           <svg
+            aria-label="burger menu"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 448 512"
             fill="white"
@@ -29,50 +44,31 @@ const NavBar = () => {
         <HStack width={"40%"} justifyContent="center">
           <Image src={logo} alt="logo" maxWidth="150px" />
 
-          <UnorderedList display={displayLinks} styleType="none" m={0} p={0}>
+          <UnorderedList
+            display={displayLinks}
+            styleType="none"
+            m={0}
+            p={0}
+            sx={{
+              "& > li > a": {
+                fontSize: "1em",
+                color: "white",
+                fontWeight: "500",
+                px: "10px",
+              },
+            }}
+          >
             <ListItem>
-              <Link
-                href="#"
-                fontSize="1em"
-                color="white"
-                fontWeight="500"
-                px="10px"
-              >
-                Film
-              </Link>
+              <Link href="#">Film</Link>
             </ListItem>
             <ListItem>
-              <Link
-                href="#"
-                fontSize="1em"
-                color="white"
-                fontWeight="500"
-                px="10px"
-              >
-                TV-serier
-              </Link>
+              <Link href="#">TV-serier</Link>
             </ListItem>
             <ListItem>
-              <Link
-                href="#"
-                fontSize="1em"
-                color="white"
-                fontWeight="500"
-                px="10px"
-              >
-                Personer
-              </Link>
+              <Link href="#">Personer</Link>
             </ListItem>
             <ListItem>
-              <Link
-                href="#"
-                fontSize="1em"
-                color="white"
-                fontWeight="500"
-                px="10px"
-              >
-                Mere
-              </Link>
+              <Link href="#">Mere</Link>
             </ListItem>
           </UnorderedList>
         </HStack>
@@ -88,7 +84,20 @@ const NavBar = () => {
             </svg>
           </Box>
 
-          <UnorderedList display={displayLinks} styleType="none" m={0} p={0}>
+          <UnorderedList
+            display={displayLinks}
+            styleType="none"
+            m={0}
+            p={0}
+            sx={{
+              "& > li > a": {
+                fontSize: "1em",
+                color: "white",
+                fontWeight: "500",
+                px: "10px",
+              },
+            }}
+          >
             <ListItem>
               <Button
                 border="1px solid white"
@@ -102,26 +111,10 @@ const NavBar = () => {
               </Button>
             </ListItem>
             <ListItem>
-              <Link
-                href="#"
-                fontSize="1em"
-                color="white"
-                fontWeight="500"
-                px="10px"
-              >
-                Log ind
-              </Link>
+              <Link href="#">Log ind</Link>
             </ListItem>
             <ListItem>
-              <Link
-                href="#"
-                fontSize="1em"
-                color="white"
-                fontWeight="500"
-                px="10px"
-              >
-                Bliv medlem af TMDB
-              </Link>
+              <Link href="#">Bliv medlem af TMDB</Link>
             </ListItem>
           </UnorderedList>
 
