@@ -23,7 +23,7 @@ const NavBar = () => {
   const headerSize = "65px";
 
   return (
-    <HStack h={headerSize} padding="10px" justifyContent="center">
+    <HStack h={headerSize} padding="20px" justifyContent="center">
       <HStack justifyContent="space-between" w="100%" maxWidth="1300px">
         <Box
           boxSize="1.5em"

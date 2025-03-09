@@ -4,7 +4,7 @@ import { Button, HStack, Input } from "@chakra-ui/react";
 const SearchBar = () => {
   return (
     <HStack h={"50px"} bg={"white"} gap={"0px"} w={"100%"}>
-      <Button h={"100%"} p={"0px"}>
+      <Button h={"100%"} pl={"20px"}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
