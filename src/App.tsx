@@ -6,8 +6,8 @@ function App() {
   return (
     <Grid
       templateAreas={`"header header"
-                  "nav main"
-                  "nav footer"`}
+                  "main main"
+                  "footer footer"`}
       gridTemplateColumns={"150px 1fr"}
       color="blackAlpha.700"
     >
@@ -15,7 +15,7 @@ function App() {
         <NavBar />
         <SearchBar />
       </GridItem>
-      <GridItem pl="2" bg="pink.300" area={"nav"}>
+      <GridItem pl="2" bg="pink.300" area={"main"}>
         Nav
       </GridItem>
       <GridItem pl="2" bg="green.300" area={"main"}>

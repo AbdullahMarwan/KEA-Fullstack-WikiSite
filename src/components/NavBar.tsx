@@ -9,10 +9,8 @@ import {
   ListItem,
   Drawer,
   DrawerBody,
-  DrawerHeader,
   DrawerOverlay,
   DrawerContent,
-  DrawerCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
 import logo from "../assets/logo.svg";
