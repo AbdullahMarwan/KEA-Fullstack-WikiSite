@@ -1,7 +1,8 @@
 import NavBar from "./components/NavBar";
-import { Grid, GridItem } from "@chakra-ui/react";
+import { Grid, GridItem, Tr } from "@chakra-ui/react";
 import SearchBar from "./components/SearchBar";
 import SearchMovieSection from "./components/SearchMovieSection";
+import TrendingMovies from "./components/TrendingMovies";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       </GridItem>
       <GridItem area={"main"}>
         <SearchMovieSection />
+        <TrendingMovies />
       </GridItem>
       <GridItem area={"main"}></GridItem>
       <GridItem bg="blue.300" area={"footer"}>

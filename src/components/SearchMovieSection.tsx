@@ -15,7 +15,7 @@ const SearchMovieSection = () => {
         display: "flex",
         justifyContent: "space-evenly",
         alignItems: "center",
-        padding: "10px",
+        padding: "20px",
         flexDirection: "column",
       }}
     >
