@@ -1,8 +1,25 @@
 import { HStack, Button } from "@chakra-ui/react";
-import bg from "../assets/trending-bg.svg";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { fetchTrendingMovies } from "../services/api";
+import Cards from "./Cards";
+import background from "../assets/trending-bg.svg";
 
 const TrendingMovies = () => {
+  const [movies, setMovies] = useState([]);
+
+  useEffect(() => {
+    const getTrendingMovies = async () => {
+      try {
+        const data = await fetchTrendingMovies();
+        setMovies(data.results); // Access the results array
+      } catch (error) {
+        console.error("Error fetching trending movies:", error);
+      }
+    };
+
+    getTrendingMovies();
+  }, []);
+
   return (
     <HStack
       p="20px"
@@ -66,11 +83,18 @@ const TrendingMovies = () => {
           </svg>
         </Button>
       </HStack>
-
+      <HStack
+        w="100%"
+        bg={`url(${background})`}
+        backgroundSize="cover"
+        backgroundPosition="center"
+      >
+        <Cards />
+      </HStack>
       <HStack
         h={"25vh"}
         w={"100%"}
-        bg={`url(${bg})`}
+        bg={`url($bg})`}
         backgroundSize="cover"
         backgroundPosition="center"
       ></HStack>
