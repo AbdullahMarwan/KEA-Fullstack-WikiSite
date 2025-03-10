@@ -9,13 +9,12 @@ import {
   ListItem,
   Drawer,
   DrawerBody,
-  DrawerHeader,
   DrawerOverlay,
   DrawerContent,
-  DrawerCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
 import logo from "../assets/logo.svg";
+import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
 
 const NavBar = () => {
   const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
@@ -24,7 +23,7 @@ const NavBar = () => {
   const headerSize = "65px";
 
   return (
-    <HStack h="{headerSize}" margin="10px" justifyContent="center">
+    <HStack h={headerSize} padding="10px" justifyContent="center">
       <HStack justifyContent="space-between" w="100%" maxWidth="1300px">
         <Box
           boxSize="1.5em"
@@ -138,6 +137,22 @@ const NavBar = () => {
           </Box>
         </HStack>
       </HStack>
+
+      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+        <DrawerOverlay />
+        <DrawerContent
+          mt={headerSize}
+          height={`calc(100vh - ${headerSize})`}
+          bg="rgba(3, 37, 65, 0.8)"
+          backdropFilter="blur(10px)" // Add blur effect to the background
+        >
+          <DrawerBody>
+            <Box bg="transparent" p={4} borderRadius="md">
+              <BurgerMenu /> {/* Use the BurgerMenu component */}
+            </Box>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
     </HStack>
   );
 };
