@@ -5,6 +5,8 @@ import SearchMovieSection from "./components/SearchMovieSection";
 import TrendingMovies from "./components/TrendingMovies";
 
 function App() {
+  const maxContentWidth = "1300px";
+
   return (
     <Grid
       templateAreas={`"header header"
