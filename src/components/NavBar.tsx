@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import logo from "../assets/logo.svg";
 import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
+import { MEDIUM_PADDING } from "../utils/constants";
 
 const NavBar = () => {
   const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
@@ -23,7 +24,7 @@ const NavBar = () => {
   const headerSize = "65px";
 
   return (
-    <HStack h={headerSize} padding="20px" justifyContent="center">
+    <HStack h={headerSize} padding={MEDIUM_PADDING} justifyContent="center">
       <HStack justifyContent="space-between" w="100%" maxWidth="1300px">
         <Box
           boxSize="1.5em"
@@ -41,7 +42,7 @@ const NavBar = () => {
           </svg>
         </Box>
         <HStack width={"40%"} justifyContent="center">
-          <Image src={logo} alt="logo" maxWidth="150px" />
+          <Image src={logo} alt="logo" maxWidth="150px" m={0} />
 
           <UnorderedList
             display={displayLinks}

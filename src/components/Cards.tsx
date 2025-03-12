@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Card, CardHeader, Heading, CardBody, Text } from "@chakra-ui/react";
+import {
+  Card,
+  CardHeader,
+  Heading,
+  CardBody,
+  Text,
+  HStack,
+} from "@chakra-ui/react";
 import { fetchTrendingMovies } from "../services/api";
+import VoteAverageRing from "./voteAverageRing"; // Import the ProgressRing component
 
 interface Movie {
   id: number;
   title: string;
   release_date: string;
   poster_path: string;
+  vote_average: number;
 }
 
 const Cards = () => {
@@ -48,9 +57,24 @@ const Cards = () => {
               backgroundSize: "cover",
               backgroundPosition: "center",
               height: "300px",
+              position: "relative",
             }}
-          />
-
+          >
+            <HStack
+              position={"absolute"}
+              bottom={"-1em"}
+              left={"20px"}
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"center"}
+            >
+              <VoteAverageRing
+                radius={50}
+                stroke={4}
+                progress={Math.round(movie.vote_average * 10)}
+              />
+            </HStack>
+          </div>
           <CardBody padding="20px 20px 20px 0px">
             <CardHeader padding="0">
               <Heading fontSize={"1em"} color="black" isTruncated>
