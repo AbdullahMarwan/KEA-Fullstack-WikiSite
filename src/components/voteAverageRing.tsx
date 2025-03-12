@@ -1,17 +1,17 @@
 import React from "react";
 
-interface ProgressRingProps {
+interface voteAverageRingProps {
   radius: number;
   stroke: number;
   progress: number;
   style?: React.CSSProperties;
 }
 
-class ProgressRing extends React.Component<ProgressRingProps> {
+class voteAverageRing extends React.Component<voteAverageRingProps> {
   private normalizedRadius: number;
   private circumference: number;
 
-  constructor(props: ProgressRingProps) {
+  constructor(props: voteAverageRingProps) {
     super(props);
 
     const { radius, stroke } = this.props;
@@ -73,4 +73,4 @@ class ProgressRing extends React.Component<ProgressRingProps> {
   }
 }
 
-export default ProgressRing;
+export default voteAverageRing;
