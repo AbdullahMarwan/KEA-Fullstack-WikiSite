@@ -9,8 +9,24 @@ export const fetchTrendingMovies = async () => {
       `${baseUrl}/trending/movie/day?api_key=${apiKey}`
     );
     return response.data; // Return the entire response object
+
   } catch (error) {
     console.error("Error fetching trending movies:", error);
     throw error;
   }
 };
+
+
+export const fetchTrailerMovies = async () => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/movie/popular?api_key=${apiKey}`
+    );
+    console.log(response.data)
+    return response.data; // Return the entire response object
+  } catch (error) {
+    console.error("Error fetching trailer movies:", error);
+    throw error;
+  }
+};
+
