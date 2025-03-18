@@ -63,7 +63,7 @@ const SearchMovieSection = () => {
           padding={0} // Remove default padding
         >
           <Input
-            placeholder="Søg..."
+            placeholder="Søg efter en film, TV-serie, person..."
             color={"grey"}
             _placeholder={{ color: "gray.500" }} // Placeholder color
             height={"100%"}

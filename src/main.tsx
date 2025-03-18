@@ -7,6 +7,7 @@ import {
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
+import { BrowserRouter } from "react-router-dom";
 
 const theme = extendTheme({
   styles: {
@@ -23,7 +24,9 @@ ReactDOM.render(
   <ChakraProvider theme={theme}>
     <CSSReset />
     <GlobalStyle />
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </ChakraProvider>,
   document.getElementById("root")
 );
