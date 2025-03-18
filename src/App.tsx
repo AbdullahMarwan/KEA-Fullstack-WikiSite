@@ -3,9 +3,9 @@ import { Grid, GridItem, Tr } from "@chakra-ui/react";
 import SearchBar from "./components/SearchBar";
 import SearchMovieSection from "./components/SearchMovieSection";
 import TrendingMovies from "./components/TrendingMovies";
+import LatestTrailers from "./components/LatestTrailers";
 
 function App() {
-  const maxContentWidth = "1300px";
 
   return (
     <Grid
@@ -22,6 +22,7 @@ function App() {
       <GridItem area={"main"}>
         <SearchMovieSection />
         <TrendingMovies />
+        <LatestTrailers />
       </GridItem>
       <GridItem area={"main"}></GridItem>
       <GridItem bg="blue.300" area={"footer"}>

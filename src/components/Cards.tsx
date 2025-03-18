@@ -8,7 +8,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { fetchTrendingMovies } from "../services/api";
-import ProgressRing from "./ProgressRing"; // Import the ProgressRing component
+import VoteAverageRing from "./voteAverageRing"; // Import the ProgressRing component
 
 interface Movie {
   id: number;
@@ -68,7 +68,7 @@ const Cards = () => {
               alignItems={"center"}
               justifyContent={"center"}
             >
-              <ProgressRing
+              <VoteAverageRing
                 radius={50}
                 stroke={4}
                 progress={Math.round(movie.vote_average * 10)}
