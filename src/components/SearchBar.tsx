@@ -1,6 +1,12 @@
 import React from "react";
-import { Button, HStack, Input } from "@chakra-ui/react";
-import { MAX_WIDTH, MEDIUM_PADDING } from "../utils/constants"; // Import the MAX_WIDTH variable
+import {
+  Button,
+  HStack,
+  Input,
+  FormControl,
+  InputGroup,
+  InputLeftElement,
+} from "@chakra-ui/react";
 
 const SearchBar = () => {
   return (
@@ -12,14 +18,23 @@ const SearchBar = () => {
       display={"flex"}
       alignItems={"center"}
       justifyContent={"center"}
-      pl={MEDIUM_PADDING}
     >
-      <HStack maxW={MAX_WIDTH} width={"100%"}>
-        <form style={{ width: "100%" }}>
-          <span
-            style={{ display: "flex", alignItems: "center", width: "100%" }}
+      <FormControl as="form" width="100%">
+        <InputGroup height={"50px"}>
+          <InputLeftElement
+            height="100%" // Ensure it takes the full height of the input
+            pointerEvents="none" // Prevent interaction with the element
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
           >
-            <Button width={"1em"} height={"1em"} p={0}>
+            <Button
+              width={"1em"}
+              height={"1em"}
+              p={0}
+              bg="transparent"
+              _hover={{ bg: "transparent" }}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 512 512"
@@ -32,21 +47,23 @@ const SearchBar = () => {
                 />
               </svg>
             </Button>
-            <Input
-              placeholder="Søg efter en film, TV-serie, person"
-              fontSize={"1em"}
-              bg="white"
-              borderRadius="none"
-              color="black"
-              _placeholder={{ color: "gray.500" }} // Placeholder color
-              focusBorderColor="transparent" // Remove border color on focus
-              height={"100%"}
-              p={"0px"}
-              w={"100%"}
-            />
-          </span>
-        </form>
-      </HStack>
+          </InputLeftElement>
+          <Input
+            placeholder="Søg efter en film, TV-serie, person"
+            fontSize={"1em"}
+            bg="white"
+            borderRadius="none"
+            color="black"
+            _placeholder={{ color: "gray.500" }} // Placeholder color
+            focusBorderColor="transparent" // Remove border color on focus
+            height={"100%"}
+            p={"0px"}
+            pl={"2.5em"} // Add padding to the left to avoid overlap with the button
+            h="50px"
+            w={"100%"}
+          />
+        </InputGroup>
+      </FormControl>
     </HStack>
   );
 };

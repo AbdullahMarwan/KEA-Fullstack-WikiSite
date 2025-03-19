@@ -10,15 +10,16 @@
     "start": "vite"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.10.6",
+    "@chakra-ui/react": "^2.10.7",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "axios": "^1.8.2",
     "dotenv": "^16.4.7",
-    "framer-motion": "^12.4.10",
+    "framer-motion": "^12.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^4.7.1"
+    "react-icons": "^4.7.1",
+    "react-router-dom": "^7.3.0"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",

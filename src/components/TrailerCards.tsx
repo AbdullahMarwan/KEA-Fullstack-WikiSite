@@ -3,7 +3,6 @@ import { HStack, Heading, Card, CardBody, CardHeader, Text } from '@chakra-ui/re
 import { FaEllipsisH } from 'react-icons/fa';
 import { fetchTrailerId } from "../services/api";
 
-
 interface Trailer {
     id: number;
     title: string;
@@ -13,8 +12,6 @@ interface Trailer {
     backdrop_path: string;
     poster_path: string;
 }
-
-
 
 const TrailerCards = () => {
     const [trailers, setTrailers] = useState<Trailer[]>([]);
@@ -38,78 +35,81 @@ const TrailerCards = () => {
       e.currentTarget.style.color = "white";
     };
 
-    const handleMouseOut = (e: React.MouseEvent<HTMLLIElement>) => {
-      e.currentTarget.style.backgroundColor = "white";
-      e.currentTarget.style.color = "black";
+  useEffect(() => {
+    const getTrailerMovies = async () => {
+      try {
+        const data = await fetchTrailerMovies();
+        setTrailers(data.results); // Access the results array
+      } catch (error) {
+        console.error("Error fetching trailer movies:", error);
+      }
     };
 
-    return (
-      <div
-        style={{
-          overflowX: "scroll",
-          whiteSpace: "nowrap",
-          width: "100%",
-          maxWidth: "1300px",
-        }}
-      >
-        {trailers.slice(0, 4).map((trailer) => (
-          <Card
-            key={trailer.id}
-            display="inline-block"
-            width="300px"
-            marginRight={"20px"}
-            backgroundColor="transparent"
+    getTrailerMovies();
+  }, []);
+
+  return (
+    <div
+      style={{
+        overflowX: "scroll", // Enable horizontal scrolling
+        whiteSpace: "nowrap", // Prevent wrapping
+        width: "100%",
+        maxWidth: "1300px",
+      }}
+    >
+      {trailers.slice(0, 4).map((trailer) => (
+        <Card
+          key={trailer.id}
+          display="inline-block"
+          width="300px" // Adjusted width for responsiveness
+          marginRight={"20px"}
+          backgroundColor="transparent"
+        >
+          <div
+            style={{
+              backgroundImage: `url(https://image.tmdb.org/t/p/w500${trailer.poster_path})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              height: "calc(300px / 1.78)",
+              position: "relative",
+              borderRadius: "10px",
+            }}
           >
-            <div
-              style={{
-                backgroundImage: `url(https://image.tmdb.org/t/p/w500${trailer.poster_path})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                height: "calc(300px/1.78)",
-                position: "relative",
-                borderRadius: "10px",
+            <HStack
+              position={"absolute"}
+              top={"10px"}
+              right={"10px"}
+              width={"2em"}
+              height={"2em"}
+              backgroundColor={"rgba(128, 128, 128, 0.7)"}
+              borderRadius={"50%"}
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              cursor={"pointer"}
+              onClick={() => {
+                const menu = document.getElementById(`menu-${trailer.id}`);
+                if (menu) {
+                  menu.style.display =
+                    menu.style.display === "block" ? "none" : "block";
+                }
               }}
             >
-              <div
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  right: "10px",
-                  width: "2em",
-                  height: "2em",
-                  backgroundColor: "rgba(128, 128, 128, 0.7)",
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  const menu = document.getElementById(`menu-${trailer.id}`);
-                  if (menu) {
-                    menu.style.display = menu.style.display === "block" ? "none" : "block";
-                  }
-                }}
-              >
-                <FaEllipsisH color="rgb(3, 37, 65)" />
-              </div>
-              <div
-                id={`menu-${trailer.id}`}
-                style={{
-                  display: "none",
-                  position: "absolute",
-                  top: "40px",
-                  right: "10px",
-                  backgroundColor: "white",
-                  borderRadius: "5px",
-                  boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-                  zIndex: 1,
-                }}
-              >
-                <ul style={{ listStyleType: "none", margin: 0, borderRadius: "10px" }}>
-                <li style={{ padding: "10px 50px 10px 50px", color: "black", cursor: "pointer", display: "flex", alignItems: "center" }} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" ><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
-                  <Text ml="10px" fontWeight={"600"}>
+              <FaEllipsisH color="rgb(3, 37, 65)" />
+            </HStack>
+          </div>
+          <CardBody padding="20px 20px 20px 0px" textAlign={"center"}>
+            <CardHeader padding="0">
+              <Heading fontSize={"1em"} color="black" isTruncated>
+                {trailer.title}
+              </Heading>
+            </CardHeader>
+          </CardBody>
+        </Card>
+      ))}
+    </div>
+  );
+};
 
                   Favorite
                   </Text>
