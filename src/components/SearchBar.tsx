@@ -19,7 +19,7 @@ const SearchBar = () => {
       alignItems={"center"}
       justifyContent={"center"}
     >
-      <FormControl as="form" width="100%">
+      <FormControl as="form" width="100%" maxW={"1300px"} border={"none"}>
         <InputGroup height={"50px"}>
           <InputLeftElement
             height="100%" // Ensure it takes the full height of the input
@@ -49,6 +49,7 @@ const SearchBar = () => {
             </Button>
           </InputLeftElement>
           <Input
+            border={"none"}
             placeholder="Søg efter en film, TV-serie, person"
             fontSize={"1em"}
             bg="white"

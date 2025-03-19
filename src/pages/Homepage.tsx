@@ -19,6 +19,7 @@ export const Homepage = () => {
       <GridItem area={"main"}>
         <SearchMovieSection />
         <TrendingMovies />
+        <LatestTrailers />
       </GridItem>
     </Grid>
   );
