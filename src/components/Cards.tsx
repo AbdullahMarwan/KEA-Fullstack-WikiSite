@@ -40,7 +40,7 @@ const Cards = () => {
         overflowX: "scroll",
         whiteSpace: "nowrap",
         width: "100%",
-        maxWidth: "100vw",
+        maxWidth: "1300px",
       }}
     >
       {movies.slice(0, 10).map((movie) => (

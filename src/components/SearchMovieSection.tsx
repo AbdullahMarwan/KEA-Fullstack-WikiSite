@@ -16,6 +16,7 @@ const SearchMovieSection = () => {
         display: "flex",
         alignItems: "center",
         flexDirection: "column",
+        padding: "20px",
       }}
     >
       <HStack

@@ -6,7 +6,12 @@ import LatestTrailers from "../components/LatestTrailers";
 
 export const Homepage = () => {
   return (
-    <Grid>
+    <Grid
+      templateAreas={`"header"
+                      "main"`}
+      gridTemplateRows={"auto 1fr"}
+      width="100%"
+    >
       <GridItem area={"header"} bg="#032440">
         <SearchBar />
       </GridItem>
@@ -14,7 +19,6 @@ export const Homepage = () => {
       <GridItem area={"main"}>
         <SearchMovieSection />
         <TrendingMovies />
-        <LatestTrailers />
       </GridItem>
     </Grid>
   );
