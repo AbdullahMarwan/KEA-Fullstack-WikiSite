@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { HStack, Heading, Card, CardBody, CardHeader, Text } from '@chakra-ui/react';
 import { FaEllipsisH } from 'react-icons/fa';
-import { fetchTrailerMovies } from "../services/api";
+import { fetchTrailerId } from "../services/api";
 
 
 interface Trailer {
     id: number;
     title: string;
+    overview: string;
     video: boolean;
+    youtubeLinks: string[];
     backdrop_path: string;
     poster_path: string;
 }
@@ -20,7 +22,8 @@ const TrailerCards = () => {
     useEffect(() => {
       const getTrailerMovies = async () => {
         try {
-          const data = await fetchTrailerMovies();
+          const data = await fetchTrailerId();
+          console.log(data); // Log the data to inspect its structure
           setTrailers(data.results); // Access the results array
         } catch (error) {
           console.error("Error fetching trailer movies:", error);
@@ -150,7 +153,17 @@ const TrailerCards = () => {
                 <Heading fontSize={"1.25em"} color="white" isTruncated>
                   {trailer.title}
                 </Heading>
+                <Text fontSize={".75em"} color="white" isTruncated>
+                  {trailer.overview}
+                </Text>
               </CardHeader>
+              <div>
+                {trailer.youtubeLinks && trailer.youtubeLinks.map((link, index) => (
+                  <a key={`${trailer.id}-${index}`} href={link} target="_blank" rel="noopener noreferrer" style={{ color: "white", display: "block", marginTop: "10px" }}>
+                    Watch Trailer {index + 1}
+                  </a>
+                ))}
+              </div>
             </CardBody>
           </Card>
         ))}
