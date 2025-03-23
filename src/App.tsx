@@ -1,6 +1,7 @@
+// src/App.tsx
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
-import { AppRoutes } from "./routes/AppRoutes";
+import { Outlet } from "react-router-dom";
 import { Flex, Box } from "@chakra-ui/react";
 
 function App() {
@@ -14,8 +15,8 @@ function App() {
         <NavBar />
       </Box>
 
-      <Box display="flex" flexDirection="column">
-        <AppRoutes />
+      <Box display="flex" flexDirection="column" flex="1">
+        <Outlet />
       </Box>
 
       <Footer />
