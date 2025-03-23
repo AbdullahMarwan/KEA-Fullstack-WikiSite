@@ -9,7 +9,8 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { FaEllipsisH } from "react-icons/fa";
-import { fetchTrailerId } from "../services/api";
+import { fetchTrailerMovies } from "../services/api";
+import { fetchTrendingMovies } from "../services/api";
 
 interface Trailer {
   id: number;
@@ -21,21 +22,54 @@ interface Trailer {
   poster_path: string;
 }
 
+interface Movie {
+  id: number;
+  title: string;
+  backdrop_path: string;
+}
+
 const TrailerCards = () => {
   const [trailers, setTrailers] = useState<Trailer[]>([]);
+  const [trendingMovies, setTrendingMovies] = useState<Movie[]>([]);
 
   useEffect(() => {
     const getTrailerMovies = async () => {
       try {
-        const data = await fetchTrailerId();
+        const data = await fetchTrailerMovies();
         console.log(data); // Log the data to inspect its structure
-        setTrailers(data.results); // Access the results array
+
+        setTrailers(
+          data.map((movie: any) => ({
+            id: movie.movieId,
+            title: movie.title || "Unknown Title",
+            overview: movie.overview || "No overview available",
+            video: true,
+            youtubeLinks: movie.youtubeLinks || [],
+            backdrop_path: movie.backdrop_path || "",
+            poster_path: movie.poster_path || "",
+          }))
+        );
       } catch (error) {
         console.error("Error fetching trailer movies:", error);
       }
     };
 
+    const getTrendingMovies = async () => {
+      try {
+        const data = await fetchTrendingMovies();
+        console.log(data); // Log the data to inspect its structure
+        data.results.slice(0, 4).forEach((movie: any) => {
+          movie.title = movie.title || "Unknown Title";
+        });
+
+        setTrendingMovies(data.results);
+      } catch (error) {
+        console.error("Error fetching trending movies:", error);
+      }
+    };
+
     getTrailerMovies();
+    getTrendingMovies();
   }, []);
 
   const handleMouseOver = (e: React.MouseEvent<HTMLLIElement>) => {
@@ -63,22 +97,54 @@ const TrailerCards = () => {
         },
       }}
     >
-      {trailers.slice(0, 4).map((trailer) => (
+      {trendingMovies.slice(0, 4).map((movie) => (
         <Card
-          key={trailer.id}
+          key={movie.id}
           flexShrink={0}
           width="300px"
           marginRight="20px"
           backgroundColor="transparent"
+          onClick={() => {
+            const trailer = trailers.find((trailer) => trailer.id === movie.id);
+            if (trailer && trailer.youtubeLinks.length > 0) {
+              window.open(
+                trailer.youtubeLinks[0],
+                "_blank",
+                "noopener,noreferrer"
+              );
+            }
+          }}
+          cursor="pointer"
         >
           <Box
-            backgroundImage={`url(https://image.tmdb.org/t/p/w500${trailer.poster_path})`}
+            backgroundImage={`url(https://image.tmdb.org/t/p/w500${movie.backdrop_path})`}
             backgroundSize="cover"
             backgroundPosition="center"
             height="calc(300px / 1.78)"
             position="relative"
             borderRadius="10px"
           >
+            <Box
+              position="absolute"
+              top="50%"
+              left="50%"
+              height={"100px"}
+              width={"100px"}
+              transform="translate(-50%, -50%)"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="white"
+                width="5em"
+                height="5em"
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </Box>
             <HStack
               position="absolute"
               top="10px"
@@ -91,8 +157,9 @@ const TrailerCards = () => {
               alignItems="center"
               justifyContent="center"
               cursor="pointer"
-              onClick={() => {
-                const menu = document.getElementById(`menu-${trailer.id}`);
+              onClick={(e) => {
+                e.stopPropagation();
+                const menu = document.getElementById(`menu-${movie.id}`);
                 if (menu) {
                   menu.style.display =
                     menu.style.display === "block" ? "none" : "block";
@@ -104,7 +171,7 @@ const TrailerCards = () => {
 
             {/* Dropdown menu */}
             <Box
-              id={`menu-${trailer.id}`}
+              id={`menu-${movie.id}`}
               position="absolute"
               top="40px"
               right="10px"
@@ -191,22 +258,10 @@ const TrailerCards = () => {
 
           <CardBody padding="20px 20px 20px 0px" textAlign="center">
             <CardHeader padding="0">
-              <Heading fontSize="1em" color="black" isTruncated>
-                {trailer.title}
+              <Heading fontSize="1em" color="white" isTruncated>
+                {movie.title || "Unknown Title"}
               </Heading>
             </CardHeader>
-            {trailer.youtubeLinks &&
-              trailer.youtubeLinks.map((link, index) => (
-                <a
-                  key={`${trailer.id}-${index}`}
-                  href={link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: "blue", display: "block", marginTop: "10px" }}
-                >
-                  Watch Trailer {index + 1}
-                </a>
-              ))}
           </CardBody>
         </Card>
       ))}

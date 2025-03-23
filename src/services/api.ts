@@ -8,39 +8,30 @@ export const fetchTrendingMovies = async () => {
     const response = await axios.get(
       `${baseUrl}/trending/movie/day?api_key=${apiKey}`
     );
-    return response.data; // Return the entire response object
+    return { data: response.data, results: response.data.results };
   } catch (error) {
     console.error("Error fetching trending movies:", error);
     throw error;
   }
 };
 
-export const fetchTrailerId = async () => {
+export const fetchTrailerMovies = async () => {
   try {
-    const response = await axios.get(
-      `${baseUrl}/movie/popular?api_key=${apiKey}`
-    );
-    const Ids = response.data.results.slice(0, 10).map((movie: any) => movie.id); // Limit to 10 items
-    const limitedResults = await Promise.all(Ids.map(async (id: number) => {
-      const trailerData = await fetchTrailerMovies(id);
-      const youtubeLinks = trailerData.results.map((trailer: any) => `https://www.youtube.com/watch?v=${trailer.key}`);
-      return youtubeLinks;
-    }));
-    return { results: limitedResults.flat() }; // Flatten the array of arrays and return the modified response object
-  } catch (error) {
-    console.error("Error fetching trailer movies:", error);
-    throw error;
-  }
-};
-
-export const fetchTrailerMovies = async (id: number) => {
-  try {
-    
+    const trendingMovies = await fetchTrendingMovies();
+    const trailerMoviesData = await Promise.all(
+      trendingMovies.results.slice(0, 4).map(async (movie: any) => {
         const response = await axios.get(
-          `${baseUrl}/movie/${id}/videos?api_key=${apiKey}`
+          `${baseUrl}/movie/${movie.id}/videos?api_key=${apiKey}`
         );
-        console.log(response)
-      return response.data; // Return the array of trailer movies data
+        const youtubeLinks = response.data.results
+          .filter((result: any) => result.type === "Trailer")
+          .map(
+            (result: any) => `https://www.youtube.com/watch?v=${result.key}`
+          );
+        return { movieId: movie.id, youtubeLinks };
+      })
+    );
+    return trailerMoviesData; // Return the array of trailer movies data for each movie ID
   } catch (error) {
     console.error("Error fetching trailer movies:", error);
     throw error;
