@@ -1,16 +1,17 @@
-import { HStack, Button } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import { fetchTrendingMovies } from "../services/api";
+import React from "react";
+import { HStack } from "@chakra-ui/react";
 import Cards from "./Cards";
-import background from "../assets/trending-bg.svg";
 import LinkSelector from "./LinkSelector";
+import { fetchPopularMovies } from "../services/api";
 
-const TrendingMovies = () => {
-  const [activeLink, setActiveLink] = useState("I dag");
+const PopularAtTheMoment = () => {
+  const [activeLink, setActiveLink] = React.useState("Streaming");
 
   const links = [
-    { name: "I dag", href: "#" },
-    { name: "Denne uge", href: "#" },
+    { name: "Streaming", href: "#" },
+    { name: "På TV", href: "#" },
+    { name: "Til leje", href: "#" },
+    { name: "I biograferne", href: "#" },
   ];
 
   return (
@@ -41,24 +42,19 @@ const TrendingMovies = () => {
             links={links}
             activeLink={activeLink}
             onLinkClick={setActiveLink}
-            maxVisible={2}
+            maxVisible={4}
             activeTextColor="linear-gradient(to right, #1ed5aa 0%, #c0fed0 100%)"
             inactiveTextColor="rgb(3, 37, 65)"
             borderColor="rgb(3, 37, 65)" // Teal border
             activeBgColor="rgb(3, 37, 65)" // Default teal gradient
           />
         </HStack>
-        <HStack
-          w="100%"
-          bg={`url(${background})`}
-          backgroundSize="cover"
-          backgroundPosition="center"
-        >
-          <Cards fetchFunction={fetchTrendingMovies} />
+        <HStack w="100%">
+          <Cards fetchFunction={fetchPopularMovies} />
         </HStack>
       </HStack>
     </HStack>
   );
 };
 
-export default TrendingMovies;
+export default PopularAtTheMoment;

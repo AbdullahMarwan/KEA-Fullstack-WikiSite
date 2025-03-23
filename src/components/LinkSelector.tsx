@@ -40,8 +40,6 @@ const LinkSelector: React.FC<LinkSelectorProps> = ({
   inactiveTextColor = "white",
   borderColor = "#1ed5aa",
   activeBgColor = "linear-gradient(to right, #1ed5aa 0%, #c0fed0 100%)", // Default gradient
-  useGradientText = false,
-  gradientTextValue = "linear-gradient(to right, #1ed5aa 0%, #c0fed0 100%)",
 }) => {
   // Determine how many links to show based on screen size
   const visibleLinks =

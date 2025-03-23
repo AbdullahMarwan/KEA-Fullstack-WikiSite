@@ -15,6 +15,18 @@ export const fetchTrendingMovies = async () => {
   }
 };
 
+export const fetchPopularMovies = async () => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/movie/popular?api_key=${apiKey}`
+    );
+    return { data: response.data, results: response.data.results };
+  } catch (error) {
+    console.error("Error fetching trending movies:", error);
+    throw error;
+  }
+};
+
 export const fetchTrailerMovies = async () => {
   try {
     const trendingMovies = await fetchTrendingMovies();

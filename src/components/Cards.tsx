@@ -8,7 +8,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { fetchTrendingMovies } from "../services/api";
-import VoteAverageRing from "./voteAverageRing"; // Import the ProgressRing component
+import VoteAverageRing from "./voteAverageRing";
 
 interface Movie {
   id: number;
@@ -18,21 +18,29 @@ interface Movie {
   vote_average: number;
 }
 
-const Cards = () => {
+interface CardsProps {
+  fetchFunction?: () => Promise<any>; // Default fetch function can be overridden
+  maxItems?: number; // Optional max number of items to display
+}
+
+const Cards: React.FC<CardsProps> = ({
+  fetchFunction = fetchTrendingMovies, // Default to fetchTrendingMovies if no function is provided
+  maxItems = 10,
+}) => {
   const [movies, setMovies] = useState<Movie[]>([]);
 
   useEffect(() => {
-    const getTrendingMovies = async () => {
+    const getMovies = async () => {
       try {
-        const data = await fetchTrendingMovies();
+        const data = await fetchFunction();
         setMovies(data.results); // Access the results array
       } catch (error) {
-        console.error("Error fetching trending movies:", error);
+        console.error("Error fetching movies:", error);
       }
     };
 
-    getTrendingMovies();
-  }, []);
+    getMovies();
+  }, [fetchFunction]); // Add fetchFunction to the dependency array
 
   return (
     <div
@@ -43,7 +51,7 @@ const Cards = () => {
         maxWidth: "1300px",
       }}
     >
-      {movies.slice(0, 10).map((movie) => (
+      {movies.slice(0, maxItems).map((movie) => (
         <Card
           key={movie.id}
           display="inline-block"
@@ -58,6 +66,7 @@ const Cards = () => {
               backgroundPosition: "center",
               height: "300px",
               position: "relative",
+              borderRadius: "10px",
             }}
           >
             <HStack

@@ -3,6 +3,7 @@ import SearchBar from "../components/SearchBar";
 import SearchMovieSection from "../components/SearchMovieSection";
 import TrendingMovies from "../components/TrendingMovies";
 import LatestTrailers from "../components/LatestTrailers";
+import PopularAtTheMoment from "../components/PopularAtTheMoment";
 
 export const Homepage = () => {
   return (
@@ -20,6 +21,7 @@ export const Homepage = () => {
         <SearchMovieSection />
         <TrendingMovies />
         <LatestTrailers />
+        <PopularAtTheMoment />
       </GridItem>
     </Grid>
   );

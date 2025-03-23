@@ -20,6 +20,7 @@ const LatestTrailers = () => {
       display={"flex"}
       alignItems={"center"}
       flexDirection={"column"}
+      mt={"50px"}
     >
       <HStack
         display={"flex"}
