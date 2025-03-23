@@ -1,27 +1,25 @@
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import { AppRoutes } from "./routes/AppRoutes";
-import { Grid, GridItem, HStack } from "@chakra-ui/react";
+import { Flex, Box } from "@chakra-ui/react";
 
 function App() {
   return (
-    <Grid
-      templateAreas={`"header header"
-                "main main"
-                "footer footer"`}
-      gridTemplateColumns={"150px 1fr"}
-      color="blackAlpha.700"
+    <Flex
+      direction="column"
+      minHeight="100vh" // Ensure full viewport height
+      height="100%" // This is important for nested flex containers
     >
-      <GridItem area={"header"} bg="#032440">
+      <Box bg="#032440">
         <NavBar />
-      </GridItem>
-      <GridItem area={"main"}>
+      </Box>
+
+      <Box display="flex" flexDirection="column">
         <AppRoutes />
-      </GridItem>
-      <GridItem area={"footer"}>
-        <Footer />
-      </GridItem>
-    </Grid>
+      </Box>
+
+      <Footer />
+    </Flex>
   );
 }
 

@@ -16,6 +16,8 @@ import {
 import logo from "../assets/logo.svg";
 import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
 import { MEDIUM_PADDING } from "../utils/constants";
+import { Link as ReactRouterLink } from "react-router-dom";
+import { Link as ChakraLink, LinkProps } from "@chakra-ui/react";
 
 const NavBar = () => {
   const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
@@ -42,8 +44,10 @@ const NavBar = () => {
           </svg>
         </Box>
         <HStack width={"40%"} justifyContent="center">
-          <Image src={logo} alt="logo" maxWidth="150px" m={0} />
-
+          ;
+          <Link as={ReactRouterLink} to="/" width={"150px"}>
+            <Image src={logo} alt="logo" maxWidth="150px" m={0} />
+          </Link>
           <UnorderedList
             display={displayLinks}
             styleType="none"
@@ -111,7 +115,7 @@ const NavBar = () => {
               </Button>
             </ListItem>
             <ListItem>
-              <Link href="#">Log ind</Link>
+              <Link href="/login">Log ind</Link>
             </ListItem>
             <ListItem>
               <Link href="#">Bliv medlem af TMDB</Link>
