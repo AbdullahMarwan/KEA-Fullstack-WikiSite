@@ -36,7 +36,6 @@ const TrailerCards = () => {
     const getTrailerMovies = async () => {
       try {
         const data = await fetchTrailerMovies();
-        console.log(data); // Log the data to inspect its structure
 
         setTrailers(
           data.map((movie: any) => ({
@@ -57,7 +56,6 @@ const TrailerCards = () => {
     const getTrendingMovies = async () => {
       try {
         const data = await fetchTrendingMovies();
-        console.log(data); // Log the data to inspect its structure
         data.results.slice(0, 4).forEach((movie: any) => {
           movie.title = movie.title || "Unknown Title";
         });

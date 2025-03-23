@@ -1,6 +1,7 @@
 import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
 import { AppRoutes } from "./routes/AppRoutes";
-import { Grid, GridItem } from "@chakra-ui/react";
+import { Grid, GridItem, HStack } from "@chakra-ui/react";
 
 function App() {
   return (
@@ -17,8 +18,8 @@ function App() {
       <GridItem area={"main"}>
         <AppRoutes />
       </GridItem>
-      <GridItem bg="blue.300" area={"footer"}>
-        Footer
+      <GridItem area={"footer"}>
+        <Footer />
       </GridItem>
     </Grid>
   );

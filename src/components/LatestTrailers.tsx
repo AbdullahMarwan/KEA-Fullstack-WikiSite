@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { HStack, Box, Heading } from "@chakra-ui/react";
 import TrailerCards from "./TrailerCards";
 import LinkSelector from "./LinkSelector";
+import backgroundImg from "../assets/images/latest-trailers-bg.webp";
 
 const LatestTrailers = () => {
   const [activeLink, setActiveLink] = useState("Popular");
@@ -17,6 +18,7 @@ const LatestTrailers = () => {
   return (
     <HStack
       bg="#032541"
+      backgroundImage={`linear-gradient(to right, rgba(3,37,65,0.75) 0%, rgba(3,37,65,0.75) 100%), url(${backgroundImg})`}
       display={"flex"}
       alignItems={"center"}
       flexDirection={"column"}

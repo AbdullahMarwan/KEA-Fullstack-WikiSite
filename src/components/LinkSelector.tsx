@@ -82,6 +82,7 @@ const LinkSelector: React.FC<LinkSelectorProps> = ({
             <Link
               href={link.href}
               padding="1em"
+              _hover={"text-decoration: none"}
               onClick={(e) => {
                 e.preventDefault();
                 onLinkClick(link.name);

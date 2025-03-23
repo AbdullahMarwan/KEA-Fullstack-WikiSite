@@ -4,8 +4,7 @@ import {
   CSSReset,
   GlobalStyle,
 } from "@chakra-ui/react";
-import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client"; // Use the new 'react-dom/client' package
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 
@@ -20,13 +19,13 @@ const theme = extendTheme({
   },
 });
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById("root")!); // Create a root
+root.render(
   <ChakraProvider theme={theme}>
     <CSSReset />
     <GlobalStyle />
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </ChakraProvider>,
-  document.getElementById("root")
+  </ChakraProvider>
 );
