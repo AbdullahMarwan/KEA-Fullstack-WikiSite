@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Heading,
   Text,
@@ -9,26 +10,17 @@ import {
   Flex,
 } from "@chakra-ui/react";
 
-const LoginForm = () => {
+const SignupForm = () => {
   return (
     <>
       <Heading fontSize={"1.5em"} fontWeight={"500"} mb={"15px"}>
-        Log ind til din konto
+        Tilmeld dig her
       </Heading>
       <Text>
-        In order to use the editing and rating capabilities of TMDB, as well as
-        get personal recommendations you will need to login to your account. If
-        you do not have an account, registering for an account is free and
-        simple.{" "}
-        <Link href="/Signup" color={"rgba(1,180,228)"}>
-          Click here
-        </Link>{" "}
-        to get started.
+        Opret en konto. Det er gratis og nemt. Udfyld formen nedenfor for at
+        komme i gang. JavaScript er påkrævet for at fortsætte
       </Text>
-      <Text mt={"15px"}>
-        If you signed up but didn't get your verification email,{" "}
-        <Link color={"rgba(1,180,228)"}>Click here</Link> to have it resent.
-      </Text>
+
       <FormControl isRequired mt={"15px"}>
         <FormLabel htmlFor="username" fontWeight={"400"}>
           Brugernavn
@@ -42,6 +34,29 @@ const LoginForm = () => {
         />
         <FormLabel htmlFor="password" mt={4} fontWeight={"400"}>
           Adgangskode
+        </FormLabel>
+        <Input
+          id="password"
+          type="password"
+          placeholder="Indtast password"
+          border="1px solid grey"
+          _selected={{ border: "1px solid rgba(1,180,228)" }}
+          _hover={{ border: "1px solid grey" }}
+        />
+
+        <FormLabel htmlFor="password" mt={4} fontWeight={"400"}>
+          Godkend adgangskode
+        </FormLabel>
+        <Input
+          id="password"
+          type="password"
+          placeholder="Indtast password"
+          border="1px solid grey"
+          _selected={{ border: "1px solid rgba(1,180,228)" }}
+          _hover={{ border: "1px solid grey" }}
+        />
+        <FormLabel htmlFor="password" mt={4} fontWeight={"400"}>
+          E-mail
         </FormLabel>
         <Input
           id="password"
@@ -66,18 +81,19 @@ const LoginForm = () => {
           color={"black"}
           _hover={{ backgroundColor: "#ced4da" }}
         >
-          Log ind
+          Tilmeld dig
         </Button>
         <Link
+          href="/login"
           color={"rgba(1,180,228)"}
           ml={"15px"}
           _hover={{ textDecoration: "none" }}
         >
-          Nulstil adgangskode
+          Annullér
         </Link>
       </Flex>
     </>
   );
 };
 
-export default LoginForm;
+export default SignupForm;
