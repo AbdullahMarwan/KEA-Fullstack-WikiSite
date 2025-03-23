@@ -4,14 +4,12 @@ import Cards from "./Cards";
 import LinkSelector from "./LinkSelector";
 import { fetchPopularMovies } from "../services/api";
 
-const PopularAtTheMoment = () => {
-  const [activeLink, setActiveLink] = React.useState("Streaming");
+const FreeToWatch = () => {
+  const [activeLink, setActiveLink] = React.useState("Film");
 
   const links = [
-    { name: "Streaming", href: "#" },
-    { name: "På TV", href: "#" },
-    { name: "Til leje", href: "#" },
-    { name: "I biograferne", href: "#" },
+    { name: "Film", href: "#" },
+    { name: "TV", href: "#" },
   ];
 
   return (
@@ -36,7 +34,7 @@ const PopularAtTheMoment = () => {
               fontWeight: "500",
             }}
           >
-            Populært for tiden
+            Gratis at se
           </h3>
           <LinkSelector
             links={links}
@@ -57,4 +55,4 @@ const PopularAtTheMoment = () => {
   );
 };
 
-export default PopularAtTheMoment;
+export default FreeToWatch;
