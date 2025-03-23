@@ -8,6 +8,7 @@ import {
   Button,
   Link,
   Flex,
+  textDecoration,
 } from "@chakra-ui/react";
 
 const LoginForm = () => {
@@ -35,6 +36,8 @@ const LoginForm = () => {
           id="username"
           placeholder="Indtast brugernavn"
           border="1px solid grey"
+          _selected={{ border: "2px solid rgba(1,180,228)" }}
+          _hover={{ border: "1px solid grey" }}
         />
         <FormLabel htmlFor="password" mt={4} fontWeight={"400"}>
           Adgangskode
@@ -44,6 +47,8 @@ const LoginForm = () => {
           type="password"
           placeholder="Indtast password"
           border="1px solid grey"
+          _selected={{ border: "1px solid rgba(1,180,228)" }}
+          _hover={{ border: "1px solid grey" }}
         />
       </FormControl>
 
@@ -54,10 +59,19 @@ const LoginForm = () => {
         justifyContent={{ base: "center", md: "flex-start" }} // Centered below 768px (base)
         width="100%"
       >
-        <Button fontWeight={"400"} backgroundColor={"#dee2e6"} color={"black"}>
+        <Button
+          fontWeight={"400"}
+          backgroundColor={"#dee2e6"}
+          color={"black"}
+          _hover={{ backgroundColor: "#ced4da" }}
+        >
           Log ind
         </Button>
-        <Link color={"rgba(1,180,228)"} ml={"15px"}>
+        <Link
+          color={"rgba(1,180,228)"}
+          ml={"15px"}
+          _hover={{ textDecoration: "none" }}
+        >
           Nulstil adgangskode
         </Link>
       </Flex>
