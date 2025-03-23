@@ -17,7 +17,6 @@ import logo from "../assets/logo.svg";
 import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
 import { MEDIUM_PADDING } from "../utils/constants";
 import { Link as ReactRouterLink } from "react-router-dom";
-import { Link as ChakraLink, LinkProps } from "@chakra-ui/react";
 
 const NavBar = () => {
   const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
@@ -63,16 +62,24 @@ const NavBar = () => {
             }}
           >
             <ListItem>
-              <Link href="#">Film</Link>
+              <Link as={ReactRouterLink} to="/" width={"150px"}>
+                Film
+              </Link>
             </ListItem>
             <ListItem>
-              <Link href="#">TV-serier</Link>
+              <Link as={ReactRouterLink} to="/" width={"150px"}>
+                TV-serier
+              </Link>
             </ListItem>
             <ListItem>
-              <Link href="#">Personer</Link>
+              <Link as={ReactRouterLink} to="/" width={"150px"}>
+                Personer
+              </Link>
             </ListItem>
             <ListItem>
-              <Link href="#">Mere</Link>
+              <Link as={ReactRouterLink} to="/" width={"150px"}>
+                Mere
+              </Link>
             </ListItem>
           </UnorderedList>
         </HStack>
@@ -115,7 +122,9 @@ const NavBar = () => {
               </Button>
             </ListItem>
             <ListItem>
-              <Link href="/login">Log ind</Link>
+              <Link as={ReactRouterLink} to="/Login" width={"150px"}>
+                Log ind
+              </Link>
             </ListItem>
             <ListItem>
               <Link href="#">Bliv medlem af TMDB</Link>

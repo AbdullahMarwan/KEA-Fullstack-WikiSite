@@ -8,6 +8,7 @@ import {
   Link,
   Flex,
 } from "@chakra-ui/react";
+import { Link as ReactRouterLink } from "react-router-dom";
 
 const LoginForm = () => {
   return (
@@ -20,7 +21,12 @@ const LoginForm = () => {
         get personal recommendations you will need to login to your account. If
         you do not have an account, registering for an account is free and
         simple.{" "}
-        <Link href="/Signup" color={"rgba(1,180,228)"}>
+        <Link
+          as={ReactRouterLink}
+          to="/Signup"
+          width={"150px"}
+          color={"rgba(1,180,228)"}
+        >
           Click here
         </Link>{" "}
         to get started.

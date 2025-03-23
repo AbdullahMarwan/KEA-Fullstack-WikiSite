@@ -1,16 +1,18 @@
 // src/App.tsx
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
-import { Outlet } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
+import { Homepage } from "./pages/Homepage";
+import { Movies } from "./pages/Movies";
+import { Persons } from "./pages/Persons";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import { Flex, Box } from "@chakra-ui/react";
 
-function App() {
+// This is your layout component (inline)
+const Layout = () => {
   return (
-    <Flex
-      direction="column"
-      minHeight="100vh" // Ensure full viewport height
-      height="100%" // This is important for nested flex containers
-    >
+    <Flex direction="column" minHeight="100vh" height="100%">
       <Box bg="#032440">
         <NavBar />
       </Box>
@@ -21,6 +23,20 @@ function App() {
 
       <Footer />
     </Flex>
+  );
+};
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Homepage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/movies" element={<Movies />} />
+        <Route path="/persons" element={<Persons />} />
+      </Route>
+    </Routes>
   );
 }
 
