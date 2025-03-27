@@ -46,3 +46,15 @@ export const fetchTrailerMovies = async (id: number) => {
     throw error;
   }
 };
+
+export const fetchPopularPersons = async () => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/trending/person/day?api_key=${apiKey}`
+    );
+    return response.data; // Return the entire response object
+  } catch (error) {
+    console.error("Error fetching popular persons:", error);
+    throw error;
+  }
+}
