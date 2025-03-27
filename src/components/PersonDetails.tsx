@@ -8,8 +8,7 @@ const PersonDetails = () => {
   useEffect(() => {
     const fetchPersonDetails = async () => {
       try {
-        // Simulate fetching person details (replace with your actual API call)
-        const response = await fetch(`https://api.themoviedb.org/3/person/38280?api_key=475f7c6aa70e55fd5a97a138977bb3cc`);
+        const response = await fetch(`https://api.themoviedb.org/3/person/${id}?api_key=475f7c6aa70e55fd5a97a138977bb3cc`);
         const data = await response.json();
         setPerson({ id: data.id, name: data.name });
       } catch (error) {
