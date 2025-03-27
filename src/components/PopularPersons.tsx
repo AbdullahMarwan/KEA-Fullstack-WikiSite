@@ -19,25 +19,41 @@ const PopularPersons = () => {
   }, []);
 
   return (
-    <Grid templateColumns="repeat(4, 1fr)" gap={6}>
+    
+    <Grid templateColumns="repeat(4, 1fr)" gap={16}>
       {persons.map((person) => (
-        <GridItem key={person.id} w="100%" h="20rem" border="1px" borderColor="red.400">
+        <GridItem key={person.id} w="100%" h="33rem">
           
 
-            <GridItem w="100%" h="80%" border="1px" borderColor="red.400">
-            <img src={`https://image.tmdb.org/t/p/w500/${person.profile_path}`} 
-            alt="img missing" style={{ height: "100%", objectFit: "cover" }} />
+            <GridItem w="100%" h="80%">
+            <img
+              src={person.profile_path ? `https://image.tmdb.org/t/p/w500/${person.profile_path}` : "./person-placeholder.jpg"}
+              alt="img missing"
+              style={{ height: "100%", objectFit: "cover" }}
+            />
             </GridItem>
+
+
+            <GridItem border="1px" borderColor="grey" padding="11">
 
 
           <div id="person-info">
           <div>
-          {person.name}
+
+            <b>
+
+
+         {person.name}
+            </b>
           </div>
+            
           <div>
           {person.known_for_department}
           </div>
           </div>
+            </GridItem>
+
+          
         </GridItem>
       ))}
       
