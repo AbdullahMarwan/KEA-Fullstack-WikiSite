@@ -1,11 +1,12 @@
-import { Heading } from "@chakra-ui/react";
-import { Grid, GridItem } from "@chakra-ui/react";
+import { Box, Grid, GridItem, Heading } from "@chakra-ui/react"
+import PopularPersons from "../components/PopularPersons";
 
 export const Persons = () => {
   return (
-    <Grid>
+    <Grid justifyContent={"center"}>
       <GridItem area={"main"}>
-        <Heading>Persons</Heading>
+        <Heading>Popular People</Heading>
+        <PopularPersons />
       </GridItem>
     </Grid>
   );
