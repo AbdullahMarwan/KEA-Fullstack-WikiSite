@@ -13,7 +13,7 @@ import { Flex, Box } from "@chakra-ui/react";
 const Layout = () => {
   return (
     <Flex direction="column" minHeight="100vh" height="100%">
-      <Box bg="#032440">
+      <Box bg="#032440" zIndex={9}>
         <NavBar />
       </Box>
 

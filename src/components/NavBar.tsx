@@ -17,15 +17,26 @@ import logo from "../assets/logo.svg";
 import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
 import { MEDIUM_PADDING } from "../utils/constants";
 import { Link as ReactRouterLink } from "react-router-dom";
+import LanguageContainer from "./LanguageContainer";
 
 const NavBar = () => {
   const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
   const displayIcons = useBreakpointValue({ base: "flex", md: "none" });
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: LanguageisOpen,
+    onOpen: LanguageonOpen,
+    onClose: LanguageonClose,
+  } = useDisclosure();
   const headerSize = "65px";
 
   return (
-    <HStack h={headerSize} padding={MEDIUM_PADDING} justifyContent="center">
+    <HStack
+      h={headerSize}
+      className="navBar"
+      padding={MEDIUM_PADDING}
+      justifyContent="center"
+    >
       <HStack justifyContent="space-between" w="100%" maxWidth="1300px">
         <Box
           boxSize="1.5em"
@@ -56,28 +67,48 @@ const NavBar = () => {
               "& > li > a": {
                 fontSize: "1em",
                 color: "white",
-                fontWeight: "500",
+                fontWeight: "600",
                 px: "10px",
               },
             }}
           >
             <ListItem>
-              <Link as={ReactRouterLink} to="/" width={"150px"}>
+              <Link
+                as={ReactRouterLink}
+                to="/"
+                width={"150px"}
+                _hover={{ textDecoration: "none" }}
+              >
                 Film
               </Link>
             </ListItem>
             <ListItem>
-              <Link as={ReactRouterLink} to="/" width={"150px"}>
+              <Link
+                as={ReactRouterLink}
+                to="/"
+                width={"150px"}
+                _hover={{ textDecoration: "none" }}
+              >
                 TV-serier
               </Link>
             </ListItem>
             <ListItem>
-              <Link as={ReactRouterLink} to="/" width={"150px"}>
+              <Link
+                as={ReactRouterLink}
+                to="/"
+                width={"150px"}
+                _hover={{ textDecoration: "none" }}
+              >
                 Personer
               </Link>
             </ListItem>
             <ListItem>
-              <Link as={ReactRouterLink} to="/" width={"150px"}>
+              <Link
+                as={ReactRouterLink}
+                to="/"
+                width={"150px"}
+                _hover={{ textDecoration: "none" }}
+              >
                 Mere
               </Link>
             </ListItem>
@@ -109,25 +140,53 @@ const NavBar = () => {
               },
             }}
           >
-            <ListItem>
+            <ListItem position={"relative"}>
               <Button
                 border="1px solid white"
                 bg="transparent"
+                _hover={{ bg: "white", color: "#032440" }}
                 padding="0px"
                 h="100%"
                 px="10px"
                 p={"5px"}
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent click event from propagating
+                  LanguageisOpen ? LanguageonClose() : LanguageonOpen();
+                }}
               >
                 DA
               </Button>
+              {LanguageisOpen && (
+                <Box
+                  position="absolute"
+                  top="100%"
+                  right="0"
+                  zIndex="10"
+                  onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the container
+                >
+                  <LanguageContainer />
+                </Box>
+              )}
             </ListItem>
             <ListItem>
-              <Link as={ReactRouterLink} to="/Login" width={"150px"}>
+              <Link
+                as={ReactRouterLink}
+                to="/Login"
+                width={"150px"}
+                _hover={{ textDecoration: "none" }}
+              >
                 Log ind
               </Link>
             </ListItem>
             <ListItem>
-              <Link href="#">Bliv medlem af TMDB</Link>
+              <Link
+                as={ReactRouterLink}
+                to="/Signup"
+                width={"150px"}
+                _hover={{ textDecoration: "none" }}
+              >
+                Bliv medlem af TMDB
+              </Link>
             </ListItem>
           </UnorderedList>
 
