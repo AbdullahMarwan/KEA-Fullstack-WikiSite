@@ -6,6 +6,7 @@ import {
   Heading,
   Link,
   VStack,
+  Flex,
 } from "@chakra-ui/react";
 import logo from "../assets/moviedb - logo vertical.svg";
 
@@ -55,49 +56,56 @@ const Footer = () => {
   ];
 
   return (
-    <HStack
+    <Box
+      mt={"auto"}
       display={"flex"}
-      alignItems={"flex-start"}
       justifyContent={"center"}
-      height={"auto"}
-      width={"100%"}
-      mt={"50px"}
-      backgroundColor={"#02253F"}
-      padding={"80px 20px"}
-      spacing={{ base: 8, md: 12 }}
-      flexWrap={{ base: "wrap", lg: "nowrap" }}
+      as="footer"
+      width="100%"
+      backgroundColor="#02253F"
+      marginTop="auto" // This helps push the footer to the bottom if needed
+      padding="80px 20px"
     >
-      <Box height={"auto"} display={"flex"} flexDirection={"column"}>
-        <Image src={logo} alt="logo" maxWidth="150px" m={0} />
-        <Button
-          backgroundColor={"white"}
-          color={"#01b4e4"}
-          fontWeight={"700"}
-          mt={4}
-        >
-          Hej Alexander
-        </Button>
-      </Box>
+      <Flex
+        maxWidth="1300px"
+        margin="0 auto"
+        justifyContent="flex-start"
+        alignItems="flex-start"
+        gap={{ base: "30px", md: "40px" }}
+        flexWrap={{ base: "wrap", lg: "nowrap" }}
+      >
+        <Box height="auto" display="flex" flexDirection="column">
+          <Image src={logo} alt="logo" maxWidth="150px" m={0} />
+          <Button
+            backgroundColor="white"
+            color="#01b4e4"
+            fontWeight="700"
+            mt={4}
+          >
+            Join the community
+          </Button>
+        </Box>
 
-      {footerSections.map((section, index) => (
-        <VStack key={index} align="flex-start">
-          <Heading fontSize={"1.45em"} color={"white"}>
-            {section.title}
-          </Heading>
-          {section.links.map((link, linkIndex) => (
-            <Link
-              key={linkIndex}
-              href={link.href}
-              color={"white"}
-              fontWeight={"400"}
-              _hover={{ textDecoration: "none", color: "#01b4e4" }}
-            >
-              {link.text}
-            </Link>
-          ))}
-        </VStack>
-      ))}
-    </HStack>
+        {footerSections.map((section, index) => (
+          <VStack key={index} align="flex-start" spacing={2}>
+            <Heading fontSize="1.45em" color="white" mb={2}>
+              {section.title}
+            </Heading>
+            {section.links.map((link, linkIndex) => (
+              <Link
+                key={linkIndex}
+                href={link.href}
+                color="white"
+                fontWeight="400"
+                _hover={{ textDecoration: "none", color: "#01b4e4" }}
+              >
+                {link.text}
+              </Link>
+            ))}
+          </VStack>
+        ))}
+      </Flex>
+    </Box>
   );
 };
 

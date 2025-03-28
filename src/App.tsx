@@ -1,27 +1,42 @@
+// src/App.tsx
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
-import { AppRoutes } from "./routes/AppRoutes";
-import { Grid, GridItem, HStack } from "@chakra-ui/react";
+import { Routes, Route, Outlet } from "react-router-dom";
+import { Homepage } from "./pages/Homepage";
+import { Movies } from "./pages/Movies";
+import { Persons } from "./pages/Persons";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import { Flex, Box } from "@chakra-ui/react";
+
+// This is your layout component (inline)
+const Layout = () => {
+  return (
+    <Flex direction="column" minHeight="100vh" height="100%">
+      <Box bg="#032440">
+        <NavBar />
+      </Box>
+
+      <Box display="flex" flexDirection="column" flex="1">
+        <Outlet />
+      </Box>
+
+      <Footer />
+    </Flex>
+  );
+};
 
 function App() {
   return (
-    <Grid
-      templateAreas={`"header header"
-                "main main"
-                "footer footer"`}
-      gridTemplateColumns={"150px 1fr"}
-      color="blackAlpha.700"
-    >
-      <GridItem area={"header"} bg="#032440">
-        <NavBar />
-      </GridItem>
-      <GridItem area={"main"}>
-        <AppRoutes />
-      </GridItem>
-      <GridItem area={"footer"}>
-        <Footer />
-      </GridItem>
-    </Grid>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Homepage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/movies" element={<Movies />} />
+        <Route path="/persons" element={<Persons />} />
+      </Route>
+    </Routes>
   );
 }
 
