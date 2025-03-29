@@ -13,7 +13,7 @@ import {
 const SignupForm = () => {
   return (
     <>
-      <Heading fontSize={"1.5em"} fontWeight={"500"} mb={"15px"}>
+      <Heading fontSize={"1.5em"} fontWeight={"700"} mb={"15px"}>
         Tilmeld dig her
       </Heading>
       <Text>

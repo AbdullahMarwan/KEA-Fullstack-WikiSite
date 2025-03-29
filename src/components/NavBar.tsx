@@ -15,12 +15,13 @@ import {
 } from "@chakra-ui/react";
 import logo from "../assets/logo.svg";
 import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
-import { MEDIUM_PADDING } from "../utils/constants";
 import { Link as ReactRouterLink } from "react-router-dom";
 import LanguageContainer from "./LanguageContainer";
 import AddMovie from "./AddMovie";
+import { useSearch } from "../context/SearchContext";
 
 const NavBar = () => {
+  const { focusSearchInput } = useSearch();
   const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
   const displayIcons = useBreakpointValue({ base: "flex", md: "none" });
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -29,14 +30,13 @@ const NavBar = () => {
     onOpen: LanguageonOpen,
     onClose: LanguageonClose,
   } = useDisclosure();
-  const headerSize = "65px";
 
   return (
     <HStack
-      h={headerSize}
+      h={"65px"}
       className="navBar"
-      padding={MEDIUM_PADDING}
       justifyContent="center"
+      padding="20px"
     >
       <HStack justifyContent="space-between" w="100%" maxWidth="1300px">
         <Box
@@ -192,7 +192,7 @@ const NavBar = () => {
               <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z" />
             </svg>
           </Box>
-          <Box boxSize="1.5em">
+          <Box boxSize="1.5em" onClick={focusSearchInput} cursor={"pointer"}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 512 512"
@@ -207,8 +207,8 @@ const NavBar = () => {
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent
-          mt={headerSize}
-          height={`calc(100vh - ${headerSize})`}
+          mt={"65px"}
+          height={`calc(100vh - {"65px"})`}
           bg="rgba(3, 37, 65, 0.8)"
           backdropFilter="blur(10px)" // Add blur effect to the background
         >

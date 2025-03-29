@@ -7,8 +7,10 @@ import {
   InputGroup,
   InputLeftElement,
 } from "@chakra-ui/react";
+import { useSearch } from "../context/SearchContext";
 
 const SearchBar = () => {
+  const { searchInputRef } = useSearch();
   return (
     <HStack
       h={"50px"}
@@ -49,6 +51,7 @@ const SearchBar = () => {
             </Button>
           </InputLeftElement>
           <Input
+            ref={searchInputRef} // Connect to the ref from context
             border={"none"}
             placeholder="Søg efter en film, TV-serie, person"
             fontSize={"1em"}

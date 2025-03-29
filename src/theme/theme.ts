@@ -13,6 +13,9 @@ const theme = extendTheme({
   },
   styles: {
     global: {
+      html: {
+        overflowY: "scroll",
+      },
       body: {
         bg: "white",
         color: "black",

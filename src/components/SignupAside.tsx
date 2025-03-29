@@ -61,6 +61,12 @@ const SignupAside = () => {
                 Bidrag med og forbedre informationen i vores database.
               </Text>
             </HStack>
+            <HStack align="flex-start">
+              <CheckIcon color="green.500" mt={1} />
+              <Text>
+                Bidrag med og forbedre informationen i vores database.
+              </Text>
+            </HStack>
           </VStack>
         </Box>
       </Box>

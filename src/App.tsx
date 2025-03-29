@@ -8,6 +8,7 @@ import { Persons } from "./pages/Persons";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { Flex, Box } from "@chakra-ui/react";
+import { SearchProvider } from "./context/SearchContext";
 
 // This is your layout component (inline)
 const Layout = () => {
@@ -28,15 +29,17 @@ const Layout = () => {
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Homepage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/movies" element={<Movies />} />
-        <Route path="/persons" element={<Persons />} />
-      </Route>
-    </Routes>
+    <SearchProvider>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Homepage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/movies" element={<Movies />} />
+          <Route path="/persons" element={<Persons />} />
+        </Route>
+      </Routes>
+    </SearchProvider>
   );
 }
 
