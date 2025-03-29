@@ -18,6 +18,7 @@ import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
 import { MEDIUM_PADDING } from "../utils/constants";
 import { Link as ReactRouterLink } from "react-router-dom";
 import LanguageContainer from "./LanguageContainer";
+import AddMovie from "./AddMovie";
 
 const NavBar = () => {
   const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
@@ -53,7 +54,7 @@ const NavBar = () => {
             <path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z" />
           </svg>
         </Box>
-        <HStack width={"40%"} justifyContent="center">
+        <HStack justifyContent="center">
           ;
           <Link as={ReactRouterLink} to="/" width={"150px"}>
             <Image src={logo} alt="logo" maxWidth="150px" m={0} />
@@ -116,15 +117,7 @@ const NavBar = () => {
         </HStack>
 
         <HStack height={"2em"} display={"flex"}>
-          <Box boxSize="24px" mr={"10px"} display={displayLinks}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 448 512"
-              fill="white"
-            >
-              <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" />
-            </svg>
-          </Box>
+          <AddMovie />
 
           <UnorderedList
             display={displayLinks}
@@ -135,7 +128,7 @@ const NavBar = () => {
               "& > li > a": {
                 fontSize: "1em",
                 color: "white",
-                fontWeight: "500",
+                fontWeight: "600",
                 px: "10px",
               },
             }}
@@ -148,7 +141,6 @@ const NavBar = () => {
                 padding="0px"
                 h="100%"
                 px="10px"
-                p={"5px"}
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent click event from propagating
                   LanguageisOpen ? LanguageonClose() : LanguageonOpen();
@@ -173,6 +165,7 @@ const NavBar = () => {
                 as={ReactRouterLink}
                 to="/Login"
                 width={"150px"}
+                fontWeight={"600"}
                 _hover={{ textDecoration: "none" }}
               >
                 Log ind
