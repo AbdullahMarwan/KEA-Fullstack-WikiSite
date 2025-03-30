@@ -43,7 +43,7 @@ const SearchMovieSection = () => {
     <Box
       as="section"
       width="100%"
-      height="35vh" // Maintain a 16:9 aspect ratio with width
+      height="40vh" // Maintain a 16:9 aspect ratio with width
       position="relative"
       display="flex"
       alignItems="center"

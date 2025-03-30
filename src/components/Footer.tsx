@@ -57,7 +57,6 @@ const Footer = () => {
 
   return (
     <Box
-      mt={"auto"}
       display={"flex"}
       justifyContent={"center"}
       as="footer"
