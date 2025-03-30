@@ -3,7 +3,7 @@ import SearchBar from "../components/SearchBar";
 import SearchMovieSection from "../components/SearchMovieSection";
 import TrendingMovies from "../components/TrendingMovies";
 import LatestTrailers from "../components/LatestTrailers";
-import PopularAtTheMoment from "../components/PopularAtTheMoment";
+import PopularAtTheMoment from "../components/filmSection";
 import TvShows from "../components/TvShows";
 import SignupSection from "../components/SignupSection";
 

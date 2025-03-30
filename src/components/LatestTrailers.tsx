@@ -1,58 +1,42 @@
-import React, { useState } from "react";
-import { HStack, Box, Heading } from "@chakra-ui/react";
+import { Box, HStack } from "@chakra-ui/react";
+import React from "react";
 import TrailerCards from "./TrailerCards";
-import LinkSelector from "./LinkSelector";
-import backgroundImg from "../assets/images/latest-trailers-bg.webp";
+import trailerBackground from "../assets/images/latest-trailers-bg.webp"; // Your background image
 
 const LatestTrailers = () => {
-  const [activeLink, setActiveLink] = useState("Popular");
-
-  const links = [
-    { name: "Popular", href: "#" },
-    { name: "Streaming", href: "#" },
-    { name: "På tv", href: "#" },
-    { name: "til leje", href: "#" },
-    { name: "I biograferne", href: "#" },
-  ];
-
   return (
     <HStack
-      bg="#032541"
-      backgroundImage={`linear-gradient(to right, rgba(3,37,65,0.75) 0%, rgba(3,37,65,0.75) 100%), url(${backgroundImg})`}
-      display={"flex"}
-      alignItems={"center"}
-      flexDirection={"column"}
-      mt={"50px"}
+      display="flex"
+      alignItems="center"
+      flexDirection="column"
+      mt="50px"
+      width="100%"
+      backgroundImage={`linear-gradient(rgba(3, 37, 65, 0.8), rgba(3, 37, 65, 0.8)), url(${trailerBackground})`}
+      backgroundSize="cover"
+      backgroundPosition="center"
+      backgroundRepeat="no-repeat"
+      py="30px"
     >
-      <HStack
-        display={"flex"}
-        alignItems={"center"}
-        flexDirection={"column"}
+      <Box
+        display="flex"
+        flexDirection="column"
         width="100%"
-        maxWidth={"1300px"}
+        maxWidth="1300px"
+        padding="0 20px"
       >
-        <Box p="20px" width="100%">
-          <Box
-            display="flex"
-            alignItems={{ base: "flex-start", md: "flex-end" }}
-            flexDirection={{ base: "column", md: "row" }}
-            mb={"20px"}
-            gap={{ base: "10px", md: "0" }}
-          >
-            <Heading fontSize="1.5rem" fontWeight="700" color="white" mr="1em">
-              Seneste Trailers
-            </Heading>
-
-            <LinkSelector
-              links={links}
-              activeLink={activeLink}
-              onLinkClick={setActiveLink}
-              maxVisible={5} // Adjust this number as needed
-            />
-          </Box>
-          <TrailerCards />
-        </Box>
-      </HStack>
+        <TrailerCards
+          title="Latest Trailers"
+          showLinkSelector={true}
+          links={[
+            { name: "Populært", href: "#", value: "popular" },
+            { name: "Streaming", href: "#", value: "streaming" },
+            { name: "På TV", href: "#", value: "on-tv" },
+            { name: "Til Leje", href: "#", value: "for-rent" },
+            { name: "I Biograferne", href: "#", value: "in-theaters" },
+          ]}
+          defaultTimeWindow="popular"
+        />
+      </Box>
     </HStack>
   );
 };

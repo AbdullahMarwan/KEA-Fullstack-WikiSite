@@ -1,17 +1,9 @@
 import React, { useState } from "react";
 import { HStack } from "@chakra-ui/react";
 import Cards from "./Cards";
-import LinkSelector from "./LinkSelector";
-import { fetchTvShows } from "../services/api";
+import { fetchTvShows, fetchPopularTvSeries } from "../services/api";
 
 const TvShows = () => {
-  const [activeLink, setActiveLink] = useState("I dag");
-
-  const links = [
-    { name: "I dag", href: "#" },
-    { name: "Denne uge", href: "#" },
-  ];
-
   return (
     <HStack
       display={"flex"}
@@ -26,29 +18,19 @@ const TvShows = () => {
         flexDirection={"column"}
         maxWidth={"1300px"}
       >
-        <HStack>
-          <h3
-            style={{
-              color: "black",
-              fontSize: "1.5rem",
-              fontWeight: "500",
-            }}
-          >
-            TV Shows
-          </h3>
-          <LinkSelector
-            links={links}
-            activeLink={activeLink}
-            onLinkClick={setActiveLink}
-            maxVisible={4}
-            activeTextColor="linear-gradient(to right, #1ed5aa 0%, #c0fed0 100%)"
-            inactiveTextColor="rgb(3, 37, 65)"
-            borderColor="rgb(3, 37, 65)" // Teal border
-            activeBgColor="rgb(3, 37, 65)" // Default teal gradient
-          />
-        </HStack>
         <HStack w="100%">
-          <Cards fetchFunction={fetchTvShows} />
+          <Cards
+            fetchFunction={fetchPopularTvSeries}
+            maxItems={10}
+            title="Tv Shows"
+            showLinkSelector={true}
+            links={[
+              { name: "Populært", href: "#", value: "popular" },
+              { name: "sendes i dag", href: "#", value: "airing_today" },
+              { name: "Bedste anmeldelser", href: "#", value: "top_rated" },
+            ]}
+            defaultTimeWindow="Popular"
+          />
         </HStack>
       </HStack>
     </HStack>
