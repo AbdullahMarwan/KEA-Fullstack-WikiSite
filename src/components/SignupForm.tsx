@@ -9,11 +9,12 @@ import {
   Link,
   Flex,
 } from "@chakra-ui/react";
+import { Link as ReactRouterLink } from "react-router-dom";
 
 const SignupForm = () => {
   return (
     <>
-      <Heading fontSize={"1.5em"} fontWeight={"500"} mb={"15px"}>
+      <Heading fontSize={"1.5em"} fontWeight={"700"} mb={"15px"}>
         Tilmeld dig her
       </Heading>
       <Text>
@@ -83,10 +84,12 @@ const SignupForm = () => {
         >
           Tilmeld dig
         </Button>
+
         <Link
-          href="/login"
-          color={"rgba(1,180,228)"}
           ml={"15px"}
+          as={ReactRouterLink}
+          to="/Login"
+          color={"rgba(1,180,228)"}
           _hover={{ textDecoration: "none" }}
         >
           Annullér

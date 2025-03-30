@@ -8,14 +8,18 @@ import { Persons } from "./pages/Persons";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { Flex, Box } from "@chakra-ui/react";
+import { SearchProvider } from "./context/SearchContext";
+import GlobalSearchBar from "./components/GlobalSearchBar";
 
-// This is your layout component (inline)
 const Layout = () => {
   return (
     <Flex direction="column" minHeight="100vh" height="100%">
-      <Box bg="#032440" zIndex={9}>
+      <Box bg="#032440" zIndex={9} position="sticky" top={0}>
         <NavBar />
       </Box>
+
+      {/* Global search bar that appears when search icon is clicked */}
+      <GlobalSearchBar />
 
       <Box display="flex" flexDirection="column" flex="1">
         <Outlet />
@@ -28,15 +32,17 @@ const Layout = () => {
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Homepage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/movies" element={<Movies />} />
-        <Route path="/persons" element={<Persons />} />
-      </Route>
-    </Routes>
+    <SearchProvider>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Homepage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/movies" element={<Movies />} />
+          <Route path="/persons" element={<Persons />} />
+        </Route>
+      </Routes>
+    </SearchProvider>
   );
 }
 

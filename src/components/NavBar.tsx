@@ -15,11 +15,14 @@ import {
 } from "@chakra-ui/react";
 import logo from "../assets/logo.svg";
 import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
-import { MEDIUM_PADDING } from "../utils/constants";
 import { Link as ReactRouterLink } from "react-router-dom";
 import LanguageContainer from "./LanguageContainer";
+import AddMovie from "./AddMovie";
+import { useSearch } from "../context/SearchContext";
+import { IoSearchSharp } from "react-icons/io5";
 
 const NavBar = () => {
+  const { focusSearchInput } = useSearch();
   const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
   const displayIcons = useBreakpointValue({ base: "flex", md: "none" });
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -28,14 +31,13 @@ const NavBar = () => {
     onOpen: LanguageonOpen,
     onClose: LanguageonClose,
   } = useDisclosure();
-  const headerSize = "65px";
 
   return (
     <HStack
-      h={headerSize}
+      h={"65px"}
       className="navBar"
-      padding={MEDIUM_PADDING}
       justifyContent="center"
+      padding="20px"
     >
       <HStack justifyContent="space-between" w="100%" maxWidth="1300px">
         <Box
@@ -53,7 +55,7 @@ const NavBar = () => {
             <path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z" />
           </svg>
         </Box>
-        <HStack width={"40%"} justifyContent="center">
+        <HStack justifyContent="center">
           ;
           <Link as={ReactRouterLink} to="/" width={"150px"}>
             <Image src={logo} alt="logo" maxWidth="150px" m={0} />
@@ -116,15 +118,7 @@ const NavBar = () => {
         </HStack>
 
         <HStack height={"2em"} display={"flex"}>
-          <Box boxSize="24px" mr={"10px"} display={displayLinks}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 448 512"
-              fill="white"
-            >
-              <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" />
-            </svg>
-          </Box>
+          <AddMovie />
 
           <UnorderedList
             display={displayLinks}
@@ -135,7 +129,7 @@ const NavBar = () => {
               "& > li > a": {
                 fontSize: "1em",
                 color: "white",
-                fontWeight: "500",
+                fontWeight: "600",
                 px: "10px",
               },
             }}
@@ -148,7 +142,6 @@ const NavBar = () => {
                 padding="0px"
                 h="100%"
                 px="10px"
-                p={"5px"}
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent click event from propagating
                   LanguageisOpen ? LanguageonClose() : LanguageonOpen();
@@ -173,6 +166,7 @@ const NavBar = () => {
                 as={ReactRouterLink}
                 to="/Login"
                 width={"150px"}
+                fontWeight={"600"}
                 _hover={{ textDecoration: "none" }}
               >
                 Log ind
@@ -199,23 +193,26 @@ const NavBar = () => {
               <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z" />
             </svg>
           </Box>
-          <Box boxSize="1.5em">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-              fill="rgb(1,181,229)"
-            >
-              <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-            </svg>
+          <Box
+            boxSize="1.5em" // Increase the box size to make the icon bigger
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            onClick={focusSearchInput}
+            cursor="pointer"
+            color="rgb(1,181,229)" // Set the color of the icon
+            fontSize="1.5em" // Adjust the font size to scale the icon
+            className="search-icon" // Add this class
+          >
+            <IoSearchSharp />
           </Box>
         </HStack>
       </HStack>
-
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent
-          mt={headerSize}
-          height={`calc(100vh - ${headerSize})`}
+          mt={"65px"}
+          height={`calc(100vh - {"65px"})`}
           bg="rgba(3, 37, 65, 0.8)"
           backdropFilter="blur(10px)" // Add blur effect to the background
         >
