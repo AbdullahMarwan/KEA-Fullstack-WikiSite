@@ -3,14 +3,17 @@ import axios from "axios";
 const apiKey = import.meta.env.VITE_API_KEY;
 const baseUrl = "https://api.themoviedb.org/3";
 
-export const fetchTrendingMovies = async () => {
+// Fetching Trending movies - for both day and week
+export const fetchTrendingMovies = async (
+  timeWindow: "day" | "week" = "day"
+) => {
   try {
     const response = await axios.get(
-      `${baseUrl}/trending/movie/day?api_key=${apiKey}`
+      `${baseUrl}/trending/movie/${timeWindow}?api_key=${apiKey}`
     );
     return { data: response.data, results: response.data.results };
   } catch (error) {
-    console.error("Error fetching trending movies:", error);
+    console.error(`Error fetching trending ${timeWindow} movies:`, error);
     throw error;
   }
 };

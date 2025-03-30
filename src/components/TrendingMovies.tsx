@@ -7,11 +7,31 @@ import LinkSelector from "./LinkSelector";
 
 const TrendingMovies = () => {
   const [activeLink, setActiveLink] = useState("I dag");
+  const [timeWindow, setTimeWindow] = useState<"day" | "week">("day");
 
   const links = [
     { name: "I dag", href: "#" },
     { name: "Denne uge", href: "#" },
   ];
+
+  // Update timeWindow when activeLink changes
+  useEffect(() => {
+    if (activeLink === "I dag") {
+      setTimeWindow("day");
+    } else if (activeLink === "Denne uge") {
+      setTimeWindow("week");
+    }
+  }, [activeLink]);
+
+  // Handle link click to update active link
+  const handleLinkClick = (linkName: string) => {
+    setActiveLink(linkName);
+  };
+
+  // Create a memoized fetch function that uses the current timeWindow
+  const fetchMoviesWithTimeWindow = React.useCallback(() => {
+    return fetchTrendingMovies(timeWindow);
+  }, [timeWindow]);
 
   return (
     <HStack
@@ -54,7 +74,11 @@ const TrendingMovies = () => {
           backgroundSize="cover"
           backgroundPosition="center"
         >
-          <Cards fetchFunction={fetchTrendingMovies} />
+          <Cards
+            fetchFunction={fetchMoviesWithTimeWindow}
+            maxItems={10}
+            key={timeWindow} // Add a key to force re-render when timeWindow changes
+          />
         </HStack>
       </HStack>
     </HStack>
