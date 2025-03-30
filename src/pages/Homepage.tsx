@@ -4,7 +4,7 @@ import SearchMovieSection from "../components/SearchMovieSection";
 import TrendingMovies from "../components/TrendingMovies";
 import LatestTrailers from "../components/LatestTrailers";
 import PopularAtTheMoment from "../components/PopularAtTheMoment";
-import FreeToWatch from "../components/FreeToWatch";
+import TvShows from "../components/TvShows";
 
 export const Homepage = () => {
   return (
@@ -23,7 +23,7 @@ export const Homepage = () => {
         <TrendingMovies />
         <LatestTrailers />
         <PopularAtTheMoment />
-        <FreeToWatch />
+        <TvShows />
       </GridItem>
     </Grid>
   );

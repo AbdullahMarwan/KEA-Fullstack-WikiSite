@@ -1,15 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { HStack } from "@chakra-ui/react";
 import Cards from "./Cards";
 import LinkSelector from "./LinkSelector";
-import { fetchPopularMovies } from "../services/api";
+import { fetchTvShows } from "../services/api";
 
-const FreeToWatch = () => {
-  const [activeLink, setActiveLink] = React.useState("Film");
+const TvShows = () => {
+  const [activeLink, setActiveLink] = useState("I dag");
 
   const links = [
-    { name: "Film", href: "#" },
-    { name: "TV", href: "#" },
+    { name: "I dag", href: "#" },
+    { name: "Denne uge", href: "#" },
   ];
 
   return (
@@ -34,7 +34,7 @@ const FreeToWatch = () => {
               fontWeight: "500",
             }}
           >
-            Gratis at se
+            TV Shows
           </h3>
           <LinkSelector
             links={links}
@@ -48,11 +48,11 @@ const FreeToWatch = () => {
           />
         </HStack>
         <HStack w="100%">
-          <Cards fetchFunction={fetchPopularMovies} />
+          <Cards fetchFunction={fetchTvShows} />
         </HStack>
       </HStack>
     </HStack>
   );
 };
 
-export default FreeToWatch;
+export default TvShows;

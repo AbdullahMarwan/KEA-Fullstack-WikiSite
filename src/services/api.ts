@@ -27,6 +27,18 @@ export const fetchPopularMovies = async () => {
   }
 };
 
+export const fetchTvShows = async () => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/discover/tv?api_key=${apiKey}`
+    );
+    return { data: response.data, results: response.data.results };
+  } catch (error) {
+    console.error("Error fetching trending movies:", error);
+    throw error;
+  }
+};
+
 export const fetchTrailerMovies = async () => {
   try {
     const trendingMovies = await fetchTrendingMovies();
