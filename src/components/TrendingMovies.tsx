@@ -9,6 +9,12 @@ const TrendingMovies = () => {
   const [activeLink, setActiveLink] = useState("I dag");
   const [timeWindow, setTimeWindow] = useState<"day" | "week">("day");
 
+  // Preload background image to prevent layout shifts
+  useEffect(() => {
+    const img = new Image();
+    img.src = background;
+  }, []);
+
   const links = [
     { name: "I dag", href: "#" },
     { name: "Denne uge", href: "#" },
@@ -73,6 +79,8 @@ const TrendingMovies = () => {
           bg={`url(${background})`}
           backgroundSize="cover"
           backgroundPosition="center"
+          minHeight="420px" // Add a minimum height to prevent collapse
+          position="relative" // Important for maintaining layout
         >
           <Cards
             fetchFunction={fetchMoviesWithTimeWindow}

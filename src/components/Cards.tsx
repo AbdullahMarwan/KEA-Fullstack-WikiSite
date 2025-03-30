@@ -9,10 +9,16 @@ import {
   Skeleton,
   SkeletonText,
   SkeletonCircle,
+  Box,
 } from "@chakra-ui/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { fetchTrendingMovies } from "../services/api";
 import VoteAverageRing from "./voteAverageRing";
 import MenuOnCards from "./MenuOnCards";
+
+// Create motion components
+const MotionCard = motion(Card);
+const MotionBox = motion(Box);
 
 interface Movie {
   id: number;
@@ -35,6 +41,8 @@ const Cards: React.FC<CardsProps> = ({
   const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   useEffect(() => {
+    setIsLoading(true); // Set loading to true when fetching new data
+
     const getMovies = async () => {
       try {
         const data = await fetchFunction();
@@ -58,71 +66,107 @@ const Cards: React.FC<CardsProps> = ({
       padding="10px"
       boxSizing="border-box"
       alignItems="flex-start" // Prevent stretching of child elements
+      minHeight="420px" // Fixed minimum height to prevent layout shifts
     >
-      {isLoading
-        ? Array.from({ length: maxItems }).map((_, index) => (
-            <Card
-              key={index}
-              display="inline-block"
-              width="250px" // Ensure a fixed width for each card
-              flex="0 0 auto" // Prevent shrinking or growing of the cards
-              marginRight="20px"
-              backgroundColor="transparent"
-            >
-              <Skeleton height="300px" borderRadius="10px" />
-              <CardBody padding="20px 20px 20px 20px">
-                <SkeletonText noOfLines={2} spacing="4" />
-                <SkeletonCircle size="10" marginTop="10px" />
-              </CardBody>
-            </Card>
-          ))
-        : movies.slice(0, maxItems).map((movie) => (
-            <Card
-              key={movie.id}
-              display="inline-block"
-              width="250px" // Ensure a fixed width for each card
-              flex="0 0 auto" // Prevent shrinking or growing of the cards
-              marginRight="20px"
-              backgroundColor="transparent"
-            >
-              <div
-                style={{
-                  backgroundImage: `url(https://image.tmdb.org/t/p/w500${movie.poster_path})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  height: "300px",
-                  position: "relative",
-                  borderRadius: "10px",
+      <AnimatePresence mode="wait">
+        {isLoading ? (
+          <MotionBox
+            key="loading"
+            display="flex"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            width="100%"
+          >
+            {Array.from({ length: maxItems }).map((_, index) => (
+              <Card
+                key={index}
+                display="inline-block"
+                width="250px"
+                height="420px" // Add a fixed height to match the loaded content
+                flex="0 0 auto"
+                marginRight="20px"
+                backgroundColor="transparent"
+              >
+                <Skeleton height="300px" borderRadius="10px" />
+                <CardBody padding="20px 20px 20px 20px">
+                  <SkeletonText noOfLines={2} spacing="4" />
+                  <SkeletonCircle size="10" marginTop="10px" />
+                </CardBody>
+              </Card>
+            ))}
+          </MotionBox>
+        ) : (
+          <MotionBox
+            key="content"
+            display="flex"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            width="100%"
+          >
+            {movies.slice(0, maxItems).map((movie, index) => (
+              <MotionCard
+                key={movie.id}
+                display="inline-block"
+                width="250px"
+                height="420px" // Match the height of the skeleton
+                flex="0 0 auto"
+                marginRight="20px"
+                backgroundColor="transparent"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    delay: index * 0.05, // Staggered animation
+                    duration: 0.4,
+                  },
                 }}
               >
-                <HStack
-                  position={"absolute"}
-                  bottom={"-1em"}
-                  left={"20px"}
-                  display={"flex"}
-                  alignItems={"center"}
-                  justifyContent={"center"}
+                <div
+                  style={{
+                    backgroundImage: `url(https://image.tmdb.org/t/p/w500${movie.poster_path})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    height: "300px",
+                    position: "relative",
+                    borderRadius: "10px",
+                  }}
                 >
-                  <VoteAverageRing
-                    radius={50}
-                    stroke={4}
-                    progress={Math.round(movie.vote_average * 10)}
-                  />
-                </HStack>
-              </div>
-              <CardBody padding="20px 20px 20px 20px">
-                <CardHeader padding="0">
-                  <Heading fontSize={"1em"} color="black" isTruncated>
-                    {movie.title}
-                  </Heading>
-                </CardHeader>
-                <Text fontSize={"1em"} color="black" noOfLines={1}>
-                  {movie.release_date}
-                </Text>
-                <MenuOnCards movie={movie} type="default" />
-              </CardBody>
-            </Card>
-          ))}
+                  <HStack
+                    position={"absolute"}
+                    bottom={"-1em"}
+                    left={"20px"}
+                    display={"flex"}
+                    alignItems={"center"}
+                    justifyContent={"center"}
+                  >
+                    <VoteAverageRing
+                      radius={50}
+                      stroke={4}
+                      progress={Math.round(movie.vote_average * 10)}
+                    />
+                  </HStack>
+                </div>
+                <CardBody padding="20px 20px 20px 20px">
+                  <CardHeader padding="0">
+                    <Heading fontSize={"1em"} color="black" isTruncated>
+                      {movie.title}
+                    </Heading>
+                  </CardHeader>
+                  <Text fontSize={"1em"} color="black" noOfLines={1}>
+                    {movie.release_date}
+                  </Text>
+                  <MenuOnCards movie={movie} type="default" />
+                </CardBody>
+              </MotionCard>
+            ))}
+          </MotionBox>
+        )}
+      </AnimatePresence>
     </HStack>
   );
 };
