@@ -1,6 +1,6 @@
 import { Grid, GridItem, Box } from "@chakra-ui/react";
-import SignupForm from "../components/SignupForm";
-import SignupAside from "../components/SignupAside";
+import SignupForm from "../components/Signup/SignupForm";
+import SignupAside from "../components/Signup/SignupAside";
 
 const Signup = () => {
   return (

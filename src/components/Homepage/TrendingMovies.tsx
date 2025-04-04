@@ -1,8 +1,8 @@
 import { HStack, Box } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import { fetchTrendingMovies } from "../services/api";
+import { fetchTrendingMovies } from "../../services/api";
 import Cards from "./Cards";
-import background from "../assets/trending-bg.svg";
+import background from "../../assets/trending-bg.svg";
 
 const TrendingMovies = () => {
   // Preload background image to prevent layout shifts

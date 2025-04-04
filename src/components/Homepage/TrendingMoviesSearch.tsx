@@ -2,7 +2,7 @@ import { Heading, ListItem, UnorderedList, Box, Link } from "@chakra-ui/react";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { IoSearchSharp } from "react-icons/io5";
 import { Link as ReactRouterLink } from "react-router-dom";
-import { fetchTrendingMovies } from "../services/api";
+import { fetchTrendingMovies } from "../../services/api";
 import { useState, useEffect } from "react";
 
 const TrendingMoviesSearch = () => {

@@ -13,12 +13,12 @@ import {
   DrawerContent,
   useDisclosure,
 } from "@chakra-ui/react";
-import logo from "../assets/logo.svg";
+import logo from "../../assets/logo.svg";
 import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
 import { Link as ReactRouterLink } from "react-router-dom";
-import LanguageContainer from "./LanguageContainer";
-import AddMovie from "./AddMovie";
-import { useSearch } from "../context/SearchContext";
+import LanguageContainer from "../Homepage/LanguageContainer";
+import AddMovie from "../Homepage/AddMovie";
+import { useSearch } from "../../context/SearchContext";
 import { IoSearchSharp } from "react-icons/io5";
 
 const NavBar = () => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Input, Button, HStack, Box } from "@chakra-ui/react";
-import { MAX_WIDTH } from "../utils/constants";
-import { fetchTrendingMovies } from "../services/api";
+import { MAX_WIDTH } from "../../utils/constants";
+import { fetchTrendingMovies } from "../../services/api";
 
 interface Movie {
   id: number;

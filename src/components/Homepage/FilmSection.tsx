@@ -1,11 +1,11 @@
 import React from "react";
 import { HStack } from "@chakra-ui/react";
 import Cards from "./Cards";
-import { fetchPopularMovies } from "../services/api";
-import background from "../assets/trending-bg.svg";
+import { fetchPopularMovies } from "../../services/api";
+import background from "../../assets/trending-bg.svg";
 import { useEffect } from "react";
 
-const PopularAtTheMoment = () => {
+const filmSection = () => {
   const [activeLink, setActiveLink] = React.useState("Vises nu");
 
   // Preload background image to prevent layout shifts
@@ -40,7 +40,7 @@ const PopularAtTheMoment = () => {
               { name: "bedste anmeldelser", href: "#", value: "top_rated" },
               { name: "Kommende", href: "#", value: "upcoming" },
             ]}
-            defaultTimeWindow="day"
+            defaultTimeWindow="popular"
           />
         </HStack>
       </HStack>
@@ -48,4 +48,4 @@ const PopularAtTheMoment = () => {
   );
 };
 
-export default PopularAtTheMoment;
+export default filmSection;

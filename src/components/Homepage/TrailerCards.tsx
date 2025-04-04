@@ -10,8 +10,8 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { fetchTrailerMovies } from "../services/api";
-import { fetchTrendingMovies } from "../services/api";
+import { fetchTrailerMovies } from "../../services/api";
+import { fetchTrendingMovies } from "../../services/api";
 import MenuOnCards from "./MenuOnCards";
 import LinkSelector from "./LinkSelector";
 

@@ -1,5 +1,5 @@
 import { HStack, Box, Heading, Text, Button } from "@chakra-ui/react";
-import bg from "../assets/images/signup-bg.webp";
+import bg from "../../assets/images/signup-bg.webp";
 import { Link as ReactRouterLink } from "react-router-dom";
 
 const SignupSection = () => {

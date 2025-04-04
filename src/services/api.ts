@@ -22,9 +22,7 @@ export const fetchTrendingMovies = async (timeWindow: string = "day") => {
 
 // fetching popular movies
 
-export const fetchPopularMovies = async (
-  timeWindow: string = "now_playing"
-) => {
+export const fetchPopularMovies = async (timeWindow: string = "popular") => {
   try {
     const response = await axios.get(
       `${baseUrl}/movie/${timeWindow}?api_key=${apiKey}`
@@ -41,6 +39,7 @@ export const fetchPopularMovies = async (
 export const fetchTrailerMovies = async () => {
   try {
     const trendingMovies = await fetchTrendingMovies();
+    const popularMovies = await fetchPopularMovies();
     const trailerMoviesData = await Promise.all(
       trendingMovies.results.slice(0, 4).map(async (movie: any) => {
         const response = await axios.get(

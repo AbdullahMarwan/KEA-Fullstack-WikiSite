@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { HStack } from "@chakra-ui/react";
 import Cards from "./Cards";
-import { fetchTvShows, fetchPopularTvSeries } from "../services/api";
+import { fetchTvShows, fetchPopularTvSeries } from "../../services/api";
 
 const TvShows = () => {
   return (

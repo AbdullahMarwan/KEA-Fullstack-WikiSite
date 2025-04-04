@@ -1,6 +1,6 @@
 // src/App.tsx
-import NavBar from "./components/NavBar";
-import Footer from "./components/Footer";
+import NavBar from "./components/Global/NavBar";
+import Footer from "./components/Global/Footer";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { Homepage } from "./pages/Homepage";
 import { Movies } from "./pages/Movies";
@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { Flex, Box } from "@chakra-ui/react";
 import { SearchProvider } from "./context/SearchContext";
-import GlobalSearchBar from "./components/GlobalSearchBar";
+import GlobalSearchBar from "./components/Homepage/GlobalSearchBar";
 
 const Layout = () => {
   return (

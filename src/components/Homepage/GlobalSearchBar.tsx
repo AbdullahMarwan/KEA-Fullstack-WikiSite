@@ -1,6 +1,6 @@
 // src/components/GlobalSearchBar.tsx
 import { Box, useColorModeValue } from "@chakra-ui/react";
-import { useSearch } from "../context/SearchContext";
+import { useSearch } from "../../context/SearchContext";
 import { useLocation } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import { motion, AnimatePresence } from "framer-motion";

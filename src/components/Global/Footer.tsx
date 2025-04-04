@@ -8,7 +8,7 @@ import {
   VStack,
   Flex,
 } from "@chakra-ui/react";
-import logo from "../assets/moviedb - logo vertical.svg";
+import logo from "../../assets/moviedb - logo vertical.svg";
 
 interface FooterSection {
   title: string;

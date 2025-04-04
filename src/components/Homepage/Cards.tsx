@@ -12,7 +12,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { fetchTrendingMovies } from "../services/api";
+import { fetchTrendingMovies } from "../../services/api";
 import VoteAverageRing from "./voteAverageRing";
 import MenuOnCards from "./MenuOnCards";
 import LinkSelector from "./LinkSelector";
@@ -194,7 +194,7 @@ const Cards: React.FC<CardsProps> = ({
                   marginRight="20px"
                   backgroundColor="transparent"
                 >
-                  <Skeleton height="300px" borderRadius="10px" />
+                  <Skeleton height="400px" borderRadius="10px" />
                   <CardBody padding="20px 20px 20px 20px">
                     <SkeletonText noOfLines={2} spacing="4" />
                     <SkeletonCircle size="10" marginTop="10px" />

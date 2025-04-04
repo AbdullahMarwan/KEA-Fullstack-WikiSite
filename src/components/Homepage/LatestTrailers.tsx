@@ -1,9 +1,12 @@
 import { Box, HStack } from "@chakra-ui/react";
 import React from "react";
 import TrailerCards from "./TrailerCards";
-import trailerBackground from "../assets/images/latest-trailers-bg.webp"; // Your background image
+import trailerBackground from "../../assets/images/latest-trailers-bg.webp"; // Your background image
+import { fetchTrendingMovies } from "../../services/api"; // Import fetchTrendingMovies
 
 const LatestTrailers = () => {
+  let defaultTimeWindow = "popular";
+
   return (
     <HStack
       display="flex"
@@ -34,7 +37,9 @@ const LatestTrailers = () => {
             { name: "Til Leje", href: "#", value: "for-rent" },
             { name: "I Biograferne", href: "#", value: "in-theaters" },
           ]}
-          defaultTimeWindow="popular"
+          defaultTimeWindow={
+            defaultTimeWindow === "popular" ? "popular" : "trending"
+          }
         />
       </Box>
     </HStack>

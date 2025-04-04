@@ -9,7 +9,7 @@ import {
   Box,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useSearch } from "../context/SearchContext";
+import { useSearch } from "../../context/SearchContext";
 import TrendingMoviesSearch from "./TrendingMoviesSearch";
 import { IoSearchSharp } from "react-icons/io5";
 const SearchBar = () => {
