@@ -6,6 +6,8 @@ import { Persons } from "../pages/Persons";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import App from "../App";
+import { PersonSingle} from "../pages/Person";
+
 
 export const AppRoutes = () => {
   return (
@@ -16,6 +18,8 @@ export const AppRoutes = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/movies" element={<Movies />} />
         <Route path="/persons" element={<Persons />} />
+        <Route path="/persons/:id" element={<PersonSingle />} />
+
       </Route>
     </Routes>
   );
