@@ -17,6 +17,8 @@ import {
   WrapItem,
   Button,
 } from "@chakra-ui/react";
+import Cards from "../components/Homepage/Cards";
+import { fetchTrendingMovies } from "../services/api";
 
 const MoviesSubPage = () => {
   const location = useLocation();
@@ -143,6 +145,17 @@ const MoviesSubPage = () => {
           </AccordionItem>
         </Accordion>
       </Box>
+      <Cards
+            fetchFunction={fetchTrendingMovies}
+            maxItems={10}
+            title="Trending"
+            showLinkSelector={true}
+            links={[
+              { name: "I dag", href: "#", value: "day" },
+              { name: "Denne uge", href: "#", value: "week" },
+            ]}
+            defaultTimeWindow="day"
+          />
     </Box>
   );
 };
