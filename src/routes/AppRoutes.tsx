@@ -6,7 +6,7 @@ import { Persons } from "../pages/Persons";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import App from "../App";
-import { PersonSingle} from "../pages/Person";
+import { PersonSingle } from "../pages/Person";
 
 
 export const AppRoutes = () => {
