@@ -26,9 +26,9 @@ const PopularPersons = () => {
 
   return (
     <Grid 
-    templateColumns="repeat(4, 1fr)" 
+    templateColumns={{base: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)"}}
     gap={20} 
-    maxWidth={{ base: "750px", lg: "1200px" }}
+    maxWidth={{ base: "600px", lg: "1200px" }}
 
     marginBottom={200}
     >
@@ -36,7 +36,7 @@ const PopularPersons = () => {
         <GridItem
           key={person.id}
           w="100%"
-          h="%"
+          h="100%"
           onClick={() => handlePersonClick(person.id)} // Add onClick handler
           style={{ cursor: "pointer" }} // Add pointer cursor for better UX
         >
