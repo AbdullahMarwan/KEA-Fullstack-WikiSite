@@ -90,16 +90,16 @@ const NavBar = () => {
                   Film
                 </MenuButton>
                 <MenuList>
-                  <MenuItem as={ReactRouterLink} to="/moviesSubPage/popular">
+                  <MenuItem as={ReactRouterLink} to="/moviesSubPage?category=popular">
                     Popular
                   </MenuItem>
-                  <MenuItem as={ReactRouterLink} to="/moviesSubPage/now-playing">
+                  <MenuItem as={ReactRouterLink} to="/moviesSubPage?category=now-playing">
                     Now Playing
                   </MenuItem>
-                  <MenuItem as={ReactRouterLink} to="/moviesSubPage/upcoming">
+                  <MenuItem as={ReactRouterLink} to="/moviesSubPage?category=upcoming">
                     Upcoming
                   </MenuItem>
-                  <MenuItem as={ReactRouterLink} to="/moviesSubPage/top-rated">
+                  <MenuItem as={ReactRouterLink} to="/moviesSubPage?category=top-rated">
                     Top Rated
                   </MenuItem>
                 </MenuList>

@@ -1,13 +1,31 @@
-import { Heading } from "@chakra-ui/react";
-import { Grid, GridItem } from "@chakra-ui/react";
+import { useLocation } from "react-router-dom";
+import { Heading, Box } from "@chakra-ui/react";
 
-export const MoviesSubPage = () => {
+const MoviesSubPage = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const category = queryParams.get("category");
+
+  const getCategoryHeading = () => {
+    switch (category) {
+      case "popular":
+        return "Popular Movies";
+      case "now-playing":
+        return "Now Playing Movies";
+      case "upcoming":
+        return "Upcoming Movies";
+      case "top-rated":
+        return "Top Rated Movies";
+      default:
+        return "Movies";
+    }
+  };
+
   return (
-    <Grid>
-      <GridItem area={"main"}>
-        <Heading>Movies Sub Page</Heading>
-      </GridItem>
-    </Grid>
+    <Box>
+      <Heading>{getCategoryHeading()}</Heading>
+      {/* Add logic here to fetch and display movies based on the category */}
+    </Box>
   );
 };
 
