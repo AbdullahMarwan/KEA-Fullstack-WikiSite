@@ -77,7 +77,7 @@ const NavBar = () => {
             <ListItem>
               <Link
                 as={ReactRouterLink}
-                to="/"
+                to="/moviesSubPage"
                 width={"150px"}
                 _hover={{ textDecoration: "none" }}
               >

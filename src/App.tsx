@@ -11,6 +11,7 @@ import { Flex, Box } from "@chakra-ui/react";
 import { SearchProvider } from "./context/SearchContext";
 import GlobalSearchBar from "./components/Homepage/GlobalSearchBar";
 import PersonSingle from "./pages/Person";
+import MoviesSubPage from "./pages/MoviesSubPage";
 
 const Layout = () => {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/movies" element={<Movies />} />
           <Route path="/persons" element={<Persons />} />
           <Route path="/persons/:id" element={<PersonSingle />} />
+          <Route path="/moviesSubPage" element={<MoviesSubPage />} />
         </Route>
       </Routes>
     </SearchProvider>
