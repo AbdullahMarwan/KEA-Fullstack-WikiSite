@@ -1,7 +1,7 @@
 import { Grid, GridItem } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { fetchPopularPersons } from "../services/api";
+import { fetchPopularPersons } from "../../services/api";
 
 const PopularPersons = () => {
   const [persons, setPersons] = useState<{ id: number; name: string; profile_path?: string; known_for_department?: string }[]>([]);

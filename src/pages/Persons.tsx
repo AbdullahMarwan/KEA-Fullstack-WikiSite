@@ -1,5 +1,5 @@
 import { Box, Grid, GridItem, Heading } from "@chakra-ui/react"
-import PopularPersons from "../components/PopularPersons";
+import PopularPersons from "../components/Persons/PopularPersons";
 
 export const Persons = () => {
   return (

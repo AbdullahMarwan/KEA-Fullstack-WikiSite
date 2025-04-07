@@ -1,5 +1,5 @@
 import { Box, Grid, GridItem, Heading } from "@chakra-ui/react"
-import PersonDetails from "../components/PersonDetails.js";
+import PersonDetails from "../components/Persons/PersonDetails.js";
 
 
 export const PersonSingle = () => {
@@ -13,3 +13,4 @@ export const PersonSingle = () => {
     );
   };
   
+  export default PersonSingle;
