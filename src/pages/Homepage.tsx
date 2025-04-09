@@ -1,8 +1,11 @@
 import { Grid, GridItem } from "@chakra-ui/react";
-import SearchBar from "../components/SearchBar";
-import SearchMovieSection from "../components/SearchMovieSection";
-import TrendingMovies from "../components/TrendingMovies";
-import LatestTrailers from "../components/LatestTrailers";
+import SearchBar from "../components/Homepage/SearchBar";
+import SearchMovieSection from "../components/Homepage/SearchMovieSection";
+import TrendingMovies from "../components/Homepage/TrendingMovies";
+import LatestTrailers from "../components/Homepage/LatestTrailers";
+import FilmSection from "../components/Homepage/FilmSection";
+import TvShows from "../components/Homepage/TvShows";
+import SignupSection from "../components/Signup/SignupSection";
 
 export const Homepage = () => {
   return (
@@ -20,6 +23,9 @@ export const Homepage = () => {
         <SearchMovieSection />
         <TrendingMovies />
         <LatestTrailers />
+        <FilmSection />
+        <SignupSection />
+        <TvShows />
       </GridItem>
     </Grid>
   );

@@ -1,26 +1,52 @@
-import NavBar from "./components/NavBar";
-import { AppRoutes } from "./routes/AppRoutes";
-import { Grid, GridItem } from "@chakra-ui/react";
+// src/App.tsx
+import NavBar from "./components/Global/NavBar";
+import Footer from "./components/Global/Footer";
+import { Routes, Route, Outlet } from "react-router-dom";
+import { Homepage } from "./pages/Homepage";
+import { Movies } from "./pages/Movies";
+import { Persons } from "./pages/Persons";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import { Flex, Box } from "@chakra-ui/react";
+import { SearchProvider } from "./context/SearchContext";
+import GlobalSearchBar from "./components/Homepage/GlobalSearchBar";
+import PersonSingle from "./pages/Person";
+import MoviesSubPage from "./pages/MoviesSubPage";
+
+const Layout = () => {
+  return (
+    <Flex direction="column" minHeight="100vh" height="100%">
+      <Box bg="#032440" zIndex={9} position="sticky" top={0}>
+        <NavBar />
+      </Box>
+
+      {/* Global search bar that appears when search icon is clicked */}
+      <GlobalSearchBar />
+
+      <Box display="flex" flexDirection="column" flex="1">
+        <Outlet />
+      </Box>
+
+      <Footer />
+    </Flex>
+  );
+};
 
 function App() {
   return (
-    <Grid
-      templateAreas={`"header header"
-                "main main"
-                "footer footer"`}
-      gridTemplateColumns={"150px 1fr"}
-      color="blackAlpha.700"
-    >
-      <GridItem area={"header"} bg="#032440">
-        <NavBar />
-      </GridItem>
-      <GridItem area={"main"}>
-        <AppRoutes />
-      </GridItem>
-      <GridItem bg="blue.300" area={"footer"}>
-        Footer
-      </GridItem>
-    </Grid>
+    <SearchProvider>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Homepage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/movies" element={<Movies />} />
+          <Route path="/persons" element={<Persons />} />
+          <Route path="/persons/:id" element={<PersonSingle />} />
+          <Route path="/moviesSubPage" element={<MoviesSubPage />} />
+        </Route>
+      </Routes>
+    </SearchProvider>
   );
 }
 
