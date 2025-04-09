@@ -12,7 +12,12 @@ import {
   DrawerOverlay,
   DrawerContent,
   useDisclosure,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import logo from "../../assets/logo.svg";
 import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
 import { Link as ReactRouterLink } from "react-router-dom";
@@ -75,14 +80,30 @@ const NavBar = () => {
             }}
           >
             <ListItem>
-              <Link
-                as={ReactRouterLink}
-                to="/"
-                width={"150px"}
-                _hover={{ textDecoration: "none" }}
-              >
-                Film
-              </Link>
+              <Menu>
+                <MenuButton
+                  as={Link}
+                  _hover={{ textDecoration: "none", color: "gray.300" }}
+                  color="white"
+                  fontWeight="600"
+                >
+                  Film
+                </MenuButton>
+                <MenuList>
+                  <MenuItem as={ReactRouterLink} to="/moviesSubPage?category=popular">
+                    Popular
+                  </MenuItem>
+                  <MenuItem as={ReactRouterLink} to="/moviesSubPage?category=now-playing">
+                    Now Playing
+                  </MenuItem>
+                  <MenuItem as={ReactRouterLink} to="/moviesSubPage?category=upcoming">
+                    Upcoming
+                  </MenuItem>
+                  <MenuItem as={ReactRouterLink} to="/moviesSubPage?category=top-rated">
+                    Top Rated
+                  </MenuItem>
+                </MenuList>
+              </Menu>
             </ListItem>
             <ListItem>
               <Link

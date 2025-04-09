@@ -7,6 +7,7 @@ import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import App from "../App";
 import { PersonSingle } from "../pages/Person";
+import MoviesSubPage from "../pages/MoviesSubPage";
 
 
 export const AppRoutes = () => {
@@ -19,7 +20,7 @@ export const AppRoutes = () => {
         <Route path="/movies" element={<Movies />} />
         <Route path="/persons" element={<Persons />} />
         <Route path="/persons/:id" element={<PersonSingle />} />
-
+        <Route path="/moviesSubPage" element={<MoviesSubPage />} />
       </Route>
     </Routes>
   );
