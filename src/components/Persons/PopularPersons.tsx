@@ -25,24 +25,38 @@ const PopularPersons = () => {
   };
 
   return (
-    <Grid templateColumns="repeat(4, 1fr)" gap={16}>
+    <Grid 
+    templateColumns={{base: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)"}}
+    gap={20} 
+    maxWidth={{ base: "600px", lg: "1200px" }}
+
+    marginBottom={200}
+    >
       {persons.map((person) => (
         <GridItem
           key={person.id}
           w="100%"
-          h="33rem"
+          h="100%"
           onClick={() => handlePersonClick(person.id)} // Add onClick handler
           style={{ cursor: "pointer" }} // Add pointer cursor for better UX
         >
-          <GridItem w="100%" h="80%">
+          <GridItem w="100%" h="100%"
+            overflow={"hidden"}
+            paddingTop={10}
+
+          >
             <img
               src={person.profile_path ? `https://image.tmdb.org/t/p/w500/${person.profile_path}` : "./person-placeholder.jpg"}
               alt="img missing"
               style={{ height: "100%", objectFit: "cover" }}
-            />
+              />
           </GridItem>
 
-          <GridItem border="1px" borderColor="grey" padding="11">
+          <GridItem border="1px" borderColor="grey"
+          padding={1}
+          maxHeight={"55px"}
+          overflow={"hidden"}
+          >
             <div id="person-info">
               <div>
                 <b>{person.name}</b>
