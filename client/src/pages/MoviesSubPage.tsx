@@ -22,6 +22,9 @@ import {
   fetchTrendingMovies,
   fetchPopularMovies,
   fetchStreamingMovies,
+  fetchNowPlayingMovies,
+  fetchTopRatedMovies,
+  fetchUpcomingMovies,
 } from "../services/api";
 
 const MoviesSubPage = () => {
@@ -50,11 +53,11 @@ const MoviesSubPage = () => {
       case "popular":
         return fetchPopularMovies;
       case "now-playing":
-        return fetchStreamingMovies; // Replace with the correct function if available
+        return fetchNowPlayingMovies;
       case "upcoming":
-        return fetchTrendingMovies; // Replace with the correct function if available
+        return fetchUpcomingMovies;
       case "top-rated":
-        return fetchTrendingMovies; // Replace with the correct function if available
+        return fetchTopRatedMovies;
       default:
         return fetchTrendingMovies;
     }
