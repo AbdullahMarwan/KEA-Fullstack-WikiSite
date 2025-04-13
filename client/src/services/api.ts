@@ -29,7 +29,7 @@ export const fetchPopularMovies = async (timeWindow: string = "popular") => {
     );
     return { data: response.data, results: response.data.results };
   } catch (error) {
-    console.error("Error fetching trending movies:", error);
+    console.error("Error fetching popular movies:", error);
     throw error;
   }
 };
