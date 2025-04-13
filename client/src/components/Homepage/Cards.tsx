@@ -270,7 +270,11 @@ const Cards: React.FC<CardsProps> = ({
                           (movie as unknown as TvShow).first_air_date
                       )}
                     </Text>
-                    <MenuOnCards movie={movie} type="default" />
+                    <MenuOnCards
+                      movie={movie}
+                      type="default"
+                      instanceId={`${title}-${timeWindow}-${index}-${movie.id}`}
+                    />
                   </CardBody>
                 </MotionCard>
               ))}
