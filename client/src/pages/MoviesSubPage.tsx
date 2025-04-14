@@ -18,6 +18,7 @@ import {
   Button,
   Grid,
   GridItem,
+  Divider,
 } from "@chakra-ui/react";
 import Cards from "../components/Homepage/Cards";
 import {
@@ -89,34 +90,59 @@ const MoviesSubPage = () => {
       >
         {/* Aside Section */}
         <GridItem area={"aside"}>
+          {/* Sort Section */}
           <Box
             borderWidth="1px"
             borderRadius="lg"
             p={4}
             bg="white"
             boxShadow="md"
+            borderColor="gray.300"
+            mb={4}
           >
-            {/* Sort Section */}
-            <Box mb={4}>
-              <Heading size="sm" mb={2}>
-                Sort
-              </Heading>
-              <Select placeholder="Sort Results By">
-                <option value="popularity.desc">Popularity Descending</option>
-                <option value="popularity.asc">Popularity Ascending</option>
-                <option value="release_date.desc">
-                  Release Date Descending
-                </option>
-                <option value="release_date.asc">Release Date Ascending</option>
-              </Select>
-            </Box>
-
-            {/* Filters Section */}
-            <Accordion allowToggle>
+            <Accordion allowToggle defaultIndex={[0]}>
               <AccordionItem>
                 <AccordionButton>
                   <Box flex="1" textAlign="left">
-                    Filters
+                    <Heading size="sm" mb={2}>
+                      Sort
+                    </Heading>
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+                <AccordionPanel pb={4}>
+                  <Box>
+                    <Heading size="xs" mb={2}>
+                      Sort Results By
+                    </Heading>
+                    <Select placeholder="Popularity Descending">
+                      <option value="popularity.desc">Popularity Descending</option>
+                      <option value="popularity.asc">Popularity Ascending</option>
+                      <option value="release_date.desc">Release Date Descending</option>
+                      <option value="release_date.asc">Release Date Ascending</option>
+                    </Select>
+                  </Box>
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
+          </Box>
+
+          {/* Filter Section */}
+          <Box
+            borderWidth="1px"
+            borderRadius="lg"
+            p={4}
+            bg="white"
+            boxShadow="md"
+            borderColor="gray.300"
+          >
+            <Accordion allowToggle defaultIndex={[0]}>
+              <AccordionItem>
+                <AccordionButton>
+                  <Box flex="1" textAlign="left">
+                    <Heading size="sm" mb={2}>
+                      Filters
+                    </Heading>
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -133,11 +159,15 @@ const MoviesSubPage = () => {
                     </Stack>
                   </RadioGroup>
 
+                  <Divider borderColor="gray.300" my={4} /> {/* Divider between sections */}
+
                   {/* Availabilities */}
                   <Heading size="sm" mt={4} mb={2}>
                     Availabilities
                   </Heading>
                   <Checkbox defaultChecked>Search all availabilities?</Checkbox>
+
+                  <Divider borderColor="gray.300" my={4} /> {/* Divider between sections */}
 
                   {/* Release Dates */}
                   <Heading size="sm" mt={4} mb={2}>
@@ -148,6 +178,8 @@ const MoviesSubPage = () => {
                     <Input type="date" placeholder="From" />
                     <Input type="date" placeholder="To" />
                   </Stack>
+
+                  <Divider borderColor="gray.300" my={4} /> {/* Divider between sections */}
 
                   {/* Genres */}
                   <Heading size="sm" mt={4} mb={2}>
