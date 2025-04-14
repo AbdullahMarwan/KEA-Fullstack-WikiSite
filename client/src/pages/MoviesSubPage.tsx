@@ -66,6 +66,10 @@ const MoviesSubPage = () => {
 
   return (
     <Box padding="20px">
+      <Heading size="lg" mb={4}>
+        {getCategoryHeading()}
+      </Heading>
+
       <Grid
         templateAreas={{
           base: `"header" 
@@ -92,10 +96,6 @@ const MoviesSubPage = () => {
             bg="white"
             boxShadow="md"
           >
-            <Heading size="md" mb={4}>
-              {getCategoryHeading()}
-            </Heading>
-
             {/* Sort Section */}
             <Box mb={4}>
               <Heading size="sm" mb={2}>
@@ -104,7 +104,9 @@ const MoviesSubPage = () => {
               <Select placeholder="Sort Results By">
                 <option value="popularity.desc">Popularity Descending</option>
                 <option value="popularity.asc">Popularity Ascending</option>
-                <option value="release_date.desc">Release Date Descending</option>
+                <option value="release_date.desc">
+                  Release Date Descending
+                </option>
                 <option value="release_date.asc">Release Date Ascending</option>
               </Select>
             </Box>
@@ -194,9 +196,6 @@ const MoviesSubPage = () => {
         {/* Main Section */}
         <GridItem area={"main"}>
           <Box>
-            <Heading size="lg" mb={4}>
-              {getCategoryHeading()}
-            </Heading>
             <Grid
               templateColumns={{
                 base: "repeat(2, 1fr)", // 2 cards per row on small screens
