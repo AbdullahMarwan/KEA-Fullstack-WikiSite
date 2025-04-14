@@ -111,6 +111,7 @@ const MoviesSubPage = () => {
                   <AccordionIcon />
                 </AccordionButton>
                 <AccordionPanel pb={4}>
+                  <Divider borderColor="gray.300" my={2} /> {/* Divider between Sort and Sort Results By */}
                   <Box>
                     <Heading size="xs" mb={2}>
                       Sort Results By
@@ -147,6 +148,7 @@ const MoviesSubPage = () => {
                   <AccordionIcon />
                 </AccordionButton>
                 <AccordionPanel pb={4}>
+                  <Divider borderColor="gray.300" my={2} /> {/* Divider between Filters and Show Me */}
                   {/* Show Me */}
                   <Heading size="sm" mb={2}>
                     Show Me
