@@ -29,7 +29,7 @@ export const fetchPopularMovies = async (timeWindow: string = "popular") => {
     );
     return { data: response.data, results: response.data.results };
   } catch (error) {
-    console.error("Error fetching trending movies:", error);
+    console.error("Error fetching popular movies:", error);
     throw error;
   }
 };
@@ -136,6 +136,45 @@ export const fetchUpcomingTrailers = async () => {
     return moviesWithTrailers;
   } catch (error) {
     console.error("Error fetching upcoming trailers:", error);
+    throw error;
+  }
+};
+
+// Fetching now playing movies
+export const fetchNowPlayingMovies = async () => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/movie/now_playing?api_key=${apiKey}`
+    );
+    return { data: response.data, results: response.data.results };
+  } catch (error) {
+    console.error("Error fetching now playing movies:", error);
+    throw error;
+  }
+};
+
+// Fetching top rated movies
+export const fetchTopRatedMovies = async () => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/movie/top_rated?api_key=${apiKey}`
+    );
+    return { data: response.data, results: response.data.results };
+  } catch (error) {
+    console.error("Error fetching top rated movies:", error);
+    throw error;
+  }
+};
+
+// Fetching upcoming movies
+export const fetchUpcomingMovies = async () => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/movie/upcoming?api_key=${apiKey}`
+    );
+    return { data: response.data, results: response.data.results };
+  } catch (error) {
+    console.error("Error fetching upcoming movies:", error);
     throw error;
   }
 };

@@ -18,12 +18,20 @@ import {
   Button,
 } from "@chakra-ui/react";
 import Cards from "../components/Homepage/Cards";
-import { fetchTrendingMovies } from "../services/api";
+import {
+  fetchTrendingMovies,
+  fetchPopularMovies,
+  fetchStreamingMovies,
+  fetchNowPlayingMovies,
+  fetchTopRatedMovies,
+  fetchUpcomingMovies,
+} from "../services/api";
 
 const MoviesSubPage = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const category = queryParams.get("category");
+  const category = queryParams.get("category") || "popular"; // Default to "popular"
+  const defaultTimeWindow = category === "popular" ? "popular" : category;
 
   const getCategoryHeading = () => {
     switch (category) {
@@ -37,6 +45,21 @@ const MoviesSubPage = () => {
         return "Top Rated Movies";
       default:
         return "Movies";
+    }
+  };
+
+  const getFetchFunction = () => {
+    switch (category) {
+      case "popular":
+        return fetchPopularMovies;
+      case "now-playing":
+        return fetchNowPlayingMovies;
+      case "upcoming":
+        return fetchUpcomingMovies;
+      case "top-rated":
+        return fetchTopRatedMovies;
+      default:
+        return fetchTrendingMovies;
     }
   };
 
@@ -146,16 +169,16 @@ const MoviesSubPage = () => {
         </Accordion>
       </Box>
       <Cards
-            fetchFunction={fetchTrendingMovies}
-            maxItems={10}
-            title="Trending"
-            showLinkSelector={true}
-            links={[
-              { name: "I dag", href: "#", value: "day" },
-              { name: "Denne uge", href: "#", value: "week" },
-            ]}
-            defaultTimeWindow="day"
-          />
+        fetchFunction={getFetchFunction()}
+        maxItems={10}
+        title="Trending"
+        showLinkSelector={true}
+        links={[
+          { name: "I dag", href: "#", value: category }, // Use the category variable here
+          { name: "Denne uge", href: "#", value: "week" },
+        ]}
+        defaultTimeWindow={defaultTimeWindow} // Use the defaultTimeWindow variable here as well
+      />
     </Box>
   );
 };
