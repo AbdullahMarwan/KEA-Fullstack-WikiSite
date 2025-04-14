@@ -94,7 +94,6 @@ const MoviesSubPage = () => {
           <Box
             borderWidth="1px"
             borderRadius="lg"
-            p={4}
             bg="white"
             boxShadow="md"
             borderColor="gray.300"
@@ -132,7 +131,6 @@ const MoviesSubPage = () => {
           <Box
             borderWidth="1px"
             borderRadius="lg"
-            p={4}
             bg="white"
             boxShadow="md"
             borderColor="gray.300"
@@ -147,8 +145,7 @@ const MoviesSubPage = () => {
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
-                <AccordionPanel pb={4}>
-                  <Divider borderColor="gray.300" my={2} /> {/* Divider between Filters and Show Me */}
+                <AccordionPanel pb={4} borderTop="1px solid" borderColor="gray.300">
                   {/* Show Me */}
                   <Heading size="sm" mb={2}>
                     Show Me
@@ -161,15 +158,14 @@ const MoviesSubPage = () => {
                     </Stack>
                   </RadioGroup>
 
-                  <Divider borderColor="gray.300" my={4} /> {/* Divider between sections */}
-
+                  <Box borderTop="1px solid" borderColor="gray.300">
                   {/* Availabilities */}
-                  <Heading size="sm" mt={4} mb={2}>
+                  <Heading size="sm" mt={4} mb={2} >
                     Availabilities
                   </Heading>
                   <Checkbox defaultChecked>Search all availabilities?</Checkbox>
+                  </Box>
 
-                  <Divider borderColor="gray.300" my={4} /> {/* Divider between sections */}
 
                   {/* Release Dates */}
                   <Heading size="sm" mt={4} mb={2}>
@@ -181,7 +177,6 @@ const MoviesSubPage = () => {
                     <Input type="date" placeholder="To" />
                   </Stack>
 
-                  <Divider borderColor="gray.300" my={4} /> {/* Divider between sections */}
 
                   {/* Genres */}
                   <Heading size="sm" mt={4} mb={2}>
