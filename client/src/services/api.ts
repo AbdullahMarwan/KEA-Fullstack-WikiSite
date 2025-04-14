@@ -47,6 +47,78 @@ export const fetchMovieTrailers = async (movieId: number) => {
   }
 };
 
+// Fetch trailers for a specific movie
+export const fetchTrendingTvSeries = async (time_window: string) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/trending/tv/${time_window}?api_key=${apiKey}`
+    );
+    console.log(response.data.results);
+    return response.data.results;
+  } catch (error) {
+    console.error(`Error fetching trailers for movie:`, error);
+    return [];
+  }
+};
+
+// Fetch trailers for a specific movie
+export const fetchTvSeriesVideos = async (series_id: string) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/tv/${series_id}/videos?api_key=${apiKey}`
+    );
+    return response.data.results;
+  } catch (error) {
+    console.error(`Error fetching trailers for movie:`, error);
+    return [];
+  }
+};
+
+export const fetchTvSeriesTrailers = async () => {
+  try {
+    let tvSeriesIds = await fetchTrendingTvSeries("day");
+
+    tvSeriesIds = tvSeriesIds.slice(0, 4); // Limit to 4 movies for performance
+
+    const tvTrailers = await Promise.all(
+      tvSeriesIds.map(async (tvSeries: any) => {
+        const trailers = await fetchTvSeriesVideos(tvSeries.id);
+
+        // Find YouTube trailers (prioritize "Trailer" type and "YouTube" site)
+        const youtubeTrailers = trailers.filter(
+          (video: any) =>
+            video.site === "YouTube" && video.type.includes("Trailer")
+        );
+
+        // If no specific trailers, use any YouTube video
+        const youtubeVideos = trailers.filter(
+          (video: any) => video.site === "YouTube"
+        );
+
+        // Format YouTube links
+        const youtubeLinks = (
+          youtubeTrailers.length > 0 ? youtubeTrailers : youtubeVideos
+        ).map((video: any) => `https://www.youtube.com/watch?v=${video.key}`);
+
+        return {
+          tvSeriesId: tvSeries.id,
+          title: tvSeries.name,
+          overview: tvSeries.overview,
+          backdrop_path: tvSeries.backdrop_path,
+          poster_path: tvSeries.poster_path,
+          youtubeLinks: youtubeLinks,
+        };
+      })
+    );
+    return tvTrailers;
+  } catch (error) {
+    console.error(`Error fetching trailers for movie:`, error);
+    return [];
+  }
+};
+
+fetchTvSeriesTrailers();
+
 // Updated version of fetchPopularTrailers with actual YouTube links
 export const fetchPopularTrailers = async () => {
   try {

@@ -27,11 +27,12 @@ const LatestTrailers = () => {
         padding="0 20px"
       >
         <TrailerCards
-          title="Latest Trailers"
+          title="Trailers"
           showLinkSelector={true}
           links={[
-            { name: "Populært", href: "#", value: "popular" },
+            { name: "Popular", href: "#", value: "popular" },
             { name: "Upcoming", href: "#", value: "upcoming" },
+            { name: "TV", href: "#", value: "tv" },
             // Only include links that have corresponding API functions
           ]}
           defaultTimeWindow="popular"

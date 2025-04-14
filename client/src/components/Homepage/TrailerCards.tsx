@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   fetchPopularTrailers,
   fetchUpcomingTrailers,
+  fetchTvSeriesTrailers,
 } from "../../services/api";
 import MenuOnCards from "./MenuOnCards";
 import LinkSelector from "./LinkSelector";
@@ -50,7 +51,7 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
   links = [
     { name: "Populært", href: "#", value: "popular" },
     { name: "Upcoming", href: "#", value: "upcoming" },
-    { name: "På TV", href: "#", value: "on-tv" },
+    { name: "På TV", href: "#", value: "tv" },
     { name: "Til Leje", href: "#", value: "for-rent" },
     { name: "I Biograferne", href: "#", value: "in-theaters" },
   ],
@@ -82,6 +83,8 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
         return fetchPopularTrailers;
       case "upcoming":
         return fetchUpcomingTrailers;
+      case "tv":
+        return fetchTvSeriesTrailers;
       // Add more cases for other categories
       default:
         return fetchPopularTrailers;
