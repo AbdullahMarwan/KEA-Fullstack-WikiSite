@@ -100,11 +100,11 @@ const MoviesSubPage = () => {
             borderColor="gray.300"
             mb={4}
           >
-            <Accordion allowToggle defaultIndex={[0]}>
+            <Accordion allowToggle>
               <AccordionItem>
                 <AccordionButton>
                   <Box flex="1" textAlign="left">
-                    <Heading size="sm" mb={2}>
+                    <Heading size="md" mb={2}> {/* Increased size to "md" */}
                       Sort
                     </Heading>
                   </Box>
@@ -141,7 +141,7 @@ const MoviesSubPage = () => {
               <AccordionItem>
                 <AccordionButton>
                   <Box flex="1" textAlign="left">
-                    <Heading size="sm" mb={2}>
+                    <Heading size="md" mb={2}> {/* Increased size to "md" */}
                       Filters
                     </Heading>
                   </Box>
