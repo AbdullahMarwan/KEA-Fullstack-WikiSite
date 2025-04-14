@@ -13,11 +13,23 @@ import { FaList } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 import { Link as ReactRouterLink } from "react-router-dom";
 interface MenuOnCardsProps {
-  movie: { id: number }; // Define the expected structure of the movie prop
-  type: string; // Add type to distinguish between datasets
+  movie: {
+    id: number;
+    // other movie properties
+  };
+  type: string;
+  instanceId?: string; // Add this new prop
 }
 
-const MenuOnCards: React.FC<MenuOnCardsProps> = ({ movie, type }) => {
+const MenuOnCards: React.FC<MenuOnCardsProps> = ({
+  movie,
+  type,
+  instanceId = `movie-${movie.id}`, // Default if not provided
+}) => {
+  // Create a truly unique ID for this menu instance
+  const menuId = `menu-${type}-${instanceId}`;
+
+  // Keep your constants as they are
   const islogged = false;
   const isnotlogged = true;
 
@@ -40,7 +52,8 @@ const MenuOnCards: React.FC<MenuOnCardsProps> = ({ movie, type }) => {
         }}
         onClick={(e) => {
           e.stopPropagation();
-          const menu = document.getElementById(`menu-${type}-${movie.id}`);
+          // Use menuId which includes instanceId
+          const menu = document.getElementById(menuId);
           if (menu) {
             const isMenuVisible = menu.style.display === "block";
             menu.style.display = isMenuVisible ? "none" : "block";
@@ -52,7 +65,7 @@ const MenuOnCards: React.FC<MenuOnCardsProps> = ({ movie, type }) => {
 
       {/* Dropdown menu */}
       <Box
-        id={`menu-${type}-${movie.id}`} // Use type and movie.id for unique identification
+        id={menuId} // Use the same menuId variable here
         position="absolute"
         top="40px"
         right="10px"

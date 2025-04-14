@@ -17,7 +17,6 @@ import {
   MenuList,
   MenuItem,
 } from "@chakra-ui/react";
-import { ChevronDownIcon } from "@chakra-ui/icons";
 import logo from "../../assets/logo.svg";
 import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
 import { Link as ReactRouterLink } from "react-router-dom";
@@ -25,6 +24,7 @@ import LanguageContainer from "../Homepage/LanguageContainer";
 import AddMovie from "../Homepage/AddMovie";
 import { useSearch } from "../../context/SearchContext";
 import { IoSearchSharp } from "react-icons/io5";
+import logomobile from "../../assets/moviedb - logo vertical.svg";
 
 const NavBar = () => {
   const { focusSearchInput } = useSearch();
@@ -63,7 +63,12 @@ const NavBar = () => {
         <HStack justifyContent="center">
           ;
           <Link as={ReactRouterLink} to="/" width={"150px"}>
-            <Image src={logo} alt="logo" maxWidth="150px" m={0} />
+            <Image
+              src={useBreakpointValue({ base: logomobile, md: logo })}
+              alt="logo"
+              maxHeight={useBreakpointValue({ base: "45px", md: "150px" })} // Adjust the size for base and md
+              m={0}
+            />
           </Link>
           <UnorderedList
             display={displayLinks}
@@ -90,16 +95,28 @@ const NavBar = () => {
                   Film
                 </MenuButton>
                 <MenuList>
-                  <MenuItem as={ReactRouterLink} to="/moviesSubPage?category=popular">
+                  <MenuItem
+                    as={ReactRouterLink}
+                    to="/moviesSubPage?category=popular"
+                  >
                     Popular
                   </MenuItem>
-                  <MenuItem as={ReactRouterLink} to="/moviesSubPage?category=now-playing">
+                  <MenuItem
+                    as={ReactRouterLink}
+                    to="/moviesSubPage?category=now-playing"
+                  >
                     Now Playing
                   </MenuItem>
-                  <MenuItem as={ReactRouterLink} to="/moviesSubPage?category=upcoming">
+                  <MenuItem
+                    as={ReactRouterLink}
+                    to="/moviesSubPage?category=upcoming"
+                  >
                     Upcoming
                   </MenuItem>
-                  <MenuItem as={ReactRouterLink} to="/moviesSubPage?category=top-rated">
+                  <MenuItem
+                    as={ReactRouterLink}
+                    to="/moviesSubPage?category=top-rated"
+                  >
                     Top Rated
                   </MenuItem>
                 </MenuList>

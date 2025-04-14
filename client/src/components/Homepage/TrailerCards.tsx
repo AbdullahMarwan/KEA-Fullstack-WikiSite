@@ -10,15 +10,16 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { fetchTrailerMovies } from "../../services/api";
-import { fetchTrendingMovies } from "../../services/api";
+import {
+  fetchPopularTrailers,
+  fetchUpcomingTrailers,
+} from "../../services/api";
 import MenuOnCards from "./MenuOnCards";
 import LinkSelector from "./LinkSelector";
 
 // Create motion components
 const MotionCard = motion(Card);
 const MotionBox = motion(Box);
-const MotionSkeleton = motion(Skeleton);
 
 interface Trailer {
   id: number;
@@ -48,7 +49,7 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
   showLinkSelector = false,
   links = [
     { name: "Populært", href: "#", value: "popular" },
-    { name: "Streaming", href: "#", value: "streaming" },
+    { name: "Upcoming", href: "#", value: "upcoming" },
     { name: "På TV", href: "#", value: "on-tv" },
     { name: "Til Leje", href: "#", value: "for-rent" },
     { name: "I Biograferne", href: "#", value: "in-theaters" },
@@ -63,7 +64,6 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
 
   // Update timeWindow when activeLink changes
   useEffect(() => {
-    // Find the corresponding link and get its value
     const selected = links.find((link) => link.name === activeLink);
     if (selected && selected.value) {
       setTimeWindow(selected.value);
@@ -75,14 +75,25 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
     setActiveLink(linkName);
   };
 
+  // Get the appropriate fetch function based on timeWindow
+  const getFetchFunction = useCallback(() => {
+    switch (timeWindow) {
+      case "popular":
+        return fetchPopularTrailers;
+      case "upcoming":
+        return fetchUpcomingTrailers;
+      // Add more cases for other categories
+      default:
+        return fetchPopularTrailers;
+    }
+  }, [timeWindow]);
+
   // Create memoized fetch function based on timeWindow
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      // In a real app, you'd use the timeWindow to fetch different trailer sets
-      // For this example, we'll just use the existing functions
-      const trailerData = await fetchTrailerMovies();
-      const trendingData = await fetchTrendingMovies();
+      const fetchFunction = getFetchFunction();
+      const trailerData = await fetchFunction();
 
       setTrailers(
         trailerData.map((movie: any) => ({
@@ -96,18 +107,22 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
         }))
       );
 
-      trendingData.results.slice(0, 4).forEach((movie: any) => {
-        movie.title = movie.title || "Unknown Title";
-      });
-
-      setTrendingMovies(trendingData.results);
+      // Also set trending movies from the same data to avoid double fetching
+      setTrendingMovies(
+        trailerData.map((movie: any) => ({
+          id: movie.movieId,
+          title: movie.title || "Unknown Title",
+          backdrop_path: movie.backdrop_path || "",
+        }))
+      );
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [timeWindow]);
+  }, [getFetchFunction]);
 
+  // Fetch data when timeWindow changes
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -185,7 +200,7 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
             </MotionBox>
           ) : (
             <MotionBox
-              key="content"
+              key={`content-${timeWindow}`} // Add timeWindow to key to force re-render
               display="flex"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -195,7 +210,7 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
             >
               {trendingMovies.slice(0, 4).map((movie, index) => (
                 <MotionCard
-                  key={`trending-${movie.id}`}
+                  key={`${timeWindow}-${movie.id}-${index}`} // Add timeWindow and index to ensure unique keys
                   flexShrink={0}
                   width="300px"
                   marginRight="20px"
@@ -244,6 +259,7 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
                         id: movie.id,
                       }}
                       type="trending"
+                      instanceId={`trailer-${timeWindow}-${index}-${movie.id}`} // Use instanceId to fix menu issues
                     />
                   </CardBody>
                 </MotionCard>
