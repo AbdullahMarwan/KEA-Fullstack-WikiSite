@@ -34,43 +34,108 @@ export const fetchPopularMovies = async (timeWindow: string = "popular") => {
   }
 };
 
-// Fetching movies with trailers
-
-export const fetchTrailerMovies = async () => {
+// Fetch trailers for a specific movie
+export const fetchMovieTrailers = async (movieId: number) => {
   try {
-    const trendingMovies = await fetchTrendingMovies();
-    const popularMovies = await fetchPopularMovies();
-    const trailerMoviesData = await Promise.all(
-      trendingMovies.results.slice(0, 4).map(async (movie: any) => {
-        const response = await axios.get(
-          `${baseUrl}/movie/${movie.id}/videos?api_key=${apiKey}`
+    const response = await axios.get(
+      `${baseUrl}/movie/${movieId}/videos?api_key=${apiKey}`
+    );
+    return response.data.results;
+  } catch (error) {
+    console.error(`Error fetching trailers for movie ${movieId}:`, error);
+    return [];
+  }
+};
+
+// Updated version of fetchPopularTrailers with actual YouTube links
+export const fetchPopularTrailers = async () => {
+  try {
+    // First get popular movies
+    const response = await axios.get(
+      `${baseUrl}/movie/popular?api_key=${apiKey}`
+    );
+
+    const movies = response.data.results.slice(0, 4); // Limit to 4 movies for performance
+
+    // For each movie, fetch its trailers
+    const moviesWithTrailers = await Promise.all(
+      movies.map(async (movie: any) => {
+        const trailers = await fetchMovieTrailers(movie.id);
+
+        // Find YouTube trailers (prioritize "Trailer" type and "YouTube" site)
+        const youtubeTrailers = trailers.filter(
+          (video: any) =>
+            video.site === "YouTube" && video.type.includes("Trailer")
         );
-        const youtubeLinks = response.data.results
-          .filter((result: any) => result.type === "Trailer")
-          .map(
-            (result: any) => `https://www.youtube.com/watch?v=${result.key}`
-          );
-        return { movieId: movie.id, youtubeLinks };
+
+        // If no specific trailers, use any YouTube video
+        const youtubeVideos = trailers.filter(
+          (video: any) => video.site === "YouTube"
+        );
+
+        // Format YouTube links
+        const youtubeLinks = (
+          youtubeTrailers.length > 0 ? youtubeTrailers : youtubeVideos
+        ).map((video: any) => `https://www.youtube.com/watch?v=${video.key}`);
+
+        return {
+          movieId: movie.id,
+          title: movie.title,
+          overview: movie.overview,
+          backdrop_path: movie.backdrop_path,
+          poster_path: movie.poster_path,
+          youtubeLinks: youtubeLinks,
+        };
       })
     );
-    return trailerMoviesData; // Return the array of trailer movies data for each movie ID
+
+    return moviesWithTrailers;
   } catch (error) {
-    console.error("Error fetching trailer movies:", error);
+    console.error("Error fetching popular trailers:", error);
     throw error;
   }
 };
 
-// Fetching streamable movies
-
-export const fetchStreamingMovies = async () => {
+// Do the same for upcoming trailers
+export const fetchUpcomingTrailers = async () => {
   try {
     const response = await axios.get(
-      `
-      ${baseUrl}/discover/movie?sort_by=popularity.desc&watch_region=US&with_watch_monetization_types=flatrate?api_key=${apiKey}`
+      `${baseUrl}/movie/upcoming?api_key=${apiKey}`
     );
-    return { data: response.data, results: response.data.results };
+
+    const movies = response.data.results.slice(0, 4);
+
+    const moviesWithTrailers = await Promise.all(
+      movies.map(async (movie: any) => {
+        const trailers = await fetchMovieTrailers(movie.id);
+
+        const youtubeTrailers = trailers.filter(
+          (video: any) =>
+            video.site === "YouTube" && video.type.includes("Trailer")
+        );
+
+        const youtubeVideos = trailers.filter(
+          (video: any) => video.site === "YouTube"
+        );
+
+        const youtubeLinks = (
+          youtubeTrailers.length > 0 ? youtubeTrailers : youtubeVideos
+        ).map((video: any) => `https://www.youtube.com/watch?v=${video.key}`);
+
+        return {
+          movieId: movie.id,
+          title: movie.title,
+          overview: movie.overview,
+          backdrop_path: movie.backdrop_path,
+          poster_path: movie.poster_path,
+          youtubeLinks: youtubeLinks,
+        };
+      })
+    );
+
+    return moviesWithTrailers;
   } catch (error) {
-    console.error("Error fetching trending movies:", error);
+    console.error("Error fetching upcoming trailers:", error);
     throw error;
   }
 };
@@ -147,7 +212,6 @@ export const fetchPopularTvSeries = async (category: string = "popular") => {
   }
 };
 
-
 export const fetchPopularPersons = async () => {
   try {
     const response = await axios.get(
@@ -158,4 +222,4 @@ export const fetchPopularPersons = async () => {
     console.error("Error fetching popular persons:", error);
     throw error;
   }
-}
+};
