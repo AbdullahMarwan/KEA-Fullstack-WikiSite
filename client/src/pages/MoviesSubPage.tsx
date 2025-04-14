@@ -102,15 +102,14 @@ const MoviesSubPage = () => {
             <Accordion allowToggle>
               <AccordionItem>
                 <AccordionButton>
-                  <Box flex="1" textAlign="left">
+                  <Box flex="1" textAlign="left"  >
                     <Heading size="md" mb={2}> {/* Increased size to "md" */}
                       Sort
                     </Heading>
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
-                <AccordionPanel pb={4}>
-                  <Divider borderColor="gray.300" my={2} /> {/* Divider between Sort and Sort Results By */}
+                <AccordionPanel pb={4} borderTop="1px solid" borderColor="gray.300">
                   <Box>
                     <Heading size="xs" mb={2}>
                       Sort Results By
