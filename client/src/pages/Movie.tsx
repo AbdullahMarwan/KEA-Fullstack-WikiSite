@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { fetchMovieById, fetchMovieCredits } from "../services/api";
 import SecondaryNav from "../components/movie/SecondaryNav";
 import Banner from "../components/movie/Banner";
+import TopCast from "../components/movie/TopCast";
 
 // Define the Movie interface here (you can also move it to a types file)
 interface Genre {
@@ -126,6 +127,9 @@ function Movie() {
           <p>Movie not found</p>
         </Box>
       )}
+      <Box width={"100%"} display={"flex"} justifyContent={"center"}>
+        {movie && <TopCast movie={movie} />}
+      </Box>
     </Box>
   );
 }

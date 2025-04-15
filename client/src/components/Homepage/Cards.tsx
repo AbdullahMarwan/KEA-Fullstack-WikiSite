@@ -11,6 +11,7 @@ import {
   SkeletonCircle,
   Box,
   Link,
+  Image,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { fetchTrendingMovies } from "../../services/api";
@@ -28,8 +29,19 @@ interface Movie {
   title: string;
   release_date: string;
   poster_path: string;
+  cardType: "movie";
   vote_average: number;
 }
+
+interface Cast {
+  id: number;
+  name: string;
+  character: string;
+  cardType: "cast";
+  profile_path: string | null;
+}
+
+type CardItem = Movie | Cast;
 
 interface TvShow {
   id: number;
@@ -39,7 +51,7 @@ interface TvShow {
   vote_average: number;
 }
 
-// Enhanced props to include links and selection options
+// Enhanced props to include links and custom data
 interface CardsProps {
   fetchFunction?: (timeWindow?: string) => Promise<any>; // Updated to accept timeWindow parameter
   maxItems?: number;
@@ -47,27 +59,49 @@ interface CardsProps {
   showLinkSelector?: boolean; // Whether to show the link selector
   links?: Array<{ name: string; href: string; value?: string }>; // Links with optional value
   defaultTimeWindow?: string; // Default time window value
+  customData?: any[]; // For passing in cast or other pre-fetched data
+  cardType?: "movie" | "person" | "cast"; // Type of card to display
+  cardSize?: "small" | "medium" | "large";
 }
 
 const Cards: React.FC<CardsProps> = ({
   fetchFunction = fetchTrendingMovies,
   maxItems = 10,
-  title = "Trending",
+  title = "",
   showLinkSelector = false,
   links = [
     { name: "I dag", href: "#", value: "day" },
     { name: "Denne uge", href: "#", value: "week" },
   ],
   defaultTimeWindow = "day",
+  customData = null,
+  cardType = "movie",
+  cardSize = "medium",
 }) => {
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [items, setItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeLink, setActiveLink] = useState(links[0].name);
+  const [activeLink, setActiveLink] = useState(
+    links.length > 0 ? links[0].name : ""
+  );
   const [timeWindow, setTimeWindow] = useState(defaultTimeWindow);
+
+  // Calculate card dimensions based on size
+  const getCardDimensions = () => {
+    switch (cardSize) {
+      case "small":
+        return { width: "150px", height: "300px" };
+      case "large":
+        return { width: "300px", height: "450px" };
+      case "medium":
+      default:
+        return { width: "250px", height: "450px" };
+    }
+  };
+
+  const { width, height } = getCardDimensions();
 
   // Update timeWindow when activeLink changes
   useEffect(() => {
-    // Find the corresponding link and get its value
     const selected = links.find((link) => link.name === activeLink);
     if (selected && selected.value) {
       setTimeWindow(selected.value);
@@ -84,33 +118,41 @@ const Cards: React.FC<CardsProps> = ({
     return fetchFunction(timeWindow);
   }, [fetchFunction, timeWindow]);
 
-  // Fetch movies when timeWindow changes
+  // Fetch data or use provided custom data
   useEffect(() => {
     setIsLoading(true);
 
-    const getMovies = async () => {
+    const getData = async () => {
       try {
+        // If customData is provided, use it directly
+        if (customData) {
+          setItems(customData);
+          setIsLoading(false);
+          return;
+        }
+
+        // Otherwise fetch data
         const data = await fetchWithTimeWindow();
-        setMovies(data.results);
+        setItems(data.results || data);
       } catch (error) {
-        console.error("Error fetching movies:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    getMovies();
-  }, [fetchWithTimeWindow]);
+    getData();
+  }, [fetchWithTimeWindow, customData]);
 
   // Format date to show month name and year
   const formatDate = (dateString: string | undefined): string => {
-    if (!dateString) return "Unknown Date";
+    if (!dateString) return "";
 
     try {
       const date = new Date(dateString);
 
       // Check if date is valid
-      if (isNaN(date.getTime())) return "Unknown Date";
+      if (isNaN(date.getTime())) return "";
 
       // Get month name and year
       const monthNames = [
@@ -134,23 +176,75 @@ const Cards: React.FC<CardsProps> = ({
 
       return `${day}. ${monthNames[monthIndex]} ${year}`;
     } catch (error) {
-      console.error("Error formatting date:", error);
-      return "Unknown Date";
+      return "";
     }
   };
 
+  // Determine the details of an item based on its type
+  const getItemDetails = (item: any) => {
+    // Fix the logical error in this condition
+    if (cardType === "cast") {
+      return {
+        id: item.id,
+        name: item.name,
+        subtitle: item.character,
+        imagePath: item.profile_path,
+        linkPath: `/person/${item.id}`,
+        rating: null, // Cast doesn't have ratings
+        isCast: true, // Add a flag we can check later
+      };
+    }
+
+    // Check if it has character property (another way to detect cast)
+    if ("character" in item) {
+      return {
+        id: item.id,
+        name: item.name,
+        subtitle: item.character,
+        imagePath: item.profile_path,
+        linkPath: `/person/${item.id}`,
+        rating: null,
+        isCast: true,
+      };
+    }
+
+    // For TV shows
+    if ("first_air_date" in item) {
+      return {
+        id: item.id,
+        name: item.name,
+        subtitle: formatDate(item.first_air_date),
+        imagePath: item.poster_path,
+        linkPath: `/tv/${item.id}`,
+        rating: item.vote_average,
+        isCast: false,
+      };
+    }
+
+    // Default: movies
+    return {
+      id: item.id,
+      name: item.title || "Unknown Title",
+      subtitle: formatDate(item.release_date),
+      imagePath: item.poster_path,
+      linkPath: `/movie/${item.id}`,
+      rating: item.vote_average,
+      isCast: false,
+    };
+  };
+
   return (
-    <Box width="100%">
+    <Box width="100%" maxW="1300px" margin="0 auto">
       {/* Title and Link Selector Header */}
       {(title || showLinkSelector) && (
-        <HStack spacing={4} mb={4} width="100%" justifyContent="flex-start">
+        <HStack spacing={4} mb={4} width="100%">
           {title && (
             <Heading fontSize="1.5rem" fontWeight="500" color="black">
               {title}
             </Heading>
           )}
 
-          {showLinkSelector && (
+          {showLinkSelector && links.length > 0 && (
             <LinkSelector
               links={links}
               activeLink={activeLink}
@@ -165,15 +259,28 @@ const Cards: React.FC<CardsProps> = ({
         </HStack>
       )}
 
-      {/* Movies List with Animation */}
-      <HStack
+      {/* Items List with Animation */}
+      <Box
         overflowX="auto"
         whiteSpace="nowrap"
         width="100%"
         padding="10px"
         boxSizing="border-box"
-        alignItems="flex-start"
-        minHeight="400px"
+        css={{
+          "&::-webkit-scrollbar": {
+            height: "4px",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "#f1f1f1",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "#888",
+            borderRadius: "2px",
+          },
+          "&::-webkit-scrollbar-thumb:hover": {
+            background: "#555",
+          },
+        }}
       >
         <AnimatePresence mode="wait">
           {isLoading ? (
@@ -190,16 +297,19 @@ const Cards: React.FC<CardsProps> = ({
                 <Card
                   key={index}
                   display="inline-block"
-                  width="250px"
-                  height="400px"
+                  width={width}
+                  height={height}
                   flex="0 0 auto"
                   marginRight="20px"
                   backgroundColor="transparent"
                 >
-                  <Skeleton height="400px" borderRadius="10px" />
-                  <CardBody padding="20px 20px 20px 20px">
+                  <Skeleton
+                    height={cardType === "cast" ? "225px" : "300px"}
+                    borderRadius="10px"
+                  />
+                  <CardBody p="4">
                     <SkeletonText noOfLines={2} spacing="4" />
-                    <SkeletonCircle size="10" marginTop="10px" />
+                    {cardType !== "cast" && <SkeletonCircle size="10" mt="4" />}
                   </CardBody>
                 </Card>
               ))}
@@ -214,99 +324,118 @@ const Cards: React.FC<CardsProps> = ({
               transition={{ duration: 0.3 }}
               width="100%"
             >
-              {movies.slice(0, maxItems).map((movie, index) => (
-                <MotionCard
-                  key={movie.id}
-                  display="inline-block"
-                  width="250px"
-                  height="400px"
-                  flex="0 0 auto"
-                  marginRight="20px"
-                  backgroundColor="transparent"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                    transition: {
-                      delay: index * 0.05,
-                      duration: 0.4,
-                    },
-                  }}
-                >
-                  <Box
-                    as={ReactRouterLink}
-                    to={`/movie/${movie.id}`}
-                    key={movie.id}
-                    _hover={{ textDecoration: "none" }}
-                    position="relative"
+              {items.slice(0, maxItems).map((item, index) => {
+                const details = getItemDetails(item);
+
+                // Add this right before your return statement in the map function
+                console.log({
+                  itemName: item.name || item.title,
+                  cardType,
+                  hasCharacter: "character" in item,
+                  details: details,
+                });
+                return (
+                  <MotionCard
+                    key={`${details.id}-${index}`}
+                    display="inline-block"
+                    width={width}
+                    height={height}
+                    flex="0 0 auto"
+                    marginRight="20px"
+                    backgroundColor="transparent"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      transition: {
+                        delay: index * 0.05,
+                        duration: 0.4,
+                      },
+                    }}
                     borderRadius="10px"
                     overflow="hidden"
                   >
                     <Box
-                      width="100%"
-                      height="75%"
-                      max-height="100px"
-                      backgroundImage={`url(https://image.tmdb.org/t/p/w500${
-                        movie.poster_path || ""
-                      })`}
-                      backgroundSize="cover"
-                      backgroundPosition="center"
+                      as={ReactRouterLink}
+                      to={details.linkPath}
+                      position="relative"
                       borderRadius="10px"
-                    />
-
-                    <HStack
-                      position="absolute"
-                      bottom="-1em"
-                      left="20px"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
+                      overflow="hidden"
+                      height={cardType === "cast" ? "250px" : "350px"}
+                      width={"300px"}
                     >
-                      <VoteAverageRing
-                        radius={50}
-                        stroke={4}
-                        progress={Math.round(movie.vote_average * 10)}
+                      <Image
+                        src={`https://image.tmdb.org/t/p/w500${
+                          details.imagePath || ""
+                        }`}
+                        alt={details.name}
+                        width="100%"
+                        height="80%"
+                        objectFit="cover" // Changed from "cover" to "contain"
+                        borderRadius="10px"
+                        fallbackSrc="/placeholder-image.jpg"
                       />
-                    </HStack>
-                  </Box>
-                  <CardBody padding="20px 20px 20px 20px">
-                    <CardHeader padding="0">
-                      <Heading
-                        fontSize="1em"
-                        color="black"
-                        as={ReactRouterLink}
-                        to={`/movie/${movie.id}`}
-                        key={movie.id}
-                        _hover={{ color: "#022441" }}
-                        whiteSpace="normal"
-                        wordBreak="break-word"
-                      >
-                        {movie.title ||
-                          (movie as unknown as TvShow).name ||
-                          "Unknown Title"}
-                      </Heading>
-                    </CardHeader>
-                    <Text fontSize="1em" color="gray.500" noOfLines={1}>
-                      {formatDate(
-                        movie.release_date ||
-                          (movie as unknown as TvShow).first_air_date
-                      ).replace(
-                        /(\d+)\. (\w{3})\w* (\d+)/,
-                        (_, day, month, year) => `${day} ${month} ${year}`
+
+                      {/* Only show rating for movies/TV shows, never for cast */}
+                      {!details.isCast && details.rating !== null && (
+                        <HStack
+                          position="absolute"
+                          bottom="-15px"
+                          left="10px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <VoteAverageRing
+                            radius={50}
+                            stroke={4}
+                            progress={Math.round(details.rating * 10)}
+                          />
+                        </HStack>
                       )}
-                    </Text>
-                    <MenuOnCards
-                      movie={movie}
-                      type="default"
-                      instanceId={`${title}-${timeWindow}-${index}-${movie.id}`}
-                    />
-                  </CardBody>
-                </MotionCard>
-              ))}
+                    </Box>
+
+                    <CardBody p="4" pt={cardType === "cast" ? "2" : "6"}>
+                      <Box whiteSpace="normal">
+                        <Heading
+                          fontSize="1em"
+                          color="black"
+                          as={ReactRouterLink}
+                          to={details.linkPath}
+                          _hover={{ color: "#022441" }}
+                          noOfLines={1}
+                        >
+                          {details.name}
+                        </Heading>
+
+                        {details.subtitle && (
+                          <Text
+                            fontSize="0.9em"
+                            color="gray.500"
+                            noOfLines={1}
+                            mt="1"
+                          >
+                            {details.subtitle}
+                          </Text>
+                        )}
+                      </Box>
+
+                      {/* Only show menu for movies/TV shows, not cast */}
+                      {cardType !== "cast" && (
+                        <MenuOnCards
+                          movie={item}
+                          type="default"
+                          instanceId={`${title}-${timeWindow}-${index}-${details.id}`}
+                        />
+                      )}
+                    </CardBody>
+                  </MotionCard>
+                );
+              })}
             </MotionBox>
           )}
         </AnimatePresence>
-      </HStack>
+      </Box>
     </Box>
   );
 };
