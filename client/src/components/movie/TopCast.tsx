@@ -54,11 +54,19 @@ function TopCast({ movie }: TopCastProps) {
     movie.credits.cast.length === 0
   ) {
     return (
-      <Box maxW={"1300px"} width={"100%"} pt={"30px"} pb={"30px"}>
+      <Box width="100%">
+        {" "}
+        {/* Changed from maxW={"1300px"} to width="100%" */}
         <Heading size="lg" mb={4}>
           Top Billed Cast
         </Heading>
-        <Text>No cast information available.</Text>
+        <Cards
+          customData={movie.credits?.cast}
+          maxItems={10}
+          cardType="cast"
+          showLinkSelector={false}
+          cardSize="small" // Use smaller card size to fit more in the container
+        />
       </Box>
     );
   }
@@ -74,7 +82,7 @@ function TopCast({ movie }: TopCastProps) {
   }));
 
   return (
-    <Box maxW={"1300px"} width={"100%"} pt={"30px"} pb={"30px"}>
+    <Box maxW={"1300px"} width={"100%"}>
       <Cards
         customData={movie.credits.cast}
         maxItems={10}

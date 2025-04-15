@@ -40,8 +40,6 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
   return (
     <HStack
       width={"100%"}
-      pt={"30px"}
-      pb={"30px"}
       display={"flex"}
       justifyContent={"center"}
       alignItems={"center"}

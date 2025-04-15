@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
   Card,
-  CardHeader,
   Heading,
   CardBody,
   Text,
@@ -10,7 +9,6 @@ import {
   SkeletonText,
   SkeletonCircle,
   Box,
-  Link,
   Image,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -234,7 +232,12 @@ const Cards: React.FC<CardsProps> = ({
   };
 
   return (
-    <Box width="100%" maxW="1300px" margin="0 auto">
+    <Box
+      position="relative" // Make the main container relative
+      width="100%"
+    >
+      {" "}
+      {/* Remove the maxW and use width 100% to respect parent container */}
       {/* Title and Link Selector Header */}
       {(title || showLinkSelector) && (
         <HStack spacing={4} mb={4} width="100%">
@@ -258,183 +261,191 @@ const Cards: React.FC<CardsProps> = ({
           )}
         </HStack>
       )}
+      {/* Container with blur overlay */}
+      <Box position="relative" width="100%">
+        {/* Fixed blur overlay */}
+        <Box
+          position="absolute"
+          top={0}
+          right={0}
+          height="100%"
+          width="60px"
+          zIndex={2}
+          pointerEvents="none" // Let events pass through
+          background="linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 70%, rgba(255,255,255,1) 100%)"
+        />
 
-      {/* Items List with Animation */}
-      <Box
-        overflowX="auto"
-        whiteSpace="nowrap"
-        width="100%"
-        padding="10px"
-        boxSizing="border-box"
-        css={{
-          "&::-webkit-scrollbar": {
-            height: "4px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "#f1f1f1",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "#888",
-            borderRadius: "2px",
-          },
-          "&::-webkit-scrollbar-thumb:hover": {
-            background: "#555",
-          },
-        }}
-      >
-        <AnimatePresence mode="wait">
-          {isLoading ? (
-            <MotionBox
-              key="loading"
-              display="flex"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              width="100%"
-            >
-              {Array.from({ length: maxItems }).map((_, index) => (
-                <Card
-                  key={index}
-                  display="inline-block"
-                  width={width}
-                  height={height}
-                  flex="0 0 auto"
-                  marginRight="20px"
-                  backgroundColor="transparent"
-                >
-                  <Skeleton
-                    height={cardType === "cast" ? "225px" : "300px"}
-                    borderRadius="10px"
-                  />
-                  <CardBody p="4">
-                    <SkeletonText noOfLines={2} spacing="4" />
-                    {cardType !== "cast" && <SkeletonCircle size="10" mt="4" />}
-                  </CardBody>
-                </Card>
-              ))}
-            </MotionBox>
-          ) : (
-            <MotionBox
-              key="content"
-              display="flex"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              width="100%"
-            >
-              {items.slice(0, maxItems).map((item, index) => {
-                const details = getItemDetails(item);
-
-                // Add this right before your return statement in the map function
-                console.log({
-                  itemName: item.name || item.title,
-                  cardType,
-                  hasCharacter: "character" in item,
-                  details: details,
-                });
-                return (
-                  <MotionCard
-                    key={`${details.id}-${index}`}
+        {/* Scrollable content */}
+        <Box
+          overflowX="auto"
+          whiteSpace="nowrap"
+          padding="10px"
+          boxSizing="border-box"
+          css={{
+            "&::-webkit-scrollbar": {
+              height: "4px",
+            },
+            "&::-webkit-scrollbar-track": {
+              background: "#f1f1f1",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: "#888",
+              borderRadius: "2px",
+            },
+            "&::-webkit-scrollbar-thumb:hover": {
+              background: "#555",
+            },
+          }}
+        >
+          <AnimatePresence mode="wait">
+            {isLoading ? (
+              <MotionBox
+                key="loading"
+                display="flex"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                width="100%"
+              >
+                {Array.from({ length: maxItems }).map((_, index) => (
+                  <Card
+                    key={index}
                     display="inline-block"
                     width={width}
                     height={height}
                     flex="0 0 auto"
                     marginRight="20px"
                     backgroundColor="transparent"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                      transition: {
-                        delay: index * 0.05,
-                        duration: 0.4,
-                      },
-                    }}
-                    borderRadius="10px"
-                    overflow="hidden"
                   >
-                    <Box
-                      as={ReactRouterLink}
-                      to={details.linkPath}
-                      position="relative"
+                    <Skeleton
+                      height={cardType === "cast" ? "225px" : "300px"}
+                      borderRadius="10px"
+                    />
+                    <CardBody p="4">
+                      <SkeletonText noOfLines={2} spacing="4" />
+                      {cardType !== "cast" && (
+                        <SkeletonCircle size="10" mt="4" />
+                      )}
+                    </CardBody>
+                  </Card>
+                ))}
+              </MotionBox>
+            ) : (
+              <MotionBox
+                key="content"
+                display="flex"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                width="100%"
+              >
+                {items.slice(0, maxItems).map((item, index) => {
+                  const details = getItemDetails(item);
+
+                  return (
+                    <MotionCard
+                      key={`${details.id}-${index}`}
+                      display="inline-block"
+                      width={width}
+                      height={height}
+                      flex="0 0 auto"
+                      marginRight="20px"
+                      backgroundColor="transparent"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                        transition: {
+                          delay: index * 0.05,
+                          duration: 0.4,
+                        },
+                      }}
                       borderRadius="10px"
                       overflow="hidden"
-                      height={cardType === "cast" ? "250px" : "350px"}
-                      width={"300px"}
                     >
-                      <Image
-                        src={`https://image.tmdb.org/t/p/w500${
-                          details.imagePath || ""
-                        }`}
-                        alt={details.name}
-                        width="100%"
-                        height="80%"
-                        objectFit="cover" // Changed from "cover" to "contain"
+                      <Box
+                        as={ReactRouterLink}
+                        to={details.linkPath}
+                        position="relative"
                         borderRadius="10px"
-                        fallbackSrc="/placeholder-image.jpg"
-                      />
+                        overflow="hidden"
+                        height={cardType === "cast" ? "250px" : "350px"}
+                        width={"300px"}
+                      >
+                        <Image
+                          src={`https://image.tmdb.org/t/p/w500${
+                            details.imagePath || ""
+                          }`}
+                          alt={details.name}
+                          width="100%"
+                          height="80%"
+                          objectFit="cover" // Changed from "cover" to "contain"
+                          borderRadius="10px"
+                          fallbackSrc="/placeholder-image.jpg"
+                        />
 
-                      {/* Only show rating for movies/TV shows, never for cast */}
-                      {!details.isCast && details.rating !== null && (
-                        <HStack
-                          position="absolute"
-                          bottom="-15px"
-                          left="10px"
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                        >
-                          <VoteAverageRing
-                            radius={50}
-                            stroke={4}
-                            progress={Math.round(details.rating * 10)}
-                          />
-                        </HStack>
-                      )}
-                    </Box>
-
-                    <CardBody p="4" pt={cardType === "cast" ? "2" : "6"}>
-                      <Box whiteSpace="normal">
-                        <Heading
-                          fontSize="1em"
-                          color="black"
-                          as={ReactRouterLink}
-                          to={details.linkPath}
-                          _hover={{ color: "#022441" }}
-                          noOfLines={1}
-                        >
-                          {details.name}
-                        </Heading>
-
-                        {details.subtitle && (
-                          <Text
-                            fontSize="0.9em"
-                            color="gray.500"
-                            noOfLines={1}
-                            mt="1"
+                        {/* Only show rating for movies/TV shows, never for cast */}
+                        {!details.isCast && details.rating !== null && (
+                          <HStack
+                            position="absolute"
+                            bottom="-15px"
+                            left="10px"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
                           >
-                            {details.subtitle}
-                          </Text>
+                            <VoteAverageRing
+                              radius={50}
+                              stroke={4}
+                              progress={Math.round(details.rating * 10)}
+                            />
+                          </HStack>
                         )}
                       </Box>
 
-                      {/* Only show menu for movies/TV shows, not cast */}
-                      {cardType !== "cast" && (
-                        <MenuOnCards
-                          movie={item}
-                          type="default"
-                          instanceId={`${title}-${timeWindow}-${index}-${details.id}`}
-                        />
-                      )}
-                    </CardBody>
-                  </MotionCard>
-                );
-              })}
-            </MotionBox>
-          )}
-        </AnimatePresence>
+                      <CardBody p="4" pt={cardType === "cast" ? "2" : "6"}>
+                        <Box whiteSpace="normal">
+                          <Heading
+                            fontSize="1em"
+                            color="black"
+                            as={ReactRouterLink}
+                            to={details.linkPath}
+                            _hover={{ color: "#022441" }}
+                            noOfLines={1}
+                          >
+                            {details.name}
+                          </Heading>
+
+                          {details.subtitle && (
+                            <Text
+                              fontSize="0.9em"
+                              color="gray.500"
+                              noOfLines={1}
+                              mt="1"
+                            >
+                              {details.subtitle}
+                            </Text>
+                          )}
+                        </Box>
+
+                        {/* Only show menu for movies/TV shows, not cast */}
+                        {cardType !== "cast" && (
+                          <MenuOnCards
+                            movie={item}
+                            type="default"
+                            instanceId={`${title}-${timeWindow}-${index}-${details.id}`}
+                          />
+                        )}
+                      </CardBody>
+                    </MotionCard>
+                  );
+                })}
+              </MotionBox>
+            )}
+          </AnimatePresence>
+        </Box>
       </Box>
     </Box>
   );
