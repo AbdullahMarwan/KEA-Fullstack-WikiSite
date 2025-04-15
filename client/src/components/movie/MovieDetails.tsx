@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import {fetchTrendingMovies} from "../../services/api"; // Adjust the import path as necessary
 
 const MovieDetails = () => {
   const { id } = useParams(); // This grabs the `id` from the URL
@@ -8,9 +9,7 @@ const MovieDetails = () => {
   useEffect(() => {
     const fetchMovie = async () => {
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${id}?api_key=YOUR_API_KEY`
-        );
+        const response = await fetch (fetchTrendingMovies(id));
         const data = await response.json();
         console.log(data);
         setMovie(data);
