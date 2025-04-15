@@ -215,77 +215,93 @@ const Cards: React.FC<CardsProps> = ({
               width="100%"
             >
               {movies.slice(0, maxItems).map((movie, index) => (
-                <Box
-                  as={ReactRouterLink}
-                  to={`/movie/${movie.id}`}
+                <MotionCard
                   key={movie.id}
-                  _hover={{ textDecoration: "none" }}
+                  display="inline-block"
+                  width="250px"
+                  height="400px"
+                  flex="0 0 auto"
+                  marginRight="20px"
+                  backgroundColor="transparent"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                      delay: index * 0.05,
+                      duration: 0.4,
+                    },
+                  }}
                 >
-                  <MotionCard
+                  <Box
+                    as={ReactRouterLink}
+                    to={`/movie/${movie.id}`}
                     key={movie.id}
-                    display="inline-block"
-                    width="250px"
-                    height="400px"
-                    flex="0 0 auto"
-                    marginRight="20px"
-                    backgroundColor="transparent"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                      transition: {
-                        delay: index * 0.05,
-                        duration: 0.4,
-                      },
-                    }}
+                    _hover={{ textDecoration: "none" }}
+                    position="relative"
+                    borderRadius="10px"
+                    overflow="hidden"
                   >
-                    <div
-                      style={{
-                        backgroundImage: `url(https://image.tmdb.org/t/p/w500${movie.poster_path})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        height: "300px",
-                        position: "relative",
-                        borderRadius: "10px",
-                      }}
+                    <Box
+                      width="100%"
+                      height="75%"
+                      max-height="100px"
+                      backgroundImage={`url(https://image.tmdb.org/t/p/w500${
+                        movie.poster_path || ""
+                      })`}
+                      backgroundSize="cover"
+                      backgroundPosition="center"
+                      borderRadius="10px"
+                    />
+
+                    <HStack
+                      position="absolute"
+                      bottom="-1em"
+                      left="20px"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
                     >
-                      <HStack
-                        position="absolute"
-                        bottom="-1em"
-                        left="20px"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <VoteAverageRing
-                          radius={50}
-                          stroke={4}
-                          progress={Math.round(movie.vote_average * 10)}
-                        />
-                      </HStack>
-                    </div>
-                    <CardBody padding="20px 20px 20px 20px">
-                      <CardHeader padding="0">
-                        <Heading fontSize="1em" color="black" isTruncated>
-                          {movie.title ||
-                            (movie as unknown as TvShow).name ||
-                            "Unknown Title"}
-                        </Heading>
-                      </CardHeader>
-                      <Text fontSize="1em" color="black" noOfLines={1}>
-                        {formatDate(
-                          movie.release_date ||
-                            (movie as unknown as TvShow).first_air_date
-                        )}
-                      </Text>
-                      <MenuOnCards
-                        movie={movie}
-                        type="default"
-                        instanceId={`${title}-${timeWindow}-${index}-${movie.id}`}
+                      <VoteAverageRing
+                        radius={50}
+                        stroke={4}
+                        progress={Math.round(movie.vote_average * 10)}
                       />
-                    </CardBody>
-                  </MotionCard>
-                </Box>
+                    </HStack>
+                  </Box>
+                  <CardBody padding="20px 20px 20px 20px">
+                    <CardHeader padding="0">
+                      <Heading
+                        fontSize="1em"
+                        color="black"
+                        as={ReactRouterLink}
+                        to={`/movie/${movie.id}`}
+                        key={movie.id}
+                        _hover={{ color: "#022441" }}
+                        whiteSpace="normal"
+                        wordBreak="break-word"
+                      >
+                        {movie.title ||
+                          (movie as unknown as TvShow).name ||
+                          "Unknown Title"}
+                      </Heading>
+                    </CardHeader>
+                    <Text fontSize="1em" color="gray.500" noOfLines={1}>
+                      {formatDate(
+                        movie.release_date ||
+                          (movie as unknown as TvShow).first_air_date
+                      ).replace(
+                        /(\d+)\. (\w{3})\w* (\d+)/,
+                        (_, day, month, year) => `${day} ${month} ${year}`
+                      )}
+                    </Text>
+                    <MenuOnCards
+                      movie={movie}
+                      type="default"
+                      instanceId={`${title}-${timeWindow}-${index}-${movie.id}`}
+                    />
+                  </CardBody>
+                </MotionCard>
               ))}
             </MotionBox>
           )}

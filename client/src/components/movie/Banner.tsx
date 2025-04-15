@@ -1,40 +1,42 @@
+// Banner.tsx
 import React from "react";
-import {
-  Text,
-  HStack,
-  Box,
-  Flex,
-  Heading,
-  Grid,
-  GridItem,
-} from "@chakra-ui/react";
+import { Box, Grid, GridItem } from "@chakra-ui/react";
 import MovieDetails from "./MovieDetails";
 
-const Banner = () => {
+interface Genre {
+  id: number;
+  name: string;
+}
+
+interface Movie {
+  id: number;
+  title: string;
+  overview: string;
+  release_date: string;
+  genres: Genre[];
+  vote_average: number;
+  poster_path: string;
+  backdrop_path: string;
+  runtime?: number;
+  tagline: string;
+}
+
+interface BannerProps {
+  movie: Movie;
+}
+
+const Banner: React.FC<BannerProps> = ({ movie }) => {
   return (
-    // Wrapper Box with padding
-    <Box padding="20px">
-      <Grid
-        templateAreas={{
-          base: `"header" 
-                   "aside" 
-                   "main"`, // Stack vertically on mobile
-          md: `"header header" 
-                 "aside main"`, // Side by side on medium screens and up
-        }}
-        gridTemplateColumns={{
-          base: "1fr", // Full width single column on mobile
-          // Fixed width aside, flexible main on medium screens and up
-        }}
-        width="100%"
-        maxWidth="1300px"
-        margin="0 auto"
-        columnGap={6} // Add gap only between columns (side-to-side)
-      >
-        <GridItem area={"aside"}></GridItem>
-        <MovieDetails />
-        <GridItem area={"main"}></GridItem>
-      </Grid>
+    <Box
+      backgroundImage={`linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`}
+      backgroundSize="cover"
+      backgroundPosition="left calc((50vw - 170px) - 340px) top"
+      display={"flex"}
+      justifyContent={"center"}
+      alignItems={"center"}
+      padding={"20px"}
+    >
+      <MovieDetails movie={movie} />
     </Box>
   );
 };

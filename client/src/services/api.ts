@@ -179,6 +179,36 @@ export const fetchUpcomingMovies = async () => {
   }
 };
 
+// fetch specific movie by ID
+
+// In your api.ts file
+export const fetchMovieById = async (movieId: string) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/movie/${movieId}?api_key=${apiKey}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching movie with ID ${movieId}:`, error);
+    throw error;
+  }
+};
+
+// fetch specific movie by ID
+
+// In your api.ts file
+export const fetchMovieCredits = async (movieId: string) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/movie/${movieId}/credits?api_key=${apiKey}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching movie with ID ${movieId}:`, error);
+    throw error;
+  }
+};
+
 ////////////////////////////////////////////////////////////////////////
 /////////////////////// Fetching TV shows //////////////////////////////
 ////////////////////////////////////////////////////////////////////////

@@ -1,42 +1,123 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import {fetchTrendingMovies} from "../../services/api"; // Adjust the import path as necessary
+// MovieDetails.tsx
+import React from "react";
+import {
+  HStack,
+  Box,
+  Image,
+  Heading,
+  Text,
+  Button,
+  Link,
+} from "@chakra-ui/react";
+import VoteAverageRing from "../Homepage/voteAverageRing";
+import ToolTips from "./ToolTips";
+import Credits from "./Credits";
 
-const MovieDetails = () => {
-  const { id } = useParams(); // This grabs the `id` from the URL
-  const [movie, setMovie] = useState(null);
+interface Genre {
+  id: number;
+  name: string;
+}
 
-  useEffect(() => {
-    const fetchMovie = async () => {
-      try {
-        const response = await fetch (fetchTrendingMovies(id));
-        const data = await response.json();
-        console.log(data);
-        setMovie(data);
-      } catch (error) {
-        console.error("Error fetching movie details:", error);
-      }
-    };
+interface Movie {
+  id: number;
+  title: string;
+  overview: string;
+  release_date: string;
+  genres: Genre[];
+  credits?: Credits; // Should be an object, not an array, and it's optional
+  vote_average: number;
+  poster_path: string;
+  backdrop_path: string;
+  runtime?: number;
+  tagline: string;
+}
 
-    if (id) {
-      fetchMovie();
-    }
-  }, [id]);
+interface MovieDetailsProps {
+  movie: Movie;
+}
 
+const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
   return (
-    <div>
-      <h1>Movie Details</h1>
-      {movie ? (
-        <div>
-          <h2>{movie}</h2>
-          <p>{movie}</p>
-          <p>Release Date: {movie}</p>
-          <p>Rating: {movie}</p>
-        </div>
-      ) : (
-        <p>Loading...</p>
-      )}
-    </div>
+    <HStack
+      width={"100%"}
+      pt={"30px"}
+      pb={"30px"}
+      display={"flex"}
+      justifyContent={"center"}
+      alignItems={"center"}
+      columnGap={10}
+      maxW={"1300px"}
+    >
+      <Image
+        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+        alt={movie.title}
+        height="500px"
+        borderRadius="10px"
+        objectFit="cover"
+      />
+      <Box
+        color={"white"}
+        height={"100%"}
+        width={"100%"}
+        display={"flex"}
+        alignItems={"space-around"}
+        flexDirection={"column"}
+        gap={5}
+      >
+        <Heading>
+          {movie.title}{" "}
+          <Box as="span" fontWeight={"400"} color="gray.300">
+            ({new Date(movie.release_date).getFullYear()})
+          </Box>
+        </Heading>
+        <Box as="span" fontWeight={"400"} color="gray.400">
+          {movie.release_date}
+          <Box as="span" mx={2}>
+            •
+          </Box>
+          {movie.genres.map((genre) => genre.name).join(", ")}
+          <Box as="span" mx={2}>
+            •
+          </Box>
+          {movie.runtime
+            ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m`
+            : ""}
+        </Box>
+        <Box display={"flex"} alignItems={"center"}>
+          <VoteAverageRing
+            radius={50}
+            stroke={4}
+            progress={Math.round(movie.vote_average * 10)}
+          />
+          <Text fontWeight={"700"} ml={2}>
+            User Score
+          </Text>
+          <Button
+            background={"#022441"}
+            ml={4}
+            _hover={{
+              transform: "scale(1.05)",
+              transition: "transform 0.2s ease-in-out",
+            }}
+          >
+            What's your vibe?
+          </Button>
+        </Box>
+        <ToolTips />
+        <Text fontSize="lg" fontStyle="italic" color="gray.300">
+          {movie.tagline}
+        </Text>
+        <Box>
+          <Heading fontSize={"1.5em"} fontWeight={600}>
+            Overview
+          </Heading>
+          <Text fontSize="lg" fontStyle="italic" color="gray.300">
+            {movie.overview}
+          </Text>
+        </Box>
+        <Credits movie={movie} />
+      </Box>
+    </HStack>
   );
 };
 

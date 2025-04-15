@@ -13,6 +13,7 @@ import GlobalSearchBar from "./components/Homepage/GlobalSearchBar";
 import PersonSingle from "./pages/Person";
 import MoviesSubPage from "./pages/MoviesSubPage";
 import Movie from "./pages/Movie";
+import ResetCSS from "./components/Global/ResetCSS";
 
 const Layout = () => {
   return (
@@ -35,20 +36,23 @@ const Layout = () => {
 
 function App() {
   return (
-    <SearchProvider>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Homepage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/movies" element={<Movies />} />
-          <Route path="/movie/:id" element={<Movie />} />
-          <Route path="/persons" element={<Persons />} />
-          <Route path="/persons/:id" element={<PersonSingle />} />
-          <Route path="/moviesSubPage" element={<MoviesSubPage />} />
-        </Route>
-      </Routes>
-    </SearchProvider>
+    <>
+      <ResetCSS />
+      <SearchProvider>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Homepage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/movies" element={<Movies />} />
+            <Route path="/movie/:id" element={<Movie />} />
+            <Route path="/persons" element={<Persons />} />
+            <Route path="/persons/:id" element={<PersonSingle />} />
+            <Route path="/moviesSubPage" element={<MoviesSubPage />} />
+          </Route>
+        </Routes>
+      </SearchProvider>
+    </>
   );
 }
 
