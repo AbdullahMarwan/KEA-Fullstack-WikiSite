@@ -405,7 +405,11 @@ const Cards: React.FC<CardsProps> = ({
                         )}
                       </Box>
 
-                      <CardBody p="4" pt={cardType === "cast" ? "2" : "6"}>
+                      <CardBody
+                        height={"20%"}
+                        display={"flex"}
+                        alignItems={"center"}
+                      >
                         <Box whiteSpace="normal">
                           <Heading
                             fontSize="1em"
