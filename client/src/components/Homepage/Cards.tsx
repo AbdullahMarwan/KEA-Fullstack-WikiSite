@@ -10,12 +10,14 @@ import {
   SkeletonText,
   SkeletonCircle,
   Box,
+  Link,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { fetchTrendingMovies } from "../../services/api";
 import VoteAverageRing from "./voteAverageRing";
 import MenuOnCards from "./MenuOnCards";
 import LinkSelector from "./LinkSelector";
+import { Link as ReactRouterLink } from "react-router-dom";
 
 // Create motion components
 const MotionCard = motion(Card);
@@ -213,70 +215,77 @@ const Cards: React.FC<CardsProps> = ({
               width="100%"
             >
               {movies.slice(0, maxItems).map((movie, index) => (
-                <MotionCard
+                <Box
+                  as={ReactRouterLink}
+                  to={`/movie/${movie.id}`}
                   key={movie.id}
-                  display="inline-block"
-                  width="250px"
-                  height="400px"
-                  flex="0 0 auto"
-                  marginRight="20px"
-                  backgroundColor="transparent"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                    transition: {
-                      delay: index * 0.05,
-                      duration: 0.4,
-                    },
-                  }}
+                  _hover={{ textDecoration: "none" }}
                 >
-                  <div
-                    style={{
-                      backgroundImage: `url(https://image.tmdb.org/t/p/w500${movie.poster_path})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      height: "300px",
-                      position: "relative",
-                      borderRadius: "10px",
+                  <MotionCard
+                    key={movie.id}
+                    display="inline-block"
+                    width="250px"
+                    height="400px"
+                    flex="0 0 auto"
+                    marginRight="20px"
+                    backgroundColor="transparent"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      transition: {
+                        delay: index * 0.05,
+                        duration: 0.4,
+                      },
                     }}
                   >
-                    <HStack
-                      position="absolute"
-                      bottom="-1em"
-                      left="20px"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
+                    <div
+                      style={{
+                        backgroundImage: `url(https://image.tmdb.org/t/p/w500${movie.poster_path})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        height: "300px",
+                        position: "relative",
+                        borderRadius: "10px",
+                      }}
                     >
-                      <VoteAverageRing
-                        radius={50}
-                        stroke={4}
-                        progress={Math.round(movie.vote_average * 10)}
+                      <HStack
+                        position="absolute"
+                        bottom="-1em"
+                        left="20px"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <VoteAverageRing
+                          radius={50}
+                          stroke={4}
+                          progress={Math.round(movie.vote_average * 10)}
+                        />
+                      </HStack>
+                    </div>
+                    <CardBody padding="20px 20px 20px 20px">
+                      <CardHeader padding="0">
+                        <Heading fontSize="1em" color="black" isTruncated>
+                          {movie.title ||
+                            (movie as unknown as TvShow).name ||
+                            "Unknown Title"}
+                        </Heading>
+                      </CardHeader>
+                      <Text fontSize="1em" color="black" noOfLines={1}>
+                        {formatDate(
+                          movie.release_date ||
+                            (movie as unknown as TvShow).first_air_date
+                        )}
+                      </Text>
+                      <MenuOnCards
+                        movie={movie}
+                        type="default"
+                        instanceId={`${title}-${timeWindow}-${index}-${movie.id}`}
                       />
-                    </HStack>
-                  </div>
-                  <CardBody padding="20px 20px 20px 20px">
-                    <CardHeader padding="0">
-                      <Heading fontSize="1em" color="black" isTruncated>
-                        {movie.title ||
-                          (movie as unknown as TvShow).name ||
-                          "Unknown Title"}
-                      </Heading>
-                    </CardHeader>
-                    <Text fontSize="1em" color="black" noOfLines={1}>
-                      {formatDate(
-                        movie.release_date ||
-                          (movie as unknown as TvShow).first_air_date
-                      )}
-                    </Text>
-                    <MenuOnCards
-                      movie={movie}
-                      type="default"
-                      instanceId={`${title}-${timeWindow}-${index}-${movie.id}`}
-                    />
-                  </CardBody>
-                </MotionCard>
+                    </CardBody>
+                  </MotionCard>
+                </Box>
               ))}
             </MotionBox>
           )}
