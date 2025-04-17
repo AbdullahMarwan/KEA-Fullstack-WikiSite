@@ -29,7 +29,7 @@ function MovieAside({ movie }: MovieAsideProps) {
         boxSize={"100%"}
         fontSize={"1.5em"}
         display="flex"
-        alignItems={"center"}
+        alignItems={"flex-start"}
         gap={3}
       >
         <Link>

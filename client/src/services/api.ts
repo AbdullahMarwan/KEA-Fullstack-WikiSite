@@ -242,10 +242,30 @@ export const fetchPopularTvSeries = async (category: string = "popular") => {
   }
 };
 
+////////////////////////////////////////////////////////////////////////
+/////////////////////// Fetching Persons ///////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
 export const fetchPopularPersons = async () => {
   try {
     const response = await axios.get(
       `${baseUrl}/trending/person/day?api_key=${apiKey}`
+    );
+    return response.data; // Return the entire response object
+  } catch (error) {
+    console.error("Error fetching popular persons:", error);
+    throw error;
+  }
+};
+
+////////////////////////////////////////////////////////////////////////
+/////////////////////// Fetching Movie Reviews /////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+export const fetchMovieReviews = async (movieId: number) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/movie/${movieId}/reviews?api_key=${apiKey}`
     );
     return response.data; // Return the entire response object
   } catch (error) {

@@ -7,6 +7,7 @@ import SecondaryNav from "../components/movie/SecondaryNav";
 import Banner from "../components/movie/Banner";
 import TopCast from "../components/movie/TopCast";
 import MovieAside from "../components/movie/MovieAside";
+import SocialCtn from "../components/movie/SocialCtn";
 
 // Define the Movie interface here (you can also move it to a types file)
 interface Genre {
@@ -58,7 +59,6 @@ interface Movie {
 function Movie() {
   const { id } = useParams<{ id: string }>();
   const [movie, setMovie] = useState<Movie | null>(null);
-  const [credit, setCredit] = useState<Credits | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -70,8 +70,6 @@ function Movie() {
       try {
         // Fetch movie details
         const movieData = await fetchMovieById(id);
-
-        console.log(movieData);
 
         // Fetch credits separately
         const creditData = await fetchMovieCredits(id);
@@ -150,13 +148,26 @@ function Movie() {
             gap={10}
           >
             {" "}
-            <Box flex="8" maxW="80%">
-              {" "}
-              {movie && (
-                <TopCast movie={{ ...movie, genres: movie.genres ?? [] }} />
-              )}
+            <HStack flexDirection={"column"} alignItems={"flex-start"}>
+              <Box flex="7">
+                {" "}
+                {movie && (
+                  <TopCast movie={{ ...movie, genres: movie.genres ?? [] }} />
+                )}
+              </Box>
+              <Link fontWeight={700} _hover={{ textDecoration: "none" }}>
+                Full Cast & Crew
+              </Link>
+              <SocialCtn />
+            </HStack>
+            <Box
+              flex="3"
+              display={"flex"}
+              alignItems={"flex-start"}
+              flexDirection={"column"}
+            >
+              {movie && <MovieAside movie={movie} />}
             </Box>
-            <Box flex="2">{movie && <MovieAside movie={movie} />}</Box>
           </HStack>
         </Box>
       </HStack>
