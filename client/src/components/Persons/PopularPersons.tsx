@@ -54,7 +54,7 @@ const PopularPersons = () => {
       <Grid
         templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }}
         gap={6}
-        maxWidth={{ base: "600px", lg: "1200px" }}
+        maxWidth={{ base: "600px", md: "900px", lg: "1200px" }}
         marginBottom={200}
       >
         {(isLoading ? Array.from({ length: personsPerPage }) : personsToDisplay).map(
@@ -68,9 +68,9 @@ const PopularPersons = () => {
               onClick={() => !isLoading && person?.id && handlePersonClick(person.id)} // Prevent clicks while loading
               style={{ cursor: isLoading ? "default" : "pointer" }} // Disable pointer cursor while loading
             >
-              <Box 
-              w="30vh"
-              h="50vh"
+              <Box
+              w={{ base: "20vh", md: "22vh", lg:"30vh" }}
+              h={{ base: "33vh", md: "40vh", lg: "50vh" }}
               bg="gray.200" 
               overflow="hidden">
                 <Image
