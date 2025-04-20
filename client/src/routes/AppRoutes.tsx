@@ -9,7 +9,6 @@ import App from "../App";
 import { PersonSingle } from "../pages/Person";
 import MoviesSubPage from "../pages/MoviesSubPage";
 
-
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -19,7 +18,7 @@ export const AppRoutes = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/movies" element={<Movies />} />
         <Route path="/persons" element={<Persons />} />
-        <Route path="/persons/:id" element={<PersonSingle />} />
+        <Route path="/person/:id" element={<PersonSingle />} />
         <Route path="/moviesSubPage" element={<MoviesSubPage />} />
       </Route>
     </Routes>
