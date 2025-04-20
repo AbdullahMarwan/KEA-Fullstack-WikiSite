@@ -248,10 +248,17 @@ export const fetchPopularTvSeries = async (category: string = "popular") => {
 
 export const fetchPopularPersons = async () => {
   try {
-    const response = await axios.get(
-      `${baseUrl}/trending/person/day?api_key=${apiKey}`
-    );
-    return response.data; // Return the entire response object
+    const totalPagesToFetch = 5; // 100 persons / 20 persons per page = 5 pages
+    const allResults: any[] = [];
+
+    for (let page = 1; page <= totalPagesToFetch; page++) {
+      const response = await axios.get(
+        `${baseUrl}/person/popular?api_key=${apiKey}&page=${page}`
+      );
+      allResults.push(...response.data.results); // Combine results from each page
+    }
+
+    return allResults; // Return all 100 persons
   } catch (error) {
     console.error("Error fetching popular persons:", error);
     throw error;

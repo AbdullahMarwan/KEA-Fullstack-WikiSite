@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Heading, Box, Button, Grid, GridItem } from "@chakra-ui/react";
+import { Heading, Box, Button, Grid, GridItem, Image} from "@chakra-ui/react";
+import missingImgPlaceholder from "../../assets/missing-img-placeholder-16-9.jpg";
 
 const genderMap: Record<number, string> = {
   0: "Not specified",
@@ -92,10 +93,13 @@ const PersonDetails = () => {
     <div>
       {person.profile_path && (
         <Box display="flex" justifyContent="center" mb={4}>
-          <img
+          <Image
             src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
             alt={`${person.name}'s profile`}
-            style={{ width: "200px", height: "auto" }}
+            boxSize="200px"
+            objectFit="cover"
+            borderRadius="full"
+            boxShadow="lg"
           />
         </Box>
       )}
@@ -147,45 +151,39 @@ const PersonDetails = () => {
       <GridItem mt={"2em"}>
         <Heading as="h3" size="md" mb={2}>
           Known For
-          <img src="../../assets/missing-img-placeholder-16-9.jpg" alt="test"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  minHeight: "4rem",
-                }}
-          />
         </Heading>
-        <Box display="flex" overflowX="auto" gap="1em" p="0em">
-          {credits.map((item, index) => (
-            <Box
-              key={index}
-              minWidth={{ base: 80,}}
-              padding="1em"
-              border="0.1em solid #ccc"
-              borderRadius="0.5em"
-              textAlign="center"
-              backgroundColor="white"
-              boxShadow="md"
-            >
-              {item.backdrop_path && (
-                <img
-                  src={`https://image.tmdb.org/t/p/w500${item.backdrop_path}`}
-                  alt={item.original_title}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    minHeight: "4rem",
-                    backgroundColor: "#808080",
-                    borderRadius: "0.5em",
-                  }}
-                />
-              )}
-              <Heading as="h4" size="sm" mt="0.5em">
-                {item.original_title}
-              </Heading>
-            </Box>
-          ))}
-        </Box>
+        <Box display="flex" overflowX="auto" gap="1em" p="0em" 
+        border={"1px solid #ccc"} borderRight={"0px"}>
+        {credits.map((item, index) => (
+          <Box
+            key={index}
+            minWidth={{ base: 80 }}
+            padding="1em"
+            textAlign="center"
+            backgroundColor="white"
+            boxShadow="md"
+          >
+            <img
+              src={
+                item.backdrop_path
+                  ? `https://image.tmdb.org/t/p/w500${item.backdrop_path}`
+                  : missingImgPlaceholder
+              }
+              alt={item.original_title || "Missing Image"}
+              style={{
+                width: "100%",
+                height: "auto",
+                minHeight: "4rem",
+                backgroundColor: "#808080",
+              }}
+            />
+            <Heading as="h4" size="sm" mt="0.5em">
+              {item.original_title}
+            </Heading>
+          </Box>
+        ))}
+      </Box>
+
       </GridItem>
     </div>
   );
