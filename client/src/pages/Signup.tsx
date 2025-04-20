@@ -1,4 +1,4 @@
-import { Grid, GridItem, Box } from "@chakra-ui/react";
+import { Grid, GridItem, Box, Image } from "@chakra-ui/react";
 import SignupForm from "../components/Signup/SignupForm";
 import SignupAside from "../components/Signup/SignupAside";
 
@@ -24,12 +24,10 @@ const Signup = () => {
         columnGap={6} // Add gap only between columns (side-to-side)
       >
         <GridItem area={"aside"}>
-          <SignupAside />
+          <Image></Image>
         </GridItem>
 
-        <GridItem area={"main"}>
-          <SignupForm />
-        </GridItem>
+        <GridItem area={"main"}></GridItem>
       </Grid>
     </Box>
   );

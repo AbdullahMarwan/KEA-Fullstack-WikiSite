@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Heading, Box } from "@chakra-ui/react";
+import { Heading, Box, Button, Grid, GridItem } from "@chakra-ui/react";
 
 const genderMap: Record<number, string> = {
   0: "Not specified",
@@ -20,6 +20,10 @@ const PersonDetails = () => {
     birthday: string;
     place_of_birth: string;
   } | null>(null);
+  const [credits, setCredits] = useState<
+    { original_title: string; backdrop_path: string }[]
+  >([]);
+  const [showFullBiography, setShowFullBiography] = useState(false);
 
   useEffect(() => {
     const fetchPersonDetails = async () => {
@@ -37,51 +41,152 @@ const PersonDetails = () => {
           birthday: data.birthday,
           place_of_birth: data.place_of_birth,
         });
+        return data; // Return the person data for further use
       } catch (error) {
         console.error("Error fetching person details:", error);
       }
     };
 
-    fetchPersonDetails();
+    const fetchCredits = async (personId: string) => {
+      try {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=475f7c6aa70e55fd5a97a138977bb3cc`
+        );
+        const data = await response.json();
+        const titles = data.cast
+          .map((item: { original_title: string; backdrop_path: string }) => ({
+            original_title: item.original_title,
+            backdrop_path: item.backdrop_path,
+          }))
+          .filter((item) => item.original_title);
+        setCredits(titles);
+      } catch (error) {
+        console.error("Error fetching credits:", error);
+      }
+    };
+
+    const fetchData = async () => {
+      const personData = await fetchPersonDetails();
+      if (personData && personData.id) {
+        await fetchCredits(personData.id);
+      }
+    };
+
+    fetchData();
   }, [id]);
 
   if (!person) {
     return <div>Loading...</div>;
   }
 
+  const toggleBiography = () => {
+    setShowFullBiography((prev) => !prev);
+  };
+
+  const truncatedBiography = person.biography
+    .split("\n")
+    .slice(0, 2)
+    .join("\n");
+
   return (
     <div>
       {person.profile_path && (
         <Box display="flex" justifyContent="center" mb={4}>
-        <img
-          src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
-          alt={`${person.name}'s profile`}
-          style={{ width: "200px", height: "auto" }}
+          <img
+            src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
+            alt={`${person.name}'s profile`}
+            style={{ width: "200px", height: "auto" }}
           />
-          </Box>
+        </Box>
       )}
 
-      <Heading as="h2" size="xl" textAlign="center" margin={"1em"}>{person.name}</Heading>
+      <Heading as="h2" size="xl" textAlign="center" margin={"1em"}>
+        {person.name}
+      </Heading>
 
-      <div> 
-        <Heading as="h3" size="md">Personal Information</Heading>
+      <div>
+        <Heading as="h3" size="md">
+          Personal Information
+        </Heading>
 
         <div>
-          <Heading as="h4" size="sm">Known for</Heading>
-          <p>{person.known_for_department || "No known for department available."}</p>
+          <Heading as="h4" size="sm">
+            Known for
+          </Heading>
+          <p>
+            {person.known_for_department ||
+              "No known for department available."}
+          </p>
         </div>
         <div>
-          <Heading as="h4" size="sm">Gender</Heading>
+          <Heading as="h4" size="sm">
+            Gender
+          </Heading>
           <p>{genderMap[person.gender] || "Not specified"}</p>
         </div>
         <div>
-          <Heading as="h4" size="sm">Birthday</Heading>
+          <Heading as="h4" size="sm">
+            Birthday
+          </Heading>
           <p>{person.birthday || "No known birthday available."}</p>
         </div>
       </div>
 
-      <Heading as="h3" size="md" mt={"2em"}>Biography</Heading>
-      <p>{person.biography || "No biography available."}</p>
+      <Heading as="h3" size="md" mt={"2em"}>
+        Biography
+      </Heading>
+      <p>{showFullBiography ? person.biography : truncatedBiography}</p>
+      {person.biography.split("\n").length > 2 && (
+        <Button onClick={toggleBiography} mt={2} size="sm" colorScheme="blue">
+          {showFullBiography ? "Read Less" : "Read More"}
+        </Button>
+      )}
+      
+
+      {/* New Grid Item for Known For */}
+      <GridItem mt={"2em"}>
+        <Heading as="h3" size="md" mb={2}>
+          Known For
+          <img src="../../assets/missing-img-placeholder-16-9.jpg" alt="test"
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  minHeight: "4rem",
+                }}
+          />
+        </Heading>
+        <Box display="flex" overflowX="auto" gap="1em" p="0em">
+          {credits.map((item, index) => (
+            <Box
+              key={index}
+              minWidth={{ base: 80,}}
+              padding="1em"
+              border="0.1em solid #ccc"
+              borderRadius="0.5em"
+              textAlign="center"
+              backgroundColor="white"
+              boxShadow="md"
+            >
+              {item.backdrop_path && (
+                <img
+                  src={`https://image.tmdb.org/t/p/w500${item.backdrop_path}`}
+                  alt={item.original_title}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    minHeight: "4rem",
+                    backgroundColor: "#808080",
+                    borderRadius: "0.5em",
+                  }}
+                />
+              )}
+              <Heading as="h4" size="sm" mt="0.5em">
+                {item.original_title}
+              </Heading>
+            </Box>
+          ))}
+        </Box>
+      </GridItem>
     </div>
   );
 };
