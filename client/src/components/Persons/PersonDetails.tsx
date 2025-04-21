@@ -92,21 +92,18 @@ const PersonDetails = () => {
   return (
     <div>
       {person.profile_path && (
-        <Box display="flex" justifyContent="center" mb={4}>
+        <Box display="flex" justifyContent="left" mb={4}>
           <Image
             src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
             alt={`${person.name}'s profile`}
             boxSize="200px"
             objectFit="cover"
-            borderRadius="full"
             boxShadow="lg"
           />
         </Box>
       )}
 
-      <Heading as="h2" size="xl" textAlign="center" margin={"1em"}>
-        {person.name}
-      </Heading>
+
 
       <div>
         <Heading as="h3" size="md">
@@ -135,6 +132,10 @@ const PersonDetails = () => {
           <p>{person.birthday || "No known birthday available."}</p>
         </div>
       </div>
+
+      <Heading as="h2" size="xl" textAlign="center" margin={"1em"}>
+        {person.name}
+      </Heading>
 
       <Heading as="h3" size="md" mt={"2em"}>
         Biography
