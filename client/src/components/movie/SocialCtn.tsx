@@ -40,8 +40,6 @@ function SocialCtn() {
 
         movieReviews = movieReviews.results;
 
-        console.log(movieReviews);
-
         // Update state with fetched reviews
         setReviews(movieReviews);
       } catch (err) {
@@ -59,8 +57,8 @@ function SocialCtn() {
           <Heading fontSize={"1.75em"} fontWeight={600} mr={5}>
             Social
           </Heading>
-          <Link fontSize={"1.25em"}>Reviews</Link>
-          <Link fontSize={"1.25em"}>Discussions</Link>
+          <Link fontSize={"1.25em"}>Reviews {reviews.length}</Link>
+          <Link fontSize={"1.25em"}>Discussions {}</Link>
         </HStack>
         <Box
           style={{
@@ -207,6 +205,9 @@ function SocialCtn() {
             })()}
         </Box>
       </Box>
+      <Link fontSize={"1em"} fontWeight={"700"} mt={"15px"}>
+        Read All Reviews
+      </Link>
     </>
   );
 }
