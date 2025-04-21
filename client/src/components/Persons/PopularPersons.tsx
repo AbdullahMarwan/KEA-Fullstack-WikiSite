@@ -29,7 +29,7 @@ const PopularPersons = () => {
   }, []);
 
   const handlePersonClick = (id: number) => {
-    navigate(`./${id}`); // Navigate to ./person.id
+    navigate(`/person/${id}`); // Navigate to ./person.id
   };
 
   // Calculate the persons to display for the current page
