@@ -7,53 +7,157 @@ import { IoMdPlay } from "react-icons/io";
 function ToolTips() {
   return (
     <HStack spacing={"20px"} display={"flex"} alignItems={"center"}>
-      <Box
-        background={"#022441"}
-        h={"50px"}
-        w={"50px"}
-        borderRadius="50%"
-        display={"flex"}
-        justifyContent={"center"}
-        alignItems={"center"}
-      >
-        <Link>
-          {" "}
+      <Link cursor={"pointer"}>
+        <Box
+          background={"#022441"}
+          h={"50px"}
+          w={"50px"}
+          borderRadius="50%"
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          position={"relative"}
+          _hover={{
+            "& > div": {
+              display: "block",
+            },
+          }}
+        >
+          <Box
+            position={"absolute"}
+            top={"100%"}
+            left={"50%"}
+            transform={"translateX(-50%)"}
+            mt={3}
+            width={"max-content"}
+            backgroundColor={"#022441"}
+            p={"5px 10px"}
+            borderRadius={"5px"}
+            display={"none"}
+            _before={{
+              content: '""',
+              position: "absolute",
+              bottom: "100%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              borderWidth: "8px",
+              borderStyle: "solid",
+              borderColor: "transparent transparent #022441 transparent",
+              width: 0,
+              height: 0,
+            }}
+          >
+            <Text fontSize={"1em"}>Add to list</Text>
+          </Box>
           <FaList />
-        </Link>
-      </Box>
+        </Box>
+      </Link>
 
-      <Box
-        background={"#022441"}
-        h={"50px"}
-        w={"50px"}
-        borderRadius="50%"
-        display={"flex"}
-        justifyContent={"center"}
-        alignItems={"center"}
-      >
-        <Link>
-          {" "}
+      <Link cursor={"pointer"}>
+        <Box
+          background={"#022441"}
+          h={"50px"}
+          w={"50px"}
+          borderRadius="50%"
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          position={"relative"}
+          _hover={{
+            "& > div": {
+              display: "block",
+            },
+          }}
+        >
+          <Box
+            position={"absolute"}
+            top={"100%"}
+            left={"50%"}
+            transform={"translateX(-50%)"}
+            mt={3}
+            width={"max-content"}
+            backgroundColor={"#022441"}
+            p={"5px 10px"}
+            borderRadius={"5px"}
+            display={"none"}
+            _before={{
+              content: '""',
+              position: "absolute",
+              bottom: "100%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              borderWidth: "8px",
+              borderStyle: "solid",
+              borderColor: "transparent transparent #022441 transparent",
+              width: 0,
+              height: 0,
+            }}
+          >
+            <Text fontSize={"1em"}>Mark as favorite</Text>
+          </Box>
           <FaHeart />
-        </Link>
-      </Box>
+        </Box>
+      </Link>
+
+      <Link cursor={"pointer"}>
+        <Box
+          background={"#022441"}
+          h={"50px"}
+          w={"50px"}
+          borderRadius="50%"
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          position={"relative"}
+          _hover={{
+            "& > div": {
+              display: "block",
+            },
+          }}
+        >
+          <Box
+            position={"absolute"}
+            top={"100%"}
+            left={"50%"}
+            transform={"translateX(-50%)"}
+            mt={3}
+            width={"max-content"}
+            backgroundColor={"#022441"}
+            p={"5px 10px"}
+            borderRadius={"5px"}
+            display={"none"}
+            _before={{
+              content: '""',
+              position: "absolute",
+              bottom: "100%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              borderWidth: "8px",
+              borderStyle: "solid",
+              borderColor: "transparent transparent #022441 transparent",
+              width: 0,
+              height: 0,
+            }}
+          >
+            <Text fontSize={"1em"}>Add to your watchlist</Text>
+          </Box>
+          <IoBookmark />
+        </Box>
+      </Link>
 
       <Box
-        background={"#022441"}
-        h={"50px"}
-        w={"50px"}
-        borderRadius="50%"
         display={"flex"}
-        justifyContent={"center"}
         alignItems={"center"}
+        gap={2}
+        _hover={{ color: "gray.300" }}
       >
-        <Link>
-          {" "}
-          <IoBookmark />
-        </Link>
-      </Box>
-      <Box display={"flex"} alignItems={"center"} gap={2}>
         <IoMdPlay />
-        <Text fontWeight={700}>Play Trailer</Text>
+        <Link
+          fontWeight={700}
+          _hover={{ color: "gray.300", textDecoration: "none" }}
+        >
+          Play Trailer
+        </Link>
       </Box>
     </HStack>
   );
