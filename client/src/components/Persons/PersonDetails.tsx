@@ -155,17 +155,16 @@ const PersonDetails = () => {
       
 
       
-        <Heading as="h3" size="md" mb={2}>
+        <Heading as="h3" size="md" mb={2} mt={10}>
           Known For
         </Heading>
         <Box 
         display="flex" overflowX="auto" gap="1em" p="0em" 
-        border={"1px solid #ccc"}>
+        >
         {credits.map((item, index) => (
           <Box
             key={index}
             minWidth={{ base: 80 }}
-            padding="1em"
             textAlign="center"
             backgroundColor="white"
             boxShadow="md"
