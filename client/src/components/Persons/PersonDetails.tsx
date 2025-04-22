@@ -90,7 +90,9 @@ const PersonDetails = () => {
     .join("\n");
 
   return (
-    <div>
+    <Grid templateColumns={{ base: "1fr", md: "20vw 40vw" }} gap={0}>
+
+      <GridItem>
       {person.profile_path && (
         <Box display="flex" justifyContent="left" mb={4}>
           <Image
@@ -133,10 +135,13 @@ const PersonDetails = () => {
         </div>
       </div>
 
+      </GridItem>
+
+
+      <GridItem>
       <Heading as="h2" size="xl" textAlign="center" margin={"1em"}>
         {person.name}
       </Heading>
-
       <Heading as="h3" size="md" mt={"2em"}>
         Biography
       </Heading>
@@ -148,8 +153,7 @@ const PersonDetails = () => {
       )}
       
 
-      {/* New Grid Item for Known For */}
-      <GridItem mt={"2em"}>
+      
         <Heading as="h3" size="md" mb={2}>
           Known For
         </Heading>
@@ -184,9 +188,9 @@ const PersonDetails = () => {
           </Box>
         ))}
       </Box>
-
       </GridItem>
-    </div>
+
+    </Grid>
   );
 };
 
