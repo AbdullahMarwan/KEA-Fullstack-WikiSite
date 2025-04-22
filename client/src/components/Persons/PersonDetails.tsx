@@ -66,6 +66,21 @@ const PersonDetails = () => {
       }
     };
 
+    const fetchCombinedCredits = async (personId: string, apiKey: string) => {
+      try {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${apiKey}`
+        );
+        const data = await response.json();
+        console.log(data); // Handle the fetched data as needed
+        console.log("zkhaha")
+      } catch (error) {
+        console.error("Error fetching combined credits:", error);
+      }
+    };
+
+    fetchCombinedCredits(id, "475f7c6aa70e55fd5a97a138977bb3cc");
+
     const fetchData = async () => {
       const personData = await fetchPersonDetails();
       if (personData && personData.id) {
@@ -98,16 +113,13 @@ const PersonDetails = () => {
           <Image 
             src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
             alt={`${person.name}'s profile`}
-            boxSize="300px"
             objectFit="cover"
-            boxShadow="lg"
             borderRadius="1em"
+            width="66%"
+            height="66%"
           />
         </Box>
       )}
-
-
-
       <div>
         <Heading as="h3" size="md">
           Personal Information
@@ -189,6 +201,17 @@ const PersonDetails = () => {
           </Box>
         ))}
       </Box>
+
+
+      <Heading as="h3" size="md" mt={10}> 
+        Directing
+      </Heading>
+
+        <Box>
+
+        </Box>
+
+
       </GridItem>
 
     </Grid>

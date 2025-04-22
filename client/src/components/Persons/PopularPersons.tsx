@@ -54,14 +54,13 @@ const PopularPersons = () => {
       <Grid
         templateColumns={{ base: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }}
         gap={6}
-        maxWidth={{ base: "600px", md: "900px", lg: "1200px" }}
+        maxWidth={{ base: "600px", md: "1000px", lg: "1200px" }}
         marginBottom={200}
       >
         {(isLoading ? Array.from({ length: personsPerPage }) : personsToDisplay).map(
           (person, index) => (
             <GridItem
               key={index}
-              
               border="1px solid #e4e4e4"
               borderRadius="1em"
               overflow="hidden"
