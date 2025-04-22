@@ -98,7 +98,7 @@ const PersonDetails = () => {
           <Image 
             src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
             alt={`${person.name}'s profile`}
-            boxSize="200px"
+            boxSize="300px"
             objectFit="cover"
             boxShadow="lg"
             borderRadius="1em"
@@ -140,7 +140,7 @@ const PersonDetails = () => {
 
 
       <GridItem>
-      <Heading as="h2" size="xl" textAlign="center" margin={"1em"}>
+      <Heading as="h2" size="xl" textAlign="center">
         {person.name}
       </Heading>
       <Heading as="h3" size="md" mt={"2em"}>
