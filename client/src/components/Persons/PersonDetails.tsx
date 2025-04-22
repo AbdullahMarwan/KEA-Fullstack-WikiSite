@@ -95,12 +95,13 @@ const PersonDetails = () => {
       <GridItem>
       {person.profile_path && (
         <Box display="flex" justifyContent="left" mb={4}>
-          <Image
+          <Image 
             src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
             alt={`${person.name}'s profile`}
             boxSize="200px"
             objectFit="cover"
             boxShadow="lg"
+            borderRadius="1em"
           />
         </Box>
       )}
@@ -157,8 +158,9 @@ const PersonDetails = () => {
         <Heading as="h3" size="md" mb={2}>
           Known For
         </Heading>
-        <Box display="flex" overflowX="auto" gap="1em" p="0em" 
-        border={"1px solid #ccc"} borderRight={"0px"}>
+        <Box 
+        display="flex" overflowX="auto" gap="1em" p="0em" 
+        border={"1px solid #ccc"}>
         {credits.map((item, index) => (
           <Box
             key={index}
