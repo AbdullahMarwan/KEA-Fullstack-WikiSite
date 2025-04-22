@@ -6,6 +6,7 @@ import MovieAside from "../components/movie/MovieAside";
 import SocialCtn from "../components/movie/SocialCtn";
 import Media from "../components/movie/Media";
 import { MovieProvider, useMovie } from "../context/MovieContext";
+import Recommendations from "../components/movie/Recommendations";
 
 function MovieContent() {
   const { movie, loading, error } = useMovie();
@@ -75,6 +76,7 @@ function MovieContent() {
               </Link>
               <SocialCtn />
               <Media />
+              <Recommendations />
             </Box>
             <Box flex="3" width="30%">
               <MovieAside movie={movie} />

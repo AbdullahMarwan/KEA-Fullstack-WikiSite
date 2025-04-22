@@ -280,3 +280,19 @@ export const fetchMovieReviews = async (movieId: number) => {
     throw error;
   }
 };
+
+////////////////////////////////////////////////////////////////////////
+/////////////////////// Fetching recommendations ///////////////////////
+////////////////////////////////////////////////////////////////////////
+
+export const fetchRecommendations = async (movieId: number) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/movie/${movieId}/recommendations?api_key=${apiKey}`
+    );
+    return response.data; // Return the entire response object
+  } catch (error) {
+    console.error("Error fetching popular persons:", error);
+    throw error;
+  }
+};
