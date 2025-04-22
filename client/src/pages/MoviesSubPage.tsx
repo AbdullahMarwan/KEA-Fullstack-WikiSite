@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import {
   Heading,
   Box,
+  Portal,
   Select,
   Accordion,
   AccordionItem,
@@ -20,6 +21,9 @@ import {
   GridItem,
   Divider,
 } from "@chakra-ui/react";
+
+//import { createListCollection } from "@chakra-ui/select"; // Import from @chakra-ui/select
+
 import Cards from "../components/Homepage/Cards";
 import {
   fetchTrendingMovies,
@@ -34,6 +38,13 @@ const MoviesSubPage = () => {
   const queryParams = new URLSearchParams(location.search);
   const category = queryParams.get("category") || "popular"; // Default to "popular"
   const defaultTimeWindow = category === "popular" ? "popular" : category;
+
+  const sortingOptions = [
+    { label: "Popularity Descending", value: "popularity.desc" },
+    { label: "Popularity Ascending", value: "popularity.asc" },
+    { label: "Release Date Descending", value: "release_date.desc" },
+    { label: "Release Date Ascending", value: "release_date.asc" },
+  ];
 
   const getCategoryHeading = () => {
     switch (category) {
@@ -64,6 +75,8 @@ const MoviesSubPage = () => {
         return fetchTrendingMovies;
     }
   };
+
+  //const sortingFunction;
 
   return (
     <Box padding="20px">
@@ -102,23 +115,39 @@ const MoviesSubPage = () => {
             <Accordion allowToggle>
               <AccordionItem>
                 <AccordionButton>
-                  <Box flex="1" textAlign="left"  >
-                    <Heading size="md" mb={2}> {/* Increased size to "md" */}
+                  <Box flex="1" textAlign="left">
+                    <Heading size="md" mb={2}>
+                      {" "}
+                      {/* Increased size to "md" */}
                       Sort
                     </Heading>
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
-                <AccordionPanel pb={4} borderTop="1px solid" borderColor="gray.300">
+                <AccordionPanel
+                  pb={4}
+                  borderTop="1px solid"
+                  borderColor="gray.300"
+                >
                   <Box>
                     <Heading size="xs" mb={2}>
                       Sort Results By
                     </Heading>
-                    <Select placeholder="Popularity Descending">
-                      <option value="popularity.desc">Popularity Descending</option>
-                      <option value="popularity.asc">Popularity Ascending</option>
-                      <option value="release_date.desc">Release Date Descending</option>
-                      <option value="release_date.asc">Release Date Ascending</option>
+
+                    <Select
+                      placeholder="Select sorting option"
+                      onChange={(e: any) => {
+                        console.log(e.target.value)
+                        // doSorting(e.target.value);
+                        // switch:
+                        // take value, sort array and set state  
+                      }}
+                    >
+                      {sortingOptions.map((option: any) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
                     </Select>
                   </Box>
                 </AccordionPanel>
@@ -138,13 +167,19 @@ const MoviesSubPage = () => {
               <AccordionItem>
                 <AccordionButton>
                   <Box flex="1" textAlign="left">
-                    <Heading size="md" mb={2}> {/* Increased size to "md" */}
+                    <Heading size="md" mb={2}>
+                      {" "}
+                      {/* Increased size to "md" */}
                       Filters
                     </Heading>
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
-                <AccordionPanel pb={4} borderTop="1px solid" borderColor="gray.300">
+                <AccordionPanel
+                  pb={4}
+                  borderTop="1px solid"
+                  borderColor="gray.300"
+                >
                   {/* Show Me */}
                   <Heading size="sm" mb={2}>
                     Show Me
@@ -158,13 +193,14 @@ const MoviesSubPage = () => {
                   </RadioGroup>
 
                   <Box borderTop="1px solid" borderColor="gray.300">
-                  {/* Availabilities */}
-                  <Heading size="sm" mt={4} mb={2} >
-                    Availabilities
-                  </Heading>
-                  <Checkbox defaultChecked>Search all availabilities?</Checkbox>
+                    {/* Availabilities */}
+                    <Heading size="sm" mt={4} mb={2}>
+                      Availabilities
+                    </Heading>
+                    <Checkbox defaultChecked>
+                      Search all availabilities?
+                    </Checkbox>
                   </Box>
-
 
                   {/* Release Dates */}
                   <Heading size="sm" mt={4} mb={2}>
@@ -175,7 +211,6 @@ const MoviesSubPage = () => {
                     <Input type="date" placeholder="From" />
                     <Input type="date" placeholder="To" />
                   </Stack>
-
 
                   {/* Genres */}
                   <Heading size="sm" mt={4} mb={2}>
