@@ -179,6 +179,36 @@ export const fetchUpcomingMovies = async () => {
   }
 };
 
+// fetch specific movie by ID
+
+// In your api.ts file
+export const fetchMovieById = async (movieId: string) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/movie/${movieId}?api_key=${apiKey}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching movie with ID ${movieId}:`, error);
+    throw error;
+  }
+};
+
+// fetch specific movie by ID
+
+// In your api.ts file
+export const fetchMovieCredits = async (movieId: string) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/movie/${movieId}/credits?api_key=${apiKey}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching movie with ID ${movieId}:`, error);
+    throw error;
+  }
+};
+
 ////////////////////////////////////////////////////////////////////////
 /////////////////////// Fetching TV shows //////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -212,10 +242,53 @@ export const fetchPopularTvSeries = async (category: string = "popular") => {
   }
 };
 
+////////////////////////////////////////////////////////////////////////
+/////////////////////// Fetching Persons ///////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
 export const fetchPopularPersons = async () => {
   try {
+    const totalPagesToFetch = 5; // 100 persons / 20 persons per page = 5 pages
+    const allResults: any[] = [];
+
+    for (let page = 1; page <= totalPagesToFetch; page++) {
+      const response = await axios.get(
+        `${baseUrl}/person/popular?api_key=${apiKey}&page=${page}`
+      );
+      allResults.push(...response.data.results); // Combine results from each page
+    }
+
+    return allResults; // Return all 100 persons
+  } catch (error) {
+    console.error("Error fetching popular persons:", error);
+    throw error;
+  }
+};
+
+////////////////////////////////////////////////////////////////////////
+/////////////////////// Fetching Movie Reviews /////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+export const fetchMovieReviews = async (movieId: number) => {
+  try {
     const response = await axios.get(
-      `${baseUrl}/trending/person/day?api_key=${apiKey}`
+      `${baseUrl}/movie/${movieId}/reviews?api_key=${apiKey}`
+    );
+    return response.data; // Return the entire response object
+  } catch (error) {
+    console.error("Error fetching popular persons:", error);
+    throw error;
+  }
+};
+
+////////////////////////////////////////////////////////////////////////
+/////////////////////// Fetching recommendations ///////////////////////
+////////////////////////////////////////////////////////////////////////
+
+export const fetchRecommendations = async (movieId: number) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/movie/${movieId}/recommendations?api_key=${apiKey}`
     );
     return response.data; // Return the entire response object
   } catch (error) {
