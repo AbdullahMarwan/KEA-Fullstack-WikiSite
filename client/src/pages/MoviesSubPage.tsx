@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Heading,
@@ -40,6 +41,8 @@ const MoviesSubPage = () => {
   const queryParams = new URLSearchParams(location.search);
   const category = queryParams.get("category") || "popular"; // Default to "popular"
   const defaultTimeWindow = category === "popular" ? "popular" : category;
+
+  const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
 
   const sortingOptions = [
     { label: "Popularity Descending", value: "popularity.desc" },
@@ -93,6 +96,20 @@ const MoviesSubPage = () => {
         return [];
     }
   };
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const fetchFunction = getFetchFunction(); // Get the appropriate fetch function
+        const data = await fetchFunction(); // Fetch the movies
+        setMovies(data.results || data); // Update the movies state
+      } catch (error) {
+        console.error("Error fetching movies:", error);
+      }
+    };
+
+    fetchMovies();
+  }, [category]); // Re-run the effect when the category changes
 
   return (
     <Box padding="20px">
@@ -286,7 +303,7 @@ const MoviesSubPage = () => {
               gap={6} // Space between cards
             >
               <Cards
-                fetchFunction={getFetchFunction()}
+                customData={movies} // Pass the fetched movies as customData
                 maxItems={10}
                 title={getCategoryHeading()}
                 showLinkSelector={true}
