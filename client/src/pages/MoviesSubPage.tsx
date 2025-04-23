@@ -1,7 +1,9 @@
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Heading,
   Box,
+  Portal,
   Select,
   Accordion,
   AccordionItem,
@@ -20,6 +22,11 @@ import {
   GridItem,
   Divider,
 } from "@chakra-ui/react";
+
+import { sortByDate, sortByPopularity } from "../utils/sortingHelper";
+
+//import { createListCollection } from "@chakra-ui/select"; // Import from @chakra-ui/select
+
 import Cards from "../components/Homepage/Cards";
 import {
   fetchTrendingMovies,
@@ -34,6 +41,15 @@ const MoviesSubPage = () => {
   const queryParams = new URLSearchParams(location.search);
   const category = queryParams.get("category") || "popular"; // Default to "popular"
   const defaultTimeWindow = category === "popular" ? "popular" : category;
+
+  const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
+
+  const sortingOptions = [
+    { label: "Popularity Descending", value: "popularity.desc" },
+    { label: "Popularity Ascending", value: "popularity.asc" },
+    { label: "Release Date Descending", value: "release_date.desc" },
+    { label: "Release Date Ascending", value: "release_date.asc" },
+  ];
 
   const getCategoryHeading = () => {
     switch (category) {
@@ -64,6 +80,36 @@ const MoviesSubPage = () => {
         return fetchTrendingMovies;
     }
   };
+
+  const doSorting = (value: string) => {
+    switch (value) {
+      case "release_date.desc":
+        return sortByDate(movies, "desc");
+      case "release_date.asc":
+        return sortByDate(movies, "asc");
+      case "popularity.desc":
+        return sortByPopularity(movies, "desc");
+      case "popularity.asc":
+        return sortByPopularity(movies, "asc"); 
+      default:
+        console.warn("Invalid sorting option");
+        return movies; 
+    }
+  };
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const fetchFunction = getFetchFunction(); // Get the appropriate fetch function
+        const data = await fetchFunction(); // Fetch the movies
+        setMovies(data.results || data); // Update the movies state
+      } catch (error) {
+        console.error("Error fetching movies:", error);
+      }
+    };
+
+    fetchMovies();
+  }, [category]); // Re-run the effect when the category changes
 
   return (
     <Box padding="20px">
@@ -102,23 +148,37 @@ const MoviesSubPage = () => {
             <Accordion allowToggle>
               <AccordionItem>
                 <AccordionButton>
-                  <Box flex="1" textAlign="left"  >
-                    <Heading size="md" mb={2}> {/* Increased size to "md" */}
+                  <Box flex="1" textAlign="left">
+                    <Heading size="md" mb={2}>
+                      {" "}
+                      {/* Increased size to "md" */}
                       Sort
                     </Heading>
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
-                <AccordionPanel pb={4} borderTop="1px solid" borderColor="gray.300">
+                <AccordionPanel
+                  pb={4}
+                  borderTop="1px solid"
+                  borderColor="gray.300"
+                >
                   <Box>
                     <Heading size="xs" mb={2}>
                       Sort Results By
                     </Heading>
-                    <Select placeholder="Popularity Descending">
-                      <option value="popularity.desc">Popularity Descending</option>
-                      <option value="popularity.asc">Popularity Ascending</option>
-                      <option value="release_date.desc">Release Date Descending</option>
-                      <option value="release_date.asc">Release Date Ascending</option>
+
+                    <Select
+                      placeholder="Select sorting option"
+                      onChange={(e: any) => {
+                        const sortedMovies = doSorting(e.target.value); // Get the sorted movies
+                        setMovies([...sortedMovies]); // Update the movies state with the sorted movies
+                      }}
+                    >
+                      {sortingOptions.map((option: any) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
                     </Select>
                   </Box>
                 </AccordionPanel>
@@ -138,13 +198,19 @@ const MoviesSubPage = () => {
               <AccordionItem>
                 <AccordionButton>
                   <Box flex="1" textAlign="left">
-                    <Heading size="md" mb={2}> {/* Increased size to "md" */}
+                    <Heading size="md" mb={2}>
+                      {" "}
+                      {/* Increased size to "md" */}
                       Filters
                     </Heading>
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
-                <AccordionPanel pb={4} borderTop="1px solid" borderColor="gray.300">
+                <AccordionPanel
+                  pb={4}
+                  borderTop="1px solid"
+                  borderColor="gray.300"
+                >
                   {/* Show Me */}
                   <Heading size="sm" mb={2}>
                     Show Me
@@ -158,13 +224,14 @@ const MoviesSubPage = () => {
                   </RadioGroup>
 
                   <Box borderTop="1px solid" borderColor="gray.300">
-                  {/* Availabilities */}
-                  <Heading size="sm" mt={4} mb={2} >
-                    Availabilities
-                  </Heading>
-                  <Checkbox defaultChecked>Search all availabilities?</Checkbox>
+                    {/* Availabilities */}
+                    <Heading size="sm" mt={4} mb={2}>
+                      Availabilities
+                    </Heading>
+                    <Checkbox defaultChecked>
+                      Search all availabilities?
+                    </Checkbox>
                   </Box>
-
 
                   {/* Release Dates */}
                   <Heading size="sm" mt={4} mb={2}>
@@ -175,7 +242,6 @@ const MoviesSubPage = () => {
                     <Input type="date" placeholder="From" />
                     <Input type="date" placeholder="To" />
                   </Stack>
-
 
                   {/* Genres */}
                   <Heading size="sm" mt={4} mb={2}>
@@ -233,14 +299,9 @@ const MoviesSubPage = () => {
               gap={6} // Space between cards
             >
               <Cards
-                fetchFunction={getFetchFunction()}
+                customData={movies} // Pass the fetched movies as customData
                 maxItems={10}
-                title={getCategoryHeading()}
-                showLinkSelector={true}
-                links={[
-                  { name: "I dag", href: "#", value: category },
-                  { name: "Denne uge", href: "#", value: "week" },
-                ]}
+                showLinkSelector={false}
                 defaultTimeWindow={defaultTimeWindow}
               />
             </Grid>

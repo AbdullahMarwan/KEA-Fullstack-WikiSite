@@ -29,6 +29,7 @@ interface Movie {
   poster_path: string;
   cardType: "movie";
   vote_average: number;
+  popularity: number;
 }
 
 interface Cast {
