@@ -52,6 +52,7 @@ interface TvShow {
 
 // Enhanced props to include links and custom data
 interface CardsProps {
+  movieId?: number; // Optional movieId prop for fetching specific movie data
   fetchFunction?: (timeWindow?: string) => Promise<any>; // Updated to accept timeWindow parameter
   maxItems?: number;
   title?: string;
@@ -59,7 +60,7 @@ interface CardsProps {
   links?: Array<{ name: string; href: string; value?: string }>; // Links with optional value
   defaultTimeWindow?: string; // Default time window value
   customData?: any[]; // For passing in cast or other pre-fetched data
-  cardType?: "movie" | "person" | "cast"; // Type of card to display
+  cardType?: "movie" | "person" | "cast" | "recommendations"; // Type of card to display
   cardSize?: "small" | "medium" | "large";
 }
 
@@ -86,6 +87,10 @@ const Cards: React.FC<CardsProps> = ({
 
   // Calculate card dimensions based on size
   const getCardDimensions = () => {
+    if (cardType === "recommendations") {
+      return { width: "250px", height: "175px" };
+    }
+
     switch (cardSize) {
       case "small":
         return { width: "150px", height: "300px" };
@@ -387,23 +392,25 @@ const Cards: React.FC<CardsProps> = ({
                           fallbackSrc="/placeholder-image.jpg"
                         />
 
-                        {/* Only show rating for movies/TV shows, never for cast */}
-                        {!details.isCast && details.rating !== null && (
-                          <HStack
-                            position="absolute"
-                            bottom="-15px"
-                            left="10px"
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="center"
-                          >
-                            <VoteAverageRing
-                              radius={50}
-                              stroke={4}
-                              progress={Math.round(details.rating * 10)}
-                            />
-                          </HStack>
-                        )}
+                        {/* Only show rating for movies/TV shows, never for cast or recommendations */}
+                        {!details.isCast &&
+                          cardType !== "recommendations" &&
+                          details.rating !== null && (
+                            <HStack
+                              position="absolute"
+                              bottom="-15px"
+                              left="10px"
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                            >
+                              <VoteAverageRing
+                                radius={50}
+                                stroke={4}
+                                progress={Math.round(details.rating * 10)}
+                              />
+                            </HStack>
+                          )}
                       </Box>
 
                       <CardBody
@@ -411,9 +418,29 @@ const Cards: React.FC<CardsProps> = ({
                         display={"flex"}
                         alignItems={"center"}
                       >
-                        <Box whiteSpace="normal">
+                        <Box
+                          whiteSpace="normal"
+                          display={
+                            cardType === "recommendations" ? "flex" : "block"
+                          }
+                          justifyContent={
+                            cardType === "recommendations"
+                              ? "space-between"
+                              : undefined
+                          }
+                          width={
+                            cardType === "recommendations" ? "100%" : undefined
+                          }
+                          alignItems={
+                            cardType === "recommendations"
+                              ? "center"
+                              : undefined
+                          }
+                        >
                           <Heading
-                            fontSize="1em"
+                            fontSize={
+                              cardType === "recommendations" ? "0.9em" : "1em"
+                            }
                             color="black"
                             as={ReactRouterLink}
                             to={details.linkPath}
@@ -428,7 +455,7 @@ const Cards: React.FC<CardsProps> = ({
                               fontSize="0.9em"
                               color="gray.500"
                               noOfLines={1}
-                              mt="1"
+                              mt={cardType === "recommendations" ? 0 : "1"}
                             >
                               {details.subtitle}
                             </Text>
@@ -436,13 +463,14 @@ const Cards: React.FC<CardsProps> = ({
                         </Box>
 
                         {/* Only show menu for movies/TV shows, not cast */}
-                        {cardType !== "cast" && (
-                          <MenuOnCards
-                            movie={item}
-                            type="default"
-                            instanceId={`${title}-${timeWindow}-${index}-${details.id}`}
-                          />
-                        )}
+                        {cardType !== "cast" &&
+                          cardType !== "recommendations" && (
+                            <MenuOnCards
+                              movie={item}
+                              type="default"
+                              instanceId={`${title}-${timeWindow}-${index}-${details.id}`}
+                            />
+                          )}
                       </CardBody>
                     </MotionCard>
                   );

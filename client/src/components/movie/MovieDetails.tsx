@@ -12,6 +12,7 @@ import {
 import VoteAverageRing from "../Homepage/voteAverageRing";
 import ToolTips from "./ToolTips";
 import Credits from "./Credits";
+import Emoji from "./Emoji";
 
 interface Genre {
   id: number;
@@ -81,7 +82,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
             ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m`
             : ""}
         </Box>
-        <Box display={"flex"} alignItems={"center"}>
+        <Box display={"flex"} alignItems={"center"} gap={2}>
           <VoteAverageRing
             radius={50}
             stroke={4}
@@ -90,6 +91,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
           <Text fontWeight={"700"} ml={2}>
             User Score
           </Text>
+          <Emoji />
           <Button
             background={"#022441"}
             ml={4}
