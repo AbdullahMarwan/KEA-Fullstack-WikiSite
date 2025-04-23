@@ -27,7 +27,7 @@ const PersonDetails = () => {
   const [combinedIds, setCombinedIds] = useState<string[]>([]); // Changed to string[] for characters
   const [crewJobs, setCrewJobs] = useState<string[]>([]); // New state for crew jobs
   const [showFullBiography, setShowFullBiography] = useState(false);
-  const [ personJobs, setPersonJobs ] = useState<string[]>([]);
+  const [personJobs, setPersonJobs] = useState<string[]>(() => []);
 
   // TODO: Move API key to environment variable
   const API_KEY = "475f7c6aa70e55fd5a97a138977bb3cc";
@@ -78,7 +78,7 @@ const PersonDetails = () => {
         `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${apiKey}`
       );
       const data = await response.json();
-      const combined = data.cast
+      const characters = data.cast
         .map(
         (cast: {
           character: string;
@@ -86,27 +86,23 @@ const PersonDetails = () => {
           release_date: string;
         }) => ({
           character: cast.character,
-          original_title: cast.original_title,
+          title: cast.original_title,
           release_date: cast.release_date,
         })
         )
-        .filter(
-        (item: { character: string; original_title: string }) =>
-          item.character && item.original_title
-        ); // Filter out entries with missing character or title
-      setCombinedIds(
-        combined.map(
-        (item: { character: string; original_title: string; release_date: string }) =>
-          `${item.character} in "${item.original_title}" (${item.release_date || "N/A"})`
-        ),
-       
+        .filter((item: { character: string; title: string }) => item.character && item.title); // Filter out entries with missing character or title
+      setCombinedIds(characters.map((item: { character: string }) => item.character));
+      console.log(
+        "Acting Roles:",
+        characters.map((item: { character: string; title: string }) => ({
+        character: item.character,
+        title: item.title,
+        }))
       );
-      console.log("Combined Characters:", combined);
-
-
-
+      return characters.map((item: { character: string }) => item.character);
       } catch (error) {
       console.error("Error fetching combined credits:", error);
+      return []; // Return an empty array in case of an error
       }
     };
 
@@ -145,11 +141,12 @@ const PersonDetails = () => {
     const fetchData = async () => {
       const personData = await fetchPersonDetails();
       if (personData && personData.id) {
-        let allJobs: string[] = []; 
+        let allJobs: string[] = [];
         await fetchCredits(personData.id);
-        allJobs += await fetchCombinedCredits(personData.id, API_KEY);
-        allJobs += await fetchCrewJobs(personData.id, API_KEY); // Added crew jobs fetch
-        setPersonJobs (allJobs)
+        allJobs = allJobs.concat(await fetchCombinedCredits(personData.id, API_KEY));
+        allJobs = allJobs.concat(await fetchCrewJobs(personData.id, API_KEY)); // Added crew jobs fetch
+        setPersonJobs(allJobs);
+        console.log("tihi"+allJobs)
       }
     };
 
@@ -261,7 +258,22 @@ const PersonDetails = () => {
         <Heading as="h3" size="md" mt={10}>
           Acting Roles
         </Heading>
+
+
         <Box>
+          {Array.isArray(personJobs) && personJobs.length > 0 ? (
+            <ul>
+              {personJobs.map((job, index) => (
+                <li key={index}>{job}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>No acting roles available.</p>
+          )}
+        </Box>
+
+
+        {/* <Box>
           {combinedIds.length > 0 ? (
             <ul>
               {combinedIds.map((character, index) => (
@@ -286,7 +298,9 @@ const PersonDetails = () => {
           ) : (
             <p>No crew roles available.</p>
           )}
-        </Box>
+        </Box> */}
+
+
       </GridItem>
     </Grid>
   );
