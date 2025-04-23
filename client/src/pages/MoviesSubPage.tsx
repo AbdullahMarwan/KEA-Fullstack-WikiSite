@@ -22,6 +22,8 @@ import {
   Divider,
 } from "@chakra-ui/react";
 
+import { sortByDate } from "../utils/sortingHelper";
+
 //import { createListCollection } from "@chakra-ui/select"; // Import from @chakra-ui/select
 
 import Cards from "../components/Homepage/Cards";
@@ -76,7 +78,21 @@ const MoviesSubPage = () => {
     }
   };
 
-  //const sortingFunction;
+  const doSorting = (value: string) => {
+    switch (value) {
+      case "popularity.desc":
+        return sortByDate("popularity", "desc");
+      case "popularity.asc":
+        return sortByDate("popularity", "asc");
+      case "release_date.desc":
+        return sortByDate("release_date", "desc");
+      case "release_date.asc":
+        return sortByDate("release_date", "asc");
+      default:
+        console.warn("Invalid sorting option");
+        return [];
+    }
+  };
 
   return (
     <Box padding="20px">
@@ -138,9 +154,11 @@ const MoviesSubPage = () => {
                       placeholder="Select sorting option"
                       onChange={(e: any) => {
                         console.log(e.target.value)
-                        // doSorting(e.target.value);
-                        // switch:
-                        // take value, sort array and set state  
+                        const sortedMovies = doSorting(e.target.value);
+                        // Assuming you have a state to manage the displayed movies
+                        // Update the movie list displayed with the sortedMovies
+                        console.log("Sorted Movies:", sortedMovies);
+                        
                       }}
                     >
                       {sortingOptions.map((option: any) => (

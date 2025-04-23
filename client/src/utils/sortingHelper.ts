@@ -21,3 +21,5 @@ export const sortByDate = (
 
   return order === "asc" ? d1.diff(d2) : d2.diff(d1);
 };
+
+//TODO add sortByPopularity function
