@@ -24,16 +24,19 @@ const PersonDetails = () => {
   const [credits, setCredits] = useState<
     { original_title: string; backdrop_path: string }[]
   >([]);
-  const [combinedIds, setCombinedIds] = useState<number[]>([]); 
+  const [combinedIds, setCombinedIds] = useState<string[]>([]); // Changed to string[] for characters
+  const [crewJobs, setCrewJobs] = useState<string[]>([]); // New state for crew jobs
   const [showFullBiography, setShowFullBiography] = useState(false);
+  const [ personJobs, setPersonJobs ] = useState<string[]>([]);
 
+  // TODO: Move API key to environment variable
+  const API_KEY = "475f7c6aa70e55fd5a97a138977bb3cc";
 
-      /* TODO change API key from hardcoded */
   useEffect(() => {
     const fetchPersonDetails = async () => {
       try {
         const response = await fetch(
-          `https://api.themoviedb.org/3/person/${id}?api_key=475f7c6aa70e55fd5a97a138977bb3cc`
+          `https://api.themoviedb.org/3/person/${id}?api_key=${API_KEY}`
         );
         const data = await response.json();
         setPerson({
@@ -51,11 +54,10 @@ const PersonDetails = () => {
       }
     };
 
-        /* TODO change API key from hardcoded */
     const fetchCredits = async (personId: string) => {
       try {
         const response = await fetch(
-          `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=475f7c6aa70e55fd5a97a138977bb3cc`
+          `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${API_KEY}`
         );
         const data = await response.json();
         const titles = data.cast
@@ -76,20 +78,78 @@ const PersonDetails = () => {
         `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${apiKey}`
       );
       const data = await response.json();
-      const combined = data.cast.map((cast: { character: string }) => cast.character); 
-      setCombinedIds(combined); 
-      console.log("Combined Characters:", combined); 
+      const combined = data.cast
+        .map(
+        (cast: {
+          character: string;
+          original_title: string;
+          release_date: string;
+        }) => ({
+          character: cast.character,
+          original_title: cast.original_title,
+          release_date: cast.release_date,
+        })
+        )
+        .filter(
+        (item: { character: string; original_title: string }) =>
+          item.character && item.original_title
+        ); // Filter out entries with missing character or title
+      setCombinedIds(
+        combined.map(
+        (item: { character: string; original_title: string; release_date: string }) =>
+          `${item.character} in "${item.original_title}" (${item.release_date || "N/A"})`
+        ),
+       
+      );
+      console.log("Combined Characters:", combined);
+
+
+
       } catch (error) {
       console.error("Error fetching combined credits:", error);
       }
     };
 
-    /* TODO change API key from hardcoded */
+    // New function to fetch and log crew jobs
+
+    
+    const fetchCrewJobs = async (personId: string, apiKey: string) => {
+      try {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${apiKey}`
+        );
+        const data = await response.json();
+        const jobs = data.crew
+          .map((crew: { job: string; title: string }) => ({
+            job: crew.job,
+            title: crew.title || crew.name, // Handle both movie and TV credits
+          }))
+          .filter((crew: { job: string }) => crew.job);
+        setCrewJobs(jobs.map((item: { job: string }) => item.job));
+        console.log(
+          "Crew Jobs:",
+          jobs.map((item: { job: string; title: string }) => ({
+            job: item.job,
+            title: item.title,
+          })),
+
+        );
+        return (jobs.map((item: { job: string }) => item.job));
+      } catch (error) {
+        console.error("Error fetching crew jobs:", error);
+      }
+    };
+
+    
+
     const fetchData = async () => {
       const personData = await fetchPersonDetails();
       if (personData && personData.id) {
+        let allJobs: string[] = []; 
         await fetchCredits(personData.id);
-        await fetchCombinedCredits(personData.id, "475f7c6aa70e55fd5a97a138977bb3cc");
+        allJobs += await fetchCombinedCredits(personData.id, API_KEY);
+        allJobs += await fetchCrewJobs(personData.id, API_KEY); // Added crew jobs fetch
+        setPersonJobs (allJobs)
       }
     };
 
@@ -199,17 +259,32 @@ const PersonDetails = () => {
         </Box>
 
         <Heading as="h3" size="md" mt={10}>
-          Directing
+          Acting Roles
         </Heading>
         <Box>
           {combinedIds.length > 0 ? (
             <ul>
-              {combinedIds.map((id, index) => (
-                <li key={index}>As: {id}</li>
+              {combinedIds.map((character, index) => (
+                <li key={index}>As: {character}</li>
               ))}
             </ul>
           ) : (
-            <p>No directing credits available.</p>
+            <p>No acting roles available.</p>
+          )}
+        </Box>
+
+        <Heading as="h3" size="md" mt={10}>
+          Crew Roles
+        </Heading>
+        <Box>
+          {crewJobs.length > 0 ? (
+            <ul>
+              {crewJobs.map((job, index) => (
+                <li key={index}>{job}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>No crew roles available.</p>
           )}
         </Box>
       </GridItem>
