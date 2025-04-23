@@ -13,7 +13,51 @@ const genderMap: Record<number, string> = {
 // TODO: Move API key to environment variable
 const API_KEY = "475f7c6aa70e55fd5a97a138977bb3cc";
 
-// Fetch person details
+
+
+const PersonDetails = () => {
+  const [combinedIds, setCombinedIds] = useState<string[]>([]);
+  const [crewJobs, setCrewJobs] = useState<string[]>([]);
+  const [showFullBiography, setShowFullBiography] = useState(false);
+  const [personJobs, setPersonJobs] = useState<string[]>([]);
+  const { id } = useParams<{ id: string }>();
+  const [person, setPerson] = useState<{
+
+    name: string;
+    profile_path: string;
+    biography: string;
+    known_for_department: string;
+    gender: number;
+    birthday: string;
+    place_of_birth: string;
+  } | null>(null);
+  const [credits, setCredits] = useState<
+    { original_title: string; backdrop_path: string }[]
+  >([]);
+
+
+  const fetchData = async () => {
+    if (!id) return;
+
+    const personData = await fetchPersonDetails(id);
+    if (personData) {
+      setPerson(personData);
+    }
+
+    const creditsData = await fetchCredits(id);
+    setCredits(creditsData);
+
+    const combinedCredits = await fetchCombinedCredits(id);
+    setCombinedIds(combinedCredits);
+
+    const crewJobsData = await fetchCrewJobs(id);
+    setCrewJobs(crewJobsData);
+
+    setPersonJobs([...combinedCredits, ...crewJobsData]);
+    return combinedCredits + crewJobsData
+  };
+
+  // Fetch person details
 const fetchPersonDetails = async (personId: string) => {
   try {
     const response = await fetch(
@@ -101,46 +145,6 @@ const fetchCrewJobs = async (personId: string) => {
   }
 };
 
-const PersonDetails = () => {
-  const { id } = useParams<{ id: string }>();
-  const [person, setPerson] = useState<{
-    name: string;
-    profile_path: string;
-    biography: string;
-    known_for_department: string;
-    gender: number;
-    birthday: string;
-    place_of_birth: string;
-  } | null>(null);
-  const [credits, setCredits] = useState<
-    { original_title: string; backdrop_path: string }[]
-  >([]);
-  const [combinedIds, setCombinedIds] = useState<string[]>([]);
-  const [crewJobs, setCrewJobs] = useState<string[]>([]);
-  const [showFullBiography, setShowFullBiography] = useState(false);
-  const [personJobs, setPersonJobs] = useState<string[]>([]);
-
-
-  const fetchData = async () => {
-    if (!id) return;
-
-    const personData = await fetchPersonDetails(id);
-    if (personData) {
-      setPerson(personData);
-    }
-
-    const creditsData = await fetchCredits(id);
-    setCredits(creditsData);
-
-    const combinedCredits = await fetchCombinedCredits(id);
-    setCombinedIds(combinedCredits);
-
-    const crewJobsData = await fetchCrewJobs(id);
-    setCrewJobs(crewJobsData);
-
-    setPersonJobs([...combinedCredits, ...crewJobsData]);
-  };
-
   useEffect(() => {
     fetchData();
   }, [id]);
@@ -157,6 +161,33 @@ const PersonDetails = () => {
     .split("\n")
     .slice(0, 2)
     .join("\n");
+
+
+
+      const doSorting = async (value: string) => {
+        if (!id) {
+          console.warn("ID is undefined");
+          return;
+        }
+
+        switch (value) {
+          case "All":
+            setPersonJobs(await fetchData());
+            break;
+          case "Cast":
+            setPersonJobs(await fetchCombinedCredits(id));
+            break;
+          case "Crew":
+            setPersonJobs(await fetchCrewJobs(id));
+            break;
+          default:
+            console.warn("Invalid sorting option");
+            break;
+        }
+      };
+
+
+    
 
   return (
     <Grid templateColumns={{ base: "1fr", md: "20vw 40vw" }} gap={0}>
@@ -245,6 +276,22 @@ const PersonDetails = () => {
               </Heading>
             </Box>
           ))}
+        </Box>
+
+        <Box>
+          <Heading as="h3" size="md" mt={10}>
+            Filter Roles
+          </Heading>
+          <Select
+            placeholder="Select option"
+            mt={2}
+            onChange={(e) => doSorting(e.target.value)}
+          >
+            <option value="all"></option>
+            <option value="cast"></option>
+            <option value="crew"></option>
+
+          </Select>
         </Box>
 
         <Box>
