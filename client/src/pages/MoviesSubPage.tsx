@@ -83,17 +83,13 @@ const MoviesSubPage = () => {
 
   const doSorting = (value: string) => {
     switch (value) {
-      case "popularity.desc":
-        return sortByDate("popularity", "desc");
-      case "popularity.asc":
-        return sortByDate("popularity", "asc");
       case "release_date.desc":
-        return sortByDate("release_date", "desc");
+        return sortByDate(movies, "desc");
       case "release_date.asc":
-        return sortByDate("release_date", "asc");
+        return sortByDate(movies, "asc");
       default:
         console.warn("Invalid sorting option");
-        return [];
+        return movies; // Return the original array if the option is invalid
     }
   };
 
@@ -170,12 +166,8 @@ const MoviesSubPage = () => {
                     <Select
                       placeholder="Select sorting option"
                       onChange={(e: any) => {
-                        console.log(e.target.value)
-                        const sortedMovies = doSorting(e.target.value);
-                        // Assuming you have a state to manage the displayed movies
-                        // Update the movie list displayed with the sortedMovies
-                        console.log("Sorted Movies:", sortedMovies);
-                        
+                        const sortedMovies = doSorting(e.target.value); // Get the sorted movies
+                        setMovies([...sortedMovies]); // Update the movies state with the sorted movies
                       }}
                     >
                       {sortingOptions.map((option: any) => (
