@@ -22,4 +22,20 @@ export const sortByDate = (
   });
 };
 
-//TODO add sortByPopularity function
+/**
+ * Sorts an array of movies based on their popularity in ascending or descending order.
+ * @param movies - The array of movies to sort.
+ * @param order - The sorting order: "asc" for ascending, "desc" for descending.
+ * @returns The sorted array of movies.
+ */
+export const sortByPopularity = (
+  movies: { popularity: number | undefined }[],
+  order: "asc" | "desc" = "asc"
+): { popularity: number | undefined }[] => {
+  return movies.sort((a, b) => {
+    const p1 = a.popularity || 0; // Default to 0 if popularity is undefined
+    const p2 = b.popularity || 0;
+
+    return order === "asc" ? p1 - p2 : p2 - p1;
+  });
+};

@@ -23,7 +23,7 @@ import {
   Divider,
 } from "@chakra-ui/react";
 
-import { sortByDate } from "../utils/sortingHelper";
+import { sortByDate, sortByPopularity } from "../utils/sortingHelper";
 
 //import { createListCollection } from "@chakra-ui/select"; // Import from @chakra-ui/select
 
@@ -87,9 +87,13 @@ const MoviesSubPage = () => {
         return sortByDate(movies, "desc");
       case "release_date.asc":
         return sortByDate(movies, "asc");
+      case "popularity.desc":
+        return sortByPopularity(movies, "desc");
+      case "popularity.asc":
+        return sortByPopularity(movies, "asc"); 
       default:
         console.warn("Invalid sorting option");
-        return movies; // Return the original array if the option is invalid
+        return movies; 
     }
   };
 
