@@ -1,97 +1,49 @@
 import React from "react";
-import { Heading, HStack, Box, Text } from "@chakra-ui/react";
+import { Heading, Box } from "@chakra-ui/react";
 import Cards from "../Homepage/Cards";
+import { useMovie } from "../../context/MovieContext";
 
-interface Genre {
-  id: number;
-  name: string;
-}
+const TopCast = () => {
+  const { movie, loading, error } = useMovie();
 
-interface Credits {
-  id: number;
-  cast: Cast[];
-  crew: Crew[];
-}
+  if (loading) {
+    return <Box>Loading...</Box>; // Show a loading state
+  }
 
-interface Crew {
-  id: number;
-  name: string;
-  job: string;
-  department: string;
-  profile_path: string | null;
-}
+  if (error) {
+    return <Box>Error: {error}</Box>; // Show an error state
+  }
 
-interface Cast {
-  id: number;
-  name: string;
-  character: string;
-  profile_path: string | null;
-}
-
-interface Movie {
-  id: number;
-  title: string;
-  overview: string;
-  release_date: string;
-  genres: Genre[];
-  credits?: Credits;
-  vote_average: number;
-  poster_path: string;
-  backdrop_path: string;
-  runtime?: number;
-  tagline: string;
-}
-
-interface TopCastProps {
-  movie: Movie;
-}
-
-function TopCast({ movie }: TopCastProps) {
-  // Check if movie has credits and cast
   if (
+    !movie ||
     !movie.credits ||
     !movie.credits.cast ||
     movie.credits.cast.length === 0
   ) {
     return (
       <Box width="100%">
-        {" "}
-        {/* Changed from maxW={"1300px"} to width="100%" */}
         <Heading size="lg" mb={4}>
           Top Billed Cast
         </Heading>
-        <Cards
-          customData={movie.credits?.cast}
-          maxItems={10}
-          cardType="cast"
-          showLinkSelector={false}
-          cardSize="small" // Use smaller card size to fit more in the container
-        />
+        <Box>No cast information available.</Box>
       </Box>
     );
   }
 
-  // Transform cast data to match the format expected by Cards
-  const castAsMovies = movie.credits.cast.map((person) => ({
-    id: person.id,
-    title: person.name,
-    overview: person.character,
-    poster_path: person.profile_path,
-    vote_average: 0, // Not applicable for cast
-    release_date: "", // Not applicable for cast
-  }));
-
   return (
-    <Box maxW={"1300px"} width={"100%"}>
+    <Box width="100%">
+      <Heading size="lg" mb={4}>
+        Top Billed Cast
+      </Heading>
       <Cards
-        customData={movie.credits.cast}
+        customData={movie.credits.cast} // Use cast data from MovieContext
         maxItems={10}
-        title="Top Billed Cast"
-        cardType="cast" // This is critical - make sure it's set to "cast"
+        cardType="cast"
         showLinkSelector={false}
+        cardSize="small"
       />
     </Box>
   );
-}
+};
 
 export default TopCast;

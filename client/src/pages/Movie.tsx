@@ -65,7 +65,7 @@ function MovieContent() {
         <Box maxW="1300px" width="100%">
           <HStack width="100%" align="flex-start" spacing={10}>
             <Box flex="7" width="70%">
-              <TopCast movie={{ ...movie, genres: movie.genres || [] }} />
+              <TopCast />
               <Link
                 fontWeight={700}
                 _hover={{ textDecoration: "none" }}
@@ -79,7 +79,10 @@ function MovieContent() {
               <Recommendations />
             </Box>
             <Box flex="3" width="30%">
-              <MovieAside movie={movie} />
+              <MovieAside
+                movie={movie}
+                movieMediaData={movie.MovieMediaData} // Pass movieMediaData to MovieAside
+              />
             </Box>
           </HStack>
         </Box>

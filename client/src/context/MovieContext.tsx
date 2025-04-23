@@ -1,7 +1,11 @@
 // src/contexts/MovieContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { fetchMovieById, fetchMovieCredits } from "../services/api";
+import {
+  fetchMovieById,
+  fetchMovieCredits,
+  fetchMediaForMovie,
+} from "../services/api";
 
 // Define your interfaces
 interface Genre {
@@ -11,7 +15,23 @@ interface Genre {
 
 interface Credits {
   id: number;
+  cast: Cast[];
+  crew: Crew[];
+}
+
+interface Crew {
+  id: number;
   name: string;
+  job: string;
+  department: string;
+  profile_path: string | null;
+}
+
+interface Cast {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string | null;
 }
 
 interface Movie {
@@ -36,6 +56,19 @@ interface MovieContextType {
   movie: Movie | null;
   loading: boolean;
   error: string | null;
+}
+
+interface TopCastProps {
+  movie: Movie;
+}
+
+interface MovieMediaData {
+  id: number;
+  imdb_id: string;
+  wikidata_id: string;
+  facebook_id: string;
+  instagram_id: string;
+  twitter_id: string;
 }
 
 const MovieContext = createContext<MovieContextType>({
@@ -66,13 +99,19 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
         // Fetch credits separately
         const creditData = await fetchMovieCredits(id);
 
+        const movieMediaData = await fetchMediaForMovie(id);
+
         // Create a complete movie object with credits
         const completeMovie = {
           ...movieData,
           genres: movieData.genres ?? [],
           credits: creditData,
+          MovieMediaData: movieMediaData, // Ensure this is populated
         };
 
+        console.log("complete movie:" + completeMovie);
+
+        console.log("Fetched movie data:", completeMovie); // Debug log
         setMovie(completeMovie);
         setError(null);
       } catch (err) {
