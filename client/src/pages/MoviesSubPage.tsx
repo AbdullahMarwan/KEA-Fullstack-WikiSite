@@ -301,12 +301,7 @@ const MoviesSubPage = () => {
               <Cards
                 customData={movies} // Pass the fetched movies as customData
                 maxItems={10}
-                title={getCategoryHeading()}
-                showLinkSelector={true}
-                links={[
-                  { name: "I dag", href: "#", value: category },
-                  { name: "Denne uge", href: "#", value: "week" },
-                ]}
+                showLinkSelector={false}
                 defaultTimeWindow={defaultTimeWindow}
               />
             </Grid>
