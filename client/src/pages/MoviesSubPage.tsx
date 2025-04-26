@@ -90,10 +90,10 @@ const MoviesSubPage = () => {
       case "popularity.desc":
         return sortByPopularity(movies, "desc");
       case "popularity.asc":
-        return sortByPopularity(movies, "asc"); 
+        return sortByPopularity(movies, "asc");
       default:
         console.warn("Invalid sorting option");
-        return movies; 
+        return movies;
     }
   };
 
@@ -113,10 +113,6 @@ const MoviesSubPage = () => {
 
   return (
     <Box padding="20px">
-      <Heading size="lg" mb={4}>
-        {getCategoryHeading()}
-      </Heading>
-
       <Grid
         templateAreas={{
           base: `"header" 
@@ -136,6 +132,9 @@ const MoviesSubPage = () => {
       >
         {/* Aside Section */}
         <GridItem area={"aside"}>
+          <Heading size="lg" mb={4}>
+            {getCategoryHeading()}
+          </Heading>
           {/* Sort Section */}
           <Box
             borderWidth="1px"
@@ -303,6 +302,7 @@ const MoviesSubPage = () => {
                 maxItems={10}
                 showLinkSelector={false}
                 defaultTimeWindow={defaultTimeWindow}
+                cardType="filter"
               />
             </Grid>
           </Box>

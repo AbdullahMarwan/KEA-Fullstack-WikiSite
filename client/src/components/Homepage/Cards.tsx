@@ -10,6 +10,7 @@ import {
   SkeletonCircle,
   Box,
   Image,
+  Grid
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { fetchTrendingMovies } from "../../services/api";
@@ -60,7 +61,7 @@ interface CardsProps {
   links?: Array<{ name: string; href: string; value?: string }>; // Links with optional value
   defaultTimeWindow?: string; // Default time window value
   customData?: any[]; // For passing in cast or other pre-fetched data
-  cardType?: "movie" | "person" | "cast" | "recommendations"; // Type of card to display
+  cardType?: "movie" | "person" | "cast" | "filter" | "recommendations"; // Type of card to display
   cardSize?: "small" | "medium" | "large";
 }
 
@@ -87,8 +88,13 @@ const Cards: React.FC<CardsProps> = ({
 
   // Calculate card dimensions based on size
   const getCardDimensions = () => {
-    if (cardType === "recommendations") {
-      return { width: "250px", height: "175px" };
+    switch (cardType) {
+      case "recommendations":
+        return { width: "250px", height: "175px" };
+      // case "filter":
+      //   return { width: "1fr", height: "1.5fr" };
+      default:
+        break;
     }
 
     switch (cardSize) {
@@ -282,12 +288,15 @@ const Cards: React.FC<CardsProps> = ({
         />
 
         {/* Scrollable content */}
-        <Box
-          overflowX="auto"
-          whiteSpace="nowrap"
+        <Grid
+          overflowX={cardType === "filter" ? "visible" : "auto"}
+          whiteSpace={cardType === "filter" ? "normal" : "nowrap"}
           padding="10px"
           boxSizing="border-box"
-          css={{
+          css={
+            cardType === "filter"
+              ? undefined
+              : {
             "&::-webkit-scrollbar": {
               height: "4px",
             },
@@ -301,184 +310,196 @@ const Cards: React.FC<CardsProps> = ({
             "&::-webkit-scrollbar-thumb:hover": {
               background: "#555",
             },
-          }}
+          }
+          }
+          templateColumns={
+            cardType === "filter"
+              ? {
+            base: "repeat(2, 1fr)", // 2 cards per row on small screens
+            md: "repeat(3, 1fr)", // 3 cards per row on medium screens
+            lg: "repeat(4, 1fr)", // 4 cards per row on large screens
+          }
+              : undefined
+          }
+          gap={cardType === "filter" ? 6 : undefined} // Space between cards
         >
           <AnimatePresence mode="wait">
             {isLoading ? (
               <MotionBox
-                key="loading"
-                display="flex"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                width="100%"
+          key="loading"
+          display="flex"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          width="100%"
               >
-                {Array.from({ length: maxItems }).map((_, index) => (
-                  <Card
-                    key={index}
-                    display="inline-block"
-                    width={width}
-                    height={height}
-                    flex="0 0 auto"
-                    marginRight="20px"
-                    backgroundColor="transparent"
-                  >
-                    <Skeleton
-                      height={cardType === "cast" ? "225px" : "300px"}
-                      borderRadius="10px"
-                    />
-                    <CardBody p="4">
-                      <SkeletonText noOfLines={2} spacing="4" />
-                      {cardType !== "cast" && (
-                        <SkeletonCircle size="10" mt="4" />
-                      )}
-                    </CardBody>
-                  </Card>
-                ))}
+          {Array.from({ length: maxItems }).map((_, index) => (
+            <Card
+              key={index}
+              display="inline-block"
+              width={width}
+              height={height}
+              flex="0 0 auto"
+              marginRight="20px"
+              backgroundColor="transparent"
+            >
+              <Skeleton
+                height={cardType === "cast" ? "225px" : "300px"}
+                borderRadius="10px"
+              />
+              <CardBody p="4">
+                <SkeletonText noOfLines={2} spacing="4" />
+                {cardType !== "cast" && (
+            <SkeletonCircle size="10" mt="4" />
+                )}
+              </CardBody>
+            </Card>
+          ))}
               </MotionBox>
             ) : (
               <MotionBox
-                key="content"
-                display="flex"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                width="100%"
+          key="content"
+          display="flex"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          width="100%"
+          flexWrap={cardType === "filter" ? "wrap" : undefined}
               >
-                {items.slice(0, maxItems).map((item, index) => {
-                  const details = getItemDetails(item);
+          {items.slice(0, maxItems).map((item, index) => {
+            const details = getItemDetails(item);
 
-                  return (
-                    <MotionCard
-                      key={`${details.id}-${index}`}
-                      display="inline-block"
-                      width={width}
-                      height={height}
-                      flex="0 0 auto"
-                      marginRight="20px"
-                      backgroundColor="transparent"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{
-                        opacity: 1,
-                        y: 0,
-                        transition: {
-                          delay: index * 0.05,
-                          duration: 0.4,
-                        },
-                      }}
-                      borderRadius="10px"
-                      overflow="hidden"
-                    >
-                      <Box
-                        as={ReactRouterLink}
-                        to={details.linkPath}
-                        position="relative"
-                        borderRadius="10px"
-                        overflow="hidden"
-                        height={cardType === "cast" ? "250px" : "350px"}
-                        width={"300px"}
-                      >
-                        <Image
-                          src={`https://image.tmdb.org/t/p/w500${
-                            details.imagePath || ""
-                          }`}
-                          alt={details.name}
-                          width="100%"
-                          height="80%"
-                          objectFit="cover" // Changed from "cover" to "contain"
-                          borderRadius="10px"
-                          fallbackSrc="/placeholder-image.jpg"
-                        />
+            return (
+              <MotionCard
+                key={`${details.id}-${index}`}
+                display="inline-block"
+                width={width}
+                height={height}
+                flex="0 0 auto"
+                marginRight="20px"
+                backgroundColor="transparent"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{
+            opacity: 1,
+            y: 0,
+            transition: {
+              delay: index * 0.05,
+              duration: 0.4,
+            },
+                }}
+                borderRadius="10px"
+                overflow="hidden"
+              >
+                <Box
+            as={ReactRouterLink}
+            to={details.linkPath}
+            position="relative"
+            borderRadius="10px"
+            overflow="hidden"
+            height={cardType === "cast" ? "250px" : "350px"}
+            width={"300px"}
+                >
+            <Image
+              src={`https://image.tmdb.org/t/p/w500${
+                details.imagePath || ""
+              }`}
+              alt={details.name}
+              width="100%"
+              height="80%"
+              objectFit="cover" // Changed from "cover" to "contain"
+              borderRadius="10px"
+              fallbackSrc="/placeholder-image.jpg"
+            />
 
-                        {/* Only show rating for movies/TV shows, never for cast or recommendations */}
-                        {!details.isCast &&
-                          cardType !== "recommendations" &&
-                          details.rating !== null && (
-                            <HStack
-                              position="absolute"
-                              bottom="-15px"
-                              left="10px"
-                              display="flex"
-                              alignItems="center"
-                              justifyContent="center"
-                            >
-                              <VoteAverageRing
-                                radius={50}
-                                stroke={4}
-                                progress={Math.round(details.rating * 10)}
-                              />
-                            </HStack>
-                          )}
-                      </Box>
+            {/* Only show rating for movies/TV shows, never for cast or recommendations */}
+            {!details.isCast &&
+              cardType !== "recommendations" &&
+              details.rating !== null && (
+                <HStack
+                  position="absolute"
+                  bottom="-15px"
+                  left="10px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <VoteAverageRing
+              radius={50}
+              stroke={4}
+              progress={Math.round(details.rating * 10)}
+                  />
+                </HStack>
+              )}
+                </Box>
 
-                      <CardBody
-                        height={"20%"}
-                        display={"flex"}
-                        alignItems={"center"}
-                      >
-                        <Box
-                          whiteSpace="normal"
-                          display={
-                            cardType === "recommendations" ? "flex" : "block"
-                          }
-                          justifyContent={
-                            cardType === "recommendations"
-                              ? "space-between"
-                              : undefined
-                          }
-                          width={
-                            cardType === "recommendations" ? "100%" : undefined
-                          }
-                          alignItems={
-                            cardType === "recommendations"
-                              ? "center"
-                              : undefined
-                          }
-                        >
-                          <Heading
-                            fontSize={
-                              cardType === "recommendations" ? "0.9em" : "1em"
-                            }
-                            color="black"
-                            as={ReactRouterLink}
-                            to={details.linkPath}
-                            _hover={{ color: "#022441" }}
-                            noOfLines={1}
-                          >
-                            {details.name}
-                          </Heading>
+                <CardBody
+            height={"20%"}
+            display={"flex"}
+            alignItems={"center"}
+                >
+            <Box
+              whiteSpace="normal"
+              display={
+                cardType === "recommendations" ? "flex" : "block"
+              }
+              justifyContent={
+                cardType === "recommendations"
+                  ? "space-between"
+                  : undefined
+              }
+              width={
+                cardType === "recommendations" ? "100%" : undefined
+              }
+              alignItems={
+                cardType === "recommendations"
+                  ? "center"
+                  : undefined
+              }
+            >
+              <Heading
+                fontSize={
+                  cardType === "recommendations" ? "0.9em" : "1em"
+                }
+                color="black"
+                as={ReactRouterLink}
+                to={details.linkPath}
+                _hover={{ color: "#022441" }}
+                noOfLines={1}
+              >
+                {details.name}
+              </Heading>
 
-                          {details.subtitle && (
-                            <Text
-                              fontSize="0.9em"
-                              color="gray.500"
-                              noOfLines={1}
-                              mt={cardType === "recommendations" ? 0 : "1"}
-                            >
-                              {details.subtitle}
-                            </Text>
-                          )}
-                        </Box>
+              {details.subtitle && (
+                <Text
+                  fontSize="0.9em"
+                  color="gray.500"
+                  noOfLines={1}
+                  mt={cardType === "recommendations" ? 0 : "1"}
+                >
+                  {details.subtitle}
+                </Text>
+              )}
+            </Box>
 
-                        {/* Only show menu for movies/TV shows, not cast */}
-                        {cardType !== "cast" &&
-                          cardType !== "recommendations" && (
-                            <MenuOnCards
-                              movie={item}
-                              type="default"
-                              instanceId={`${title}-${timeWindow}-${index}-${details.id}`}
-                            />
-                          )}
-                      </CardBody>
-                    </MotionCard>
-                  );
-                })}
+            {/* Only show menu for movies/TV shows, not cast */}
+            {cardType !== "cast" &&
+              cardType !== "recommendations" && (
+                <MenuOnCards
+                  movie={item}
+                  type="default"
+                  instanceId={`${title}-${timeWindow}-${index}-${details.id}`}
+                />
+              )}
+                </CardBody>
+              </MotionCard>
+            );
+          })}
               </MotionBox>
             )}
           </AnimatePresence>
-        </Box>
+        </Grid>
       </Box>
     </Box>
   );
