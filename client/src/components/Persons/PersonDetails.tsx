@@ -38,25 +38,25 @@ const PersonDetails = () => {
 
   const fetchData = async () => {
     if (!id) return;
-
+  
     const personData = await fetchPersonDetails(id);
     if (personData) {
       setPerson(personData);
     }
-
+  
     const creditsData = await fetchCredits(id);
     setCredits(creditsData);
-
-    const combinedCredits = await fetchCombinedCredits(id);
-    const crewJobsData = await fetchCrewJobs(id);
-
+  
+    const combinedCredits = await fetchCombinedCredits(id); // Cast roles
+    const crewJobsData = await fetchCrewJobs(id); // Crew roles
+  
     setCombinedIds(combinedCredits);
     setCrewJobs(crewJobsData);
-
+  
     // Combine cast and crew jobs
     const allJobs = [...combinedCredits, ...crewJobsData];
     setPersonJobs(allJobs);
-
+  
     return allJobs; // Return combined jobs
   };
 
@@ -108,20 +108,18 @@ const PersonDetails = () => {
         `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${API_KEY}`
       );
       const data = await response.json();
-      const characters = data.cast
-        .map(
-          (cast: {
-            character: string;
-            original_title: string;
-            release_date: string;
-          }) => ({
-            character: cast.character,
-            title: cast.original_title,
-            release_date: cast.release_date,
-          })
-        )
+  
+      // Process cast data
+      const cast = data.cast
+        .map((cast: { character: string; original_title: string; release_date: string }) => ({
+          type: "cast", // Add type to differentiate cast roles
+          character: cast.character,
+          title: cast.original_title,
+          release_date: cast.release_date,
+        }))
         .filter((item: { character: string; title: string }) => item.character && item.title);
-      return characters.map((item: { character: string }) => item.character);
+  
+      return cast;
     } catch (error) {
       console.error("Error fetching combined credits:", error);
       return [];
@@ -135,13 +133,17 @@ const PersonDetails = () => {
         `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${API_KEY}`
       );
       const data = await response.json();
-      const jobs = data.crew
+  
+      // Process crew data
+      const crew = data.crew
         .map((crew: { job: string; title: string }) => ({
+          type: "crew", // Add type to differentiate crew roles
           job: crew.job,
           title: crew.title || crew.name,
         }))
         .filter((crew: { job: string }) => crew.job);
-      return jobs.map((item: { job: string }) => item.job);
+  
+      return crew;
     } catch (error) {
       console.error("Error fetching crew jobs:", error);
       return [];
@@ -310,22 +312,43 @@ const PersonDetails = () => {
           </Select>
         </Box>
 
-        <Box>
-          <Heading as="h3" size="md" mt={10}>
-            Acting Roles
-          </Heading>
-          <Box>
-            {Array.isArray(personJobs) && personJobs.length > 0 ? (
-              <ul>
-                {personJobs.map((job, index) => (
-                  <li key={index}>{job}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>No roles available.</p>
-            )}
-          </Box>
-        </Box>
+        {personJobs.some((job) => job.type === "cast") && (
+  <Box>
+    <Heading as="h3" size="md" mt={10}>
+      Acting Roles
+    </Heading>
+    <Box>
+      <ul>
+        {personJobs
+          .filter((job) => job.type === "cast")
+          .map((job, index) => (
+            <li key={index}>
+              {job.title} as {job.character}
+            </li>
+          ))}
+      </ul>
+    </Box>
+  </Box>
+)}
+
+{personJobs.some((job) => job.type === "crew") && (
+  <Box>
+    <Heading as="h3" size="md" mt={10}>
+      Production
+    </Heading>
+    <Box>
+      <ul>
+        {personJobs
+          .filter((job) => job.type === "crew")
+          .map((job, index) => (
+            <li key={index}>
+              {job.title} ({job.job})
+            </li>
+          ))}
+      </ul>
+    </Box>
+  </Box>
+)}
 
 
 
