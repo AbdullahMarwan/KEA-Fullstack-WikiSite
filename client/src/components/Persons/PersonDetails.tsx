@@ -38,23 +38,26 @@ const PersonDetails = () => {
 
   const fetchData = async () => {
     if (!id) return;
-
+  
     const personData = await fetchPersonDetails(id);
     if (personData) {
       setPerson(personData);
     }
-
+  
     const creditsData = await fetchCredits(id);
     setCredits(creditsData);
-
+  
     const combinedCredits = await fetchCombinedCredits(id);
-    setCombinedIds(combinedCredits);
-
     const crewJobsData = await fetchCrewJobs(id);
+  
+    setCombinedIds(combinedCredits);
     setCrewJobs(crewJobsData);
-
-    setPersonJobs([...combinedCredits, ...crewJobsData]);
-    return combinedCredits + crewJobsData
+  
+    // Combine cast and crew jobs
+    const allJobs = [...combinedCredits, ...crewJobsData];
+    setPersonJobs(allJobs);
+  
+    return allJobs; // Return combined jobs
   };
 
   // Fetch person details
@@ -164,27 +167,37 @@ const fetchCrewJobs = async (personId: string) => {
 
 
 
-      const doSorting = async (value: string) => {
-        if (!id) {
-          console.warn("ID is undefined");
-          return;
-        }
-
-        switch (value) {
-          case "All":
-            setPersonJobs(await fetchData());
-            break;
-          case "Cast":
-            setPersonJobs(await fetchCombinedCredits(id));
-            break;
-          case "Crew":
-            setPersonJobs(await fetchCrewJobs(id));
-            break;
-          default:
-            console.warn("Invalid sorting option");
-            break;
-        }
-      };
+    const doSorting = async (value: string) => {
+      if (!id) {
+        console.warn("ID is undefined");
+        return;
+      }
+    
+      switch (value.toLowerCase()) {
+        case "all":
+          // Combine cast and crew jobs
+          const combinedCredits = await fetchCombinedCredits(id);
+          const crewJobsData = await fetchCrewJobs(id);
+          setPersonJobs([...combinedCredits, ...crewJobsData]);
+          break;
+    
+        case "cast":
+          // Fetch only cast jobs
+          const castJobs = await fetchCombinedCredits(id);
+          setPersonJobs(castJobs);
+          break;
+    
+        case "crew":
+          // Fetch only crew jobs
+          const crewJobsOnly = await fetchCrewJobs(id);
+          setPersonJobs(crewJobsOnly);
+          break;
+    
+        default:
+          console.warn("Invalid sorting option");
+          break;
+      }
+    };
 
 
     
@@ -283,15 +296,14 @@ const fetchCrewJobs = async (personId: string) => {
             Filter Roles
           </Heading>
           <Select
-            placeholder="Select option"
-            mt={2}
-            onChange={(e) => doSorting(e.target.value)}
-          >
-            <option value="all"></option>
-            <option value="cast"></option>
-            <option value="crew"></option>
-
-          </Select>
+  placeholder="Select option"
+  mt={2}
+  onChange={(e) => doSorting(e.target.value)}
+>
+  <option value="all">All</option>
+  <option value="cast">Cast</option>
+  <option value="crew">Crew</option>
+</Select>
         </Box>
 
         <Box>
@@ -299,16 +311,16 @@ const fetchCrewJobs = async (personId: string) => {
             Acting Roles
           </Heading>
           <Box>
-            {Array.isArray(personJobs) && personJobs.length > 0 ? (
-              <ul>
-                {personJobs.map((job, index) => (
-                  <li key={index}>{job}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>No acting roles available.</p>
-            )}
-          </Box>
+  {Array.isArray(personJobs) && personJobs.length > 0 ? (
+    <ul>
+      {personJobs.map((job, index) => (
+        <li key={index}>{job}</li>
+      ))}
+    </ul>
+  ) : (
+    <p>No roles available.</p> // Updated fallback message
+  )}
+</Box>
         </Box>
       </GridItem>
     </Grid>
