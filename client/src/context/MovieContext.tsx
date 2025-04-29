@@ -61,7 +61,6 @@ export interface Movie {
   revenue: number;
   MovieMediaData?: MovieMediaData;
   keywords?: {
-    // Add this property
     id: number;
     keywords: Array<{
       id: number;
@@ -137,7 +136,7 @@ const MovieContext = createContext<MovieContextType>({
   trailers: [],
   videos: [],
   images: null,
-  keywords: null, // Replace "Keywords: null" with "keywords: null"
+  keywords: null,
   selectedTrailer: null,
   setSelectedTrailer: () => {},
   isLoadingTrailers: false,

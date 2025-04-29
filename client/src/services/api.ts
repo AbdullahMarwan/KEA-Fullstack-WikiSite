@@ -103,16 +103,35 @@ export const fetchPopularTrailers = async () => {
     // For each movie, fetch its trailers
     const moviesWithTrailers = await Promise.all(
       movies.map(async (movie: any) => {
-        const trailers = await fetchMovieTrailers(movie.id);
+        const trailersResponse = await fetchMovieTrailers(movie.id);
+
+        // Ensure we have a results array to work with
+        const trailerResults = trailersResponse?.results || [];
+
+        // Add safety check to ensure trailerResults is an array
+        if (!Array.isArray(trailerResults)) {
+          console.log(
+            `Trailers for movie ${movie.id} is not an array:`,
+            trailersResponse
+          );
+          return {
+            movieId: movie.id,
+            title: movie.title,
+            overview: movie.overview,
+            backdrop_path: movie.backdrop_path,
+            poster_path: movie.poster_path,
+            youtubeLinks: [], // Empty array if no valid trailers
+          };
+        }
 
         // Find YouTube trailers (prioritize "Trailer" type and "YouTube" site)
-        const youtubeTrailers = trailers.filter(
+        const youtubeTrailers = trailerResults.filter(
           (video: any) =>
             video.site === "YouTube" && video.type.includes("Trailer")
         );
 
         // If no specific trailers, use any YouTube video
-        const youtubeVideos = trailers.filter(
+        const youtubeVideos = trailerResults.filter(
           (video: any) => video.site === "YouTube"
         );
 
@@ -135,11 +154,12 @@ export const fetchPopularTrailers = async () => {
     return moviesWithTrailers;
   } catch (error) {
     console.error("Error fetching popular trailers:", error);
-    throw error;
+    return []; // Return empty array instead of throwing
   }
 };
 
 // Do the same for upcoming trailers
+// Fix fetchUpcomingTrailers to match the fixed fetchPopularTrailers
 export const fetchUpcomingTrailers = async () => {
   try {
     const response = await axios.get(
@@ -150,17 +170,39 @@ export const fetchUpcomingTrailers = async () => {
 
     const moviesWithTrailers = await Promise.all(
       movies.map(async (movie: any) => {
-        const trailers = await fetchMovieTrailers(movie.id);
+        const trailersResponse = await fetchMovieTrailers(movie.id);
 
-        const youtubeTrailers = trailers.filter(
+        // Ensure we have a results array to work with
+        const trailerResults = trailersResponse?.results || [];
+
+        // Add safety check to ensure trailerResults is an array
+        if (!Array.isArray(trailerResults)) {
+          console.log(
+            `Trailers for movie ${movie.id} is not an array:`,
+            trailersResponse
+          );
+          return {
+            movieId: movie.id,
+            title: movie.title,
+            overview: movie.overview,
+            backdrop_path: movie.backdrop_path,
+            poster_path: movie.poster_path,
+            youtubeLinks: [], // Empty array if no valid trailers
+          };
+        }
+
+        // Find YouTube trailers (prioritize "Trailer" type and "YouTube" site)
+        const youtubeTrailers = trailerResults.filter(
           (video: any) =>
             video.site === "YouTube" && video.type.includes("Trailer")
         );
 
-        const youtubeVideos = trailers.filter(
+        // If no specific trailers, use any YouTube video
+        const youtubeVideos = trailerResults.filter(
           (video: any) => video.site === "YouTube"
         );
 
+        // Format YouTube links
         const youtubeLinks = (
           youtubeTrailers.length > 0 ? youtubeTrailers : youtubeVideos
         ).map((video: any) => `https://www.youtube.com/watch?v=${video.key}`);
@@ -179,7 +221,7 @@ export const fetchUpcomingTrailers = async () => {
     return moviesWithTrailers;
   } catch (error) {
     console.error("Error fetching upcoming trailers:", error);
-    throw error;
+    return []; // Return empty array instead of throwing - this was missing before
   }
 };
 

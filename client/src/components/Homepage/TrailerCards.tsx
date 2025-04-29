@@ -50,9 +50,6 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
   links = [
     { name: "Populært", href: "#", value: "popular" },
     { name: "Upcoming", href: "#", value: "upcoming" },
-    { name: "På TV", href: "#", value: "on-tv" },
-    { name: "Til Leje", href: "#", value: "for-rent" },
-    { name: "I Biograferne", href: "#", value: "in-theaters" },
   ],
   defaultTimeWindow = "popular",
 }) => {
@@ -88,12 +85,54 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
     }
   }, [timeWindow]);
 
-  // Create memoized fetch function based on timeWindow
+  // Update the fetchData function to ensure we have enough valid movies
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
+      console.log(`Fetching data for timeWindow: ${timeWindow}`);
       const fetchFunction = getFetchFunction();
-      const trailerData = await fetchFunction();
+      let trailerData = await fetchFunction();
+      console.log(`Received ${trailerData.length} trailers for ${timeWindow}`);
+
+      // Filter out movies without backdrop images
+      const validMovies = trailerData.filter(
+        (movie: any) => movie.backdrop_path && movie.title
+      );
+
+      // If we don't have enough valid movies, fetch more
+      if (validMovies.length < 4) {
+        console.log("Not enough valid movies, fetching more...");
+
+        // Get the other fetch function to supplement
+        const backupFetchFunction =
+          timeWindow === "popular"
+            ? fetchUpcomingTrailers
+            : fetchPopularTrailers;
+
+        const additionalData = await backupFetchFunction();
+
+        // Filter these for valid backdrop paths too
+        const additionalValidMovies = additionalData.filter(
+          (movie: any) =>
+            movie.backdrop_path &&
+            movie.title &&
+            // Make sure we don't have duplicates
+            !validMovies.some((m: any) => m.movieId === movie.movieId)
+        );
+
+        // Combine the movies, ensuring we have unique ones
+        trailerData = [...validMovies, ...additionalValidMovies].slice(0, 4); // Ensure we only take what we need
+
+        console.log(
+          `After supplementing: ${trailerData.length} valid trailers`
+        );
+      } else {
+        trailerData = validMovies;
+      }
+
+      if (trailerData.length > 0) {
+        console.log(`First movie: ${trailerData[0].title}`);
+      }
 
       setTrailers(
         trailerData.map((movie: any) => ({
@@ -120,7 +159,7 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
     } finally {
       setIsLoading(false);
     }
-  }, [getFetchFunction]);
+  }, [getFetchFunction, timeWindow]);
 
   // Fetch data when timeWindow changes
   useEffect(() => {
@@ -171,7 +210,7 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
         <AnimatePresence mode="wait">
           {isLoading ? (
             <MotionBox
-              key="loading"
+              key={`content-${timeWindow}-${Date.now()}`} // Add timestamp to force re-render
               display="flex"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -210,7 +249,7 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
             >
               {trendingMovies.slice(0, 4).map((movie, index) => (
                 <MotionCard
-                  key={`${timeWindow}-${movie.id}-${index}`} // Add timeWindow and index to ensure unique keys
+                  key={`${timeWindow}-${movie.id}-${index}`}
                   flexShrink={0}
                   width="300px"
                   marginRight="20px"
@@ -240,7 +279,11 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
                   }}
                 >
                   <Box
-                    backgroundImage={`url(https://image.tmdb.org/t/p/w500${movie.backdrop_path})`}
+                    backgroundImage={
+                      movie.backdrop_path
+                        ? `url(https://image.tmdb.org/t/p/w500${movie.backdrop_path})`
+                        : "url('https://via.placeholder.com/500x281?text=No+Image+Available')"
+                    }
                     backgroundSize="cover"
                     backgroundPosition="center"
                     height="calc(300px / 1.78)"

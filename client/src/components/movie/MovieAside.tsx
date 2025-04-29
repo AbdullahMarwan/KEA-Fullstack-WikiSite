@@ -8,7 +8,7 @@ import {
   FaImdb,
 } from "react-icons/fa6";
 import { SiWikidata } from "react-icons/si";
-import { useMovie, Movie } from "../../context/MovieContext";
+import { Movie } from "../../context/MovieContext";
 
 interface MovieAsideProps {
   movie: Movie;
