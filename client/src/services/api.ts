@@ -51,11 +51,37 @@ export const fetchMovieTrailers = async (movieId: string | number) => {
   }
 };
 
-// Fetch trailers for a specific movie
+// Fetch images for a specific movie
 export const fetchMovieImages = async (movieId: string | number) => {
   try {
     const response = await fetch(
       `${baseUrl}/movie/${movieId}/images?api_key=${apiKey}`
+    );
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching movie trailers:", error);
+    return { results: [] };
+  }
+};
+
+// Fetch Keywords for a specific movie
+export const fetchMovieKeywords = async (movieId: string | number) => {
+  try {
+    const response = await fetch(
+      `${baseUrl}/movie/${movieId}/keywords?api_key=${apiKey}`
+    );
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching movie trailers:", error);
+    return { results: [] };
+  }
+};
+
+// Fetch Keywords for a specific movie
+export const fetchMoviePopularityChart = async (movieId: string | number) => {
+  try {
+    const response = await fetch(
+      `${baseUrl}/movie/${movieId}/keywords?api_key=${apiKey}`
     );
     return await response.json();
   } catch (error) {
