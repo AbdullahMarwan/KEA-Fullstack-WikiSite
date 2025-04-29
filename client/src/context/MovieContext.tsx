@@ -153,8 +153,6 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
         // Fetch external media links
         const movieMediaData = await fetchMediaForMovie(id);
 
-        console.log(movieImages);
-
         // Create a complete movie object with credits
         const completeMovie = {
           ...movieData,

@@ -5,6 +5,8 @@ import { fetchMovieReviews } from "../../services/api"; // Adjust the import pat
 import { IoIosStar } from "react-icons/io";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
+import { IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowForward } from "react-icons/io";
 
 interface AuthorDetails {
   name: string | null;
@@ -26,6 +28,40 @@ function SocialCtn() {
   const { id } = useParams<{ id: string }>();
   const [reviews, setReviews] = React.useState<MovieReview[]>([]);
   const [showFullText, setShowFullText] = React.useState(false); // Move this to component top level
+  const [currentReviewIndex, setCurrentReviewIndex] = React.useState(0);
+
+  const formatReviewContent = (content: string, maxLength?: number) => {
+    // First, sanitize the HTML content
+    const sanitizedContent = DOMPurify.sanitize(content);
+
+    // If maxLength is provided, truncate the content
+    if (maxLength && sanitizedContent.length > maxLength) {
+      const truncatedContent = sanitizedContent.substring(0, maxLength) + "...";
+      return parse(truncatedContent);
+    }
+
+    // Parse the HTML content to React elements
+    return parse(sanitizedContent);
+  };
+
+  // Add these navigation functions
+  const handleNextReview = () => {
+    if (reviews.length > 0) {
+      setCurrentReviewIndex((prevIndex) =>
+        prevIndex === reviews.length - 1 ? 0 : prevIndex + 1
+      );
+      setShowFullText(false); // Reset the expanded text when changing reviews
+    }
+  };
+
+  const handlePrevReview = () => {
+    if (reviews.length > 0) {
+      setCurrentReviewIndex((prevIndex) =>
+        prevIndex === 0 ? reviews.length - 1 : prevIndex - 1
+      );
+      setShowFullText(false); // Reset the expanded text when changing reviews
+    }
+  };
 
   useEffect(() => {
     const getMovieDetails = async () => {
@@ -53,12 +89,44 @@ function SocialCtn() {
   return (
     <>
       <Box mt={10} borderTop={"1px solid #d7d7d7"} pt={10}>
-        <HStack gap={5} mb={5}>
-          <Heading fontSize={"1.75em"} fontWeight={600} mr={5}>
+        <HStack gap={".5em"} mb={5} alignItems={"flex-end"}>
+          <Heading fontSize="1.75em" fontWeight={600} mr={5}>
             Social
           </Heading>
-          <Link fontSize={"1.25em"}>Reviews {reviews.length}</Link>
-          <Link fontSize={"1.25em"}>Discussions {}</Link>
+          <Link fontSize="1.15em" _hover={{ textDecoration: "none" }}>
+            Reviews{" "}
+            <Text
+              as={"span"}
+              fontSize={"0.75em"}
+              fontWeight={"600"}
+              color="gray.500"
+            >
+              ({reviews?.length ? reviews.length : 0})
+            </Text>
+          </Link>
+          <HStack>
+            <Box
+              as="button"
+              onClick={handlePrevReview}
+              cursor="pointer"
+              opacity={reviews.length <= 1 ? 0.5 : 1}
+              pointerEvents={reviews.length <= 1 ? "none" : "auto"}
+            >
+              <IoIosArrowBack />
+            </Box>
+          </HStack>
+
+          <HStack>
+            <Box
+              as="button"
+              onClick={handleNextReview}
+              cursor="pointer"
+              opacity={reviews.length <= 1 ? 0.5 : 1}
+              pointerEvents={reviews.length <= 1 ? "none" : "auto"}
+            >
+              <IoIosArrowForward />
+            </Box>
+          </HStack>
         </HStack>
         <Box
           style={{
@@ -70,76 +138,23 @@ function SocialCtn() {
         >
           {reviews.length > 0 &&
             (() => {
-              const highestRatedReview = reviews.reduce((prev, current) => {
-                return (current.author_details.rating || 0) >
-                  (prev.author_details.rating || 0)
-                  ? current
-                  : prev;
-              });
+              // Get the current review based on the index
+              const currentReview = reviews[currentReviewIndex];
 
-              // Then update your formatReviewContent function
-              const formatReviewContent = (
-                content: string,
-                maxLength?: number
-              ) => {
-                // First sanitize the HTML content to prevent XSS
-                const sanitizedContent = DOMPurify.sanitize(content);
-
-                // Split by line breaks but preserve HTML
-                const lines = sanitizedContent.split(/\r\n|\r|\n/);
-
-                // If no maxLength, render the full content with HTML parsing
-                if (!maxLength) {
-                  return lines.map((line, i) => (
-                    <React.Fragment key={i}>
-                      {parse(line)}
-                      {i !== lines.length - 1 && <br />}
-                    </React.Fragment>
-                  ));
-                }
-
-                // For truncated content with HTML
-                let currentLength = 0;
-                const truncatedLines = [];
-
-                for (let i = 0; i < lines.length; i++) {
-                  const line = lines[i];
-                  // Strip HTML for length calculation
-                  const plainTextLine = line.replace(/<\/?[^>]+(>|$)/g, "");
-
-                  if (currentLength + plainTextLine.length > maxLength) {
-                    // This is trickier with HTML - we'll use a simpler approach
-                    truncatedLines.push(
-                      line.substring(0, maxLength - currentLength)
-                    );
-                    break;
-                  }
-
-                  truncatedLines.push(line);
-                  currentLength += plainTextLine.length + 1;
-
-                  if (currentLength >= maxLength) {
-                    break;
-                  }
-                }
-
-                // Join with <br> and parse HTML
-                return parse(truncatedLines.join("<br>"));
-              };
-
+              // Rest of your code remains the same but replace highestRatedReview with currentReview
               return (
                 <>
                   <HStack>
                     <Image
                       src={
-                        highestRatedReview.author_details.avatar_path
-                          ? `https://image.tmdb.org/t/p/w200${highestRatedReview.author_details.avatar_path}`
+                        currentReview.author_details.avatar_path
+                          ? `https://image.tmdb.org/t/p/w200${currentReview.author_details.avatar_path}`
                           : undefined
                       }
                       borderRadius={"50%"}
                       height={"50px"}
                       width={"50px"}
-                      alt={highestRatedReview.author}
+                      alt={currentReview.author}
                     />
                     <HStack
                       flexDirection={"column"}
@@ -147,7 +162,7 @@ function SocialCtn() {
                       gap={0}
                     >
                       <Heading fontSize={"1.25em"}>
-                        A review by {highestRatedReview.author}
+                        A review by {currentReview.author}
                       </Heading>
 
                       <HStack>
@@ -163,15 +178,15 @@ function SocialCtn() {
                           fontWeight={600}
                         >
                           <IoIosStar size={15} />{" "}
-                          {highestRatedReview.author_details.rating
-                            ? highestRatedReview.author_details.rating * 10
+                          {currentReview.author_details.rating
+                            ? currentReview.author_details.rating * 10
                             : null}
                           %
                         </Box>
                         <Text>
                           on{" "}
                           {new Date(
-                            highestRatedReview.created_at
+                            currentReview.created_at
                           ).toLocaleDateString("en-US", {
                             month: "short",
                             day: "2-digit",
@@ -182,12 +197,29 @@ function SocialCtn() {
                     </HStack>
                   </HStack>
 
+                  {/* Add a review counter */}
+                  <Text fontSize="sm" color="gray.500" mt={2}>
+                    Review {currentReviewIndex + 1} of {reviews.length}
+                  </Text>
+
                   <Text mt={10}>
                     {showFullText ? (
-                      formatReviewContent(highestRatedReview.content)
+                      <>
+                        {formatReviewContent(currentReview.content)}
+                        <Text
+                          as="span"
+                          color="blue.500"
+                          cursor="pointer"
+                          ml={2}
+                          onClick={() => setShowFullText(false)}
+                          display="inline-block"
+                        >
+                          Show Less
+                        </Text>
+                      </>
                     ) : (
                       <>
-                        {formatReviewContent(highestRatedReview.content, 500)}
+                        {formatReviewContent(currentReview.content, 500)}
                         <Text
                           as="span"
                           color="blue.500"
@@ -205,9 +237,6 @@ function SocialCtn() {
             })()}
         </Box>
       </Box>
-      <Link fontSize={"1em"} fontWeight={"700"} mt={"15px"}>
-        Read All Reviews
-      </Link>
     </>
   );
 }
