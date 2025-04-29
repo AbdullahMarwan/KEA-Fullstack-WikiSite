@@ -154,7 +154,6 @@ function MediaVideos() {
             <Box
               overflowX="auto"
               whiteSpace="nowrap"
-              padding="10px"
               boxSizing="border-box"
               css={{
                 "&::-webkit-scrollbar": { height: "4px" },
