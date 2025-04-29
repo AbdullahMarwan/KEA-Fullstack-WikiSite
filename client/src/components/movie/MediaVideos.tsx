@@ -5,7 +5,6 @@ import {
   Text,
   Image,
   Flex,
-  AspectRatio,
   Skeleton,
   SkeletonText,
 } from "@chakra-ui/react";
@@ -27,20 +26,18 @@ function MediaVideos() {
   // Function to render skeleton loaders for different content types
   const renderSkeletons = (contentType: string) => {
     switch (contentType) {
-      // Update skeleton for videos
       case "videos":
         return (
           <Flex>
             {[...Array(4)].map((_, index) => (
               <Box
                 key={index}
-                width="400px" // Updated from 350px
-                height="245px" // Updated from 220px (to account for title)
+                width="50%"
+                height="300px"
                 marginRight="20px"
                 flex="0 0 auto"
               >
-                <Skeleton height="225px" width="100%" borderRadius="8px" /> //
-                Updated from 197px
+                <Skeleton height="300px" width="100%" borderRadius="8px" />
                 <SkeletonText mt="2" noOfLines={1} spacing="2" />
               </Box>
             ))}
@@ -52,8 +49,8 @@ function MediaVideos() {
             {[...Array(4)].map((_, index) => (
               <Skeleton
                 key={index}
-                width="350px"
-                height="200px"
+                width="500px"
+                height="281px"
                 marginRight="20px"
                 flex="0 0 auto"
                 borderRadius="8px"
@@ -80,20 +77,54 @@ function MediaVideos() {
         return (
           <Box>
             <HStack alignItems="flex-start" spacing={4} mb={6}>
-              <Skeleton width="50%" height="300px" borderRadius="8px" />
-              <Skeleton width="50%" height="300px" borderRadius="8px" />
+              <Box
+                width="50%"
+                height="300px"
+                borderRadius="8px"
+                overflow="hidden"
+              >
+                <Skeleton
+                  width="100%"
+                  height="100%"
+                  borderRadius="8px"
+                  startColor="gray.100"
+                  endColor="gray.300"
+                />
+              </Box>
+              <Box
+                width="50%"
+                height="300px"
+                borderRadius="8px"
+                overflow="hidden"
+              >
+                <Skeleton
+                  width="100%"
+                  height="100%"
+                  borderRadius="8px"
+                  startColor="gray.100"
+                  endColor="gray.300"
+                />
+              </Box>
             </HStack>
-            <SkeletonText mt="4" noOfLines={1} width="100px" />
             <Flex mt="4">
               {[...Array(5)].map((_, index) => (
-                <Skeleton
+                <Box
                   key={index}
                   width="150px"
                   height="225px"
                   marginRight="20px"
                   flex="0 0 auto"
                   borderRadius="8px"
-                />
+                  overflow="hidden"
+                >
+                  <Skeleton
+                    width="100%"
+                    height="100%"
+                    borderRadius="8px"
+                    startColor="gray.100"
+                    endColor="gray.300"
+                  />
+                </Box>
               ))}
             </Flex>
           </Box>
@@ -104,11 +135,10 @@ function MediaVideos() {
   // Function to render content based on the active tab
   const renderContent = () => {
     switch (activeMediaTab) {
-      // In your videos case in renderContent()
       case "videos":
         return (
           <Box width="100%" position="relative">
-            {/* Gradient overlay remains the same */}
+            {/* Gradient overlay */}
             <Box
               position="absolute"
               top={0}
@@ -127,12 +157,8 @@ function MediaVideos() {
               padding="10px"
               boxSizing="border-box"
               css={{
-                "&::-webkit-scrollbar": {
-                  height: "4px",
-                },
-                "&::-webkit-scrollbar-track": {
-                  background: "#f1f1f1",
-                },
+                "&::-webkit-scrollbar": { height: "4px" },
+                "&::-webkit-scrollbar-track": { background: "#f1f1f1" },
                 "&::-webkit-scrollbar-thumb": {
                   background: "#888",
                   borderRadius: "2px",
@@ -147,59 +173,52 @@ function MediaVideos() {
                     videos.map((video, index) => (
                       <Box
                         key={video.id || index}
-                        width="50%" // Increased from 350px to match popular
+                        width="50%"
                         marginRight="20px"
                         flex="0 0 auto"
                       >
                         <Box
                           position="relative"
-                          height="225px" // Increased from 197px to match popular
+                          height="300px"
                           width="100%"
                           borderRadius="8px"
                           overflow="hidden"
                         >
-                          <AspectRatio
-                            ratio={16 / 9}
+                          {/* Thumbnail image */}
+                          <Image
+                            src={`https://img.youtube.com/vi/${video.key}/hqdefault.jpg`}
+                            alt={video.name}
                             width="100%"
                             height="100%"
-                          >
-                            {/* YouTube thumbnail as placeholder */}
-                            <Box position="relative">
-                              <Image
-                                src={`https://img.youtube.com/vi/${video.key}/hqdefault.jpg`} // Using higher quality thumbnail
-                                alt={video.name}
-                                width="100%"
-                                height="100%"
-                                objectFit="cover"
-                                borderRadius="8px"
-                              />
-                              {/* Play button overlay */}
-                              <Box
-                                position="absolute"
-                                top="50%"
-                                left="50%"
-                                transform="translate(-50%, -50%)"
-                                width="60px"
-                                height="60px"
-                                borderRadius="50%"
-                                bg="rgba(0,0,0,0.7)"
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                              >
-                                <Box
-                                  width="0"
-                                  height="0"
-                                  borderTop="15px solid transparent"
-                                  borderBottom="15px solid transparent"
-                                  borderLeft="25px solid white"
-                                  marginLeft="5px"
-                                />
-                              </Box>
-                            </Box>
-                          </AspectRatio>
+                            objectFit="cover"
+                            borderRadius="8px"
+                          />
 
-                          {/* Iframe positioned absolutely, will be on top when loaded */}
+                          {/* Play button overlay */}
+                          <Box
+                            position="absolute"
+                            top="50%"
+                            left="50%"
+                            transform="translate(-50%, -50%)"
+                            width="60px"
+                            height="60px"
+                            borderRadius="50%"
+                            bg="rgba(0,0,0,0.7)"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                          >
+                            <Box
+                              width="0"
+                              height="0"
+                              borderTop="15px solid transparent"
+                              borderBottom="15px solid transparent"
+                              borderLeft="25px solid white"
+                              marginLeft="5px"
+                            />
+                          </Box>
+
+                          {/* iframe */}
                           <Box
                             position="absolute"
                             top="0"
@@ -228,8 +247,8 @@ function MediaVideos() {
                     ))
                   ) : (
                     <Box
-                      width="400px" // Updated to match new size
-                      height="225px" // Updated to match new size
+                      width="50%"
+                      height="300px"
                       bg="gray.100"
                       borderRadius="8px"
                       display="flex"
@@ -237,6 +256,80 @@ function MediaVideos() {
                       justifyContent="center"
                     >
                       <Text>No videos available</Text>
+                    </Box>
+                  )}
+                </Flex>
+              )}
+            </Box>
+          </Box>
+        );
+
+      case "backdrops":
+        return (
+          <Box width="100%" position="relative">
+            {/* Gradient overlay */}
+            <Box
+              position="absolute"
+              top={0}
+              right={0}
+              height="100%"
+              width="60px"
+              zIndex={2}
+              pointerEvents="none"
+              background="linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 70%, rgba(255,255,255,1) 100%)"
+            />
+
+            {/* Scrollable content */}
+            <Box
+              overflowX="auto"
+              whiteSpace="nowrap"
+              padding="10px"
+              boxSizing="border-box"
+              css={{
+                "&::-webkit-scrollbar": { height: "4px" },
+                "&::-webkit-scrollbar-track": { background: "#f1f1f1" },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "#888",
+                  borderRadius: "2px",
+                },
+              }}
+            >
+              {loading ? (
+                renderSkeletons("backdrops")
+              ) : (
+                <Flex>
+                  {images?.backdrops && images.backdrops.length > 0 ? (
+                    images.backdrops.map((backdrop, index) => (
+                      <Box
+                        key={index}
+                        width="500px"
+                        height="281px"
+                        marginRight="20px"
+                        flex="0 0 auto"
+                        borderRadius="8px"
+                        overflow="hidden"
+                      >
+                        <Image
+                          src={`https://image.tmdb.org/t/p/w1280${backdrop.file_path}`}
+                          alt={`${movie.title} backdrop ${index + 1}`}
+                          width="100%"
+                          height="100%"
+                          objectFit="cover"
+                          borderRadius="8px"
+                        />
+                      </Box>
+                    ))
+                  ) : (
+                    <Box
+                      width="500px"
+                      height="281px"
+                      bg="gray.100"
+                      borderRadius="8px"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Text>No backdrops available</Text>
                     </Box>
                   )}
                 </Flex>
@@ -267,12 +360,8 @@ function MediaVideos() {
               padding="10px"
               boxSizing="border-box"
               css={{
-                "&::-webkit-scrollbar": {
-                  height: "4px",
-                },
-                "&::-webkit-scrollbar-track": {
-                  background: "#f1f1f1",
-                },
+                "&::-webkit-scrollbar": { height: "4px" },
+                "&::-webkit-scrollbar-track": { background: "#f1f1f1" },
                 "&::-webkit-scrollbar-thumb": {
                   background: "#888",
                   borderRadius: "2px",
@@ -325,7 +414,6 @@ function MediaVideos() {
 
       case "popular":
       default:
-        // Default to showing a mix of content
         return (
           <Box width="100%" position="relative">
             {loading || isLoadingTrailers ? (
@@ -340,44 +428,41 @@ function MediaVideos() {
                       position="relative"
                       borderRadius="8px"
                       overflow="hidden"
+                      height="300px"
                     >
-                      {/* Use the same thumbnail approach as in videos tab */}
-                      <AspectRatio ratio={16 / 9}>
-                        {/* YouTube thumbnail as placeholder */}
-                        <Box position="relative">
-                          <Image
-                            src={`https://img.youtube.com/vi/${selectedTrailer.key}/mqdefault.jpg`}
-                            alt={selectedTrailer.name}
-                            width="100%"
-                            height="100%"
-                            objectFit="cover"
-                            borderRadius="8px"
-                          />
-                          {/* Play button overlay */}
-                          <Box
-                            position="absolute"
-                            top="50%"
-                            left="50%"
-                            transform="translate(-50%, -50%)"
-                            width="60px"
-                            height="60px"
-                            borderRadius="50%"
-                            bg="rgba(0,0,0,0.7)"
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="center"
-                          >
-                            <Box
-                              width="0"
-                              height="0"
-                              borderTop="15px solid transparent"
-                              borderBottom="15px solid transparent"
-                              borderLeft="25px solid white"
-                              marginLeft="5px"
-                            />
-                          </Box>
-                        </Box>
-                      </AspectRatio>
+                      {/* YouTube thumbnail as placeholder */}
+                      <Image
+                        src={`https://img.youtube.com/vi/${selectedTrailer.key}/hqdefault.jpg`}
+                        alt={selectedTrailer.name}
+                        width="100%"
+                        height="100%"
+                        objectFit="cover"
+                        borderRadius="8px"
+                      />
+
+                      {/* Play button overlay */}
+                      <Box
+                        position="absolute"
+                        top="50%"
+                        left="50%"
+                        transform="translate(-50%, -50%)"
+                        width="60px"
+                        height="60px"
+                        borderRadius="50%"
+                        bg="rgba(0,0,0,0.7)"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Box
+                          width="0"
+                          height="0"
+                          borderTop="15px solid transparent"
+                          borderBottom="15px solid transparent"
+                          borderLeft="25px solid white"
+                          marginLeft="5px"
+                        />
+                      </Box>
 
                       {/* Iframe positioned absolutely, will be on top when loaded */}
                       <Box
@@ -406,14 +491,15 @@ function MediaVideos() {
                   {images?.backdrops && images.backdrops.length > 0 && (
                     <Box
                       width={selectedTrailer ? "50%" : "100%"}
+                      height="300px"
                       borderRadius="8px"
                       overflow="hidden"
                     >
                       <Image
-                        src={`https://image.tmdb.org/t/p/w500${images.backdrops[0].file_path}`}
+                        src={`https://image.tmdb.org/t/p/w1280${images.backdrops[0].file_path}`}
                         alt={`${movie.title} backdrop`}
                         width="100%"
-                        height="auto"
+                        height="100%"
                         objectFit="cover"
                         borderRadius="8px"
                       />
@@ -422,7 +508,62 @@ function MediaVideos() {
                 </HStack>
 
                 {/* Scrollable posters if available */}
-                {/* Rest of your code remains unchanged */}
+                {images?.posters && images.posters.length > 0 && (
+                  <Box mt={4} position="relative">
+                    <Text fontWeight="bold" mb={2}>
+                      Posters
+                    </Text>
+
+                    <Box
+                      position="absolute"
+                      top="30px"
+                      right={0}
+                      height="calc(100% - 30px)"
+                      width="60px"
+                      zIndex={2}
+                      pointerEvents="none"
+                      background="linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 70%, rgba(255,255,255,1) 100%)"
+                    />
+
+                    <Box
+                      overflowX="auto"
+                      whiteSpace="nowrap"
+                      padding="10px"
+                      boxSizing="border-box"
+                      css={{
+                        "&::-webkit-scrollbar": { height: "4px" },
+                        "&::-webkit-scrollbar-track": { background: "#f1f1f1" },
+                        "&::-webkit-scrollbar-thumb": {
+                          background: "#888",
+                          borderRadius: "2px",
+                        },
+                      }}
+                    >
+                      <Flex>
+                        {images.posters.map((poster, index) => (
+                          <Box
+                            key={index}
+                            width="150px"
+                            height="225px"
+                            marginRight="20px"
+                            flex="0 0 auto"
+                            borderRadius="8px"
+                            overflow="hidden"
+                          >
+                            <Image
+                              src={`https://image.tmdb.org/t/p/w500${poster.file_path}`}
+                              alt={`${movie.title} poster ${index + 1}`}
+                              width="100%"
+                              height="100%"
+                              objectFit="cover"
+                              borderRadius="8px"
+                            />
+                          </Box>
+                        ))}
+                      </Flex>
+                    </Box>
+                  </Box>
+                )}
               </>
             )}
           </Box>
