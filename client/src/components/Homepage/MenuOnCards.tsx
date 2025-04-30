@@ -113,14 +113,9 @@ const MenuOnCards: React.FC<MenuOnCardsProps> = ({
                   justifyContent="flex-start"
                   backgroundColor="transparent"
                 ></Box>
-                <Link
-                  fontSize={".75em"}
-                  as={ReactRouterLink}
-                  to="/"
-                  _hover={{ textDecoration: "none" }}
-                >
+                <Text fontSize={".75em"} _hover={{ textDecoration: "none" }}>
                   Log ind
-                </Link>
+                </Text>
                 <IoIosArrowForward />
               </ListItem>
 

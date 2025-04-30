@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+} from "react";
 import { useParams } from "react-router-dom";
 import {
   fetchMovieById,
@@ -6,6 +12,7 @@ import {
   fetchMediaForMovie,
   fetchMovieTrailers,
   fetchMovieImages,
+  fetchMovieKeywords,
 } from "../services/api";
 
 // Define your interfaces
@@ -35,7 +42,7 @@ interface Cast {
   profile_path: string | null;
 }
 
-interface Movie {
+export interface Movie {
   id: number;
   title: string;
   overview: string;
@@ -45,6 +52,7 @@ interface Movie {
   vote_average: number;
   poster_path: string;
   backdrop_path: string;
+  homepage: string;
   runtime?: number;
   tagline: string;
   status: string;
@@ -52,6 +60,13 @@ interface Movie {
   budget: number;
   revenue: number;
   MovieMediaData?: MovieMediaData;
+  keywords?: {
+    id: number;
+    keywords: Array<{
+      id: number;
+      name: string;
+    }>;
+  };
 }
 
 interface Trailer {
@@ -79,12 +94,13 @@ interface MovieContextType {
   error: string | null;
   trailers: Trailer[];
   images: Images | null;
-  videos: Trailer[]; // Add this line
+  videos: Trailer[];
+  keywords: Keywords | null; // Add this line
   selectedTrailer: Trailer | null;
   setSelectedTrailer: (trailer: Trailer | null) => void;
   isLoadingTrailers: boolean;
-  activeMediaTab: string; // Add this
-  setActiveMediaTab: (tab: string) => void; // Add this
+  activeMediaTab: string;
+  setActiveMediaTab: (tab: string) => void;
 }
 
 interface Images {
@@ -103,15 +119,24 @@ interface Images {
   }>;
 }
 
+interface Keywords {
+  id: number;
+  keywords: Array<{
+    id: number;
+    name: string;
+  }>;
+}
+
 const MovieContext = createContext<MovieContextType>({
-  activeMediaTab: "videos", // Provide a default value, not a type
-  setActiveMediaTab: () => {}, // Provide a no-op function
+  activeMediaTab: "videos",
+  setActiveMediaTab: () => {},
   movie: null,
   loading: true,
   error: null,
   trailers: [],
-  videos: [], // Add this line
+  videos: [],
   images: null,
+  keywords: null,
   selectedTrailer: null,
   setSelectedTrailer: () => {},
   isLoadingTrailers: false,
@@ -128,6 +153,7 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
   const [images, setImages] = useState<Images | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [trailers, setTrailers] = useState<Trailer[]>([]);
+  const [keywords, setKeywords] = useState<Keywords | null>(null);
   const [videos, setVideos] = useState<Trailer[]>([]);
   const [selectedTrailer, setSelectedTrailer] = useState<Trailer | null>(null);
   const [isLoadingTrailers, setIsLoadingTrailers] = useState(false);
@@ -140,27 +166,30 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setLoading(true);
       try {
-        // Fetch movie details
-        const movieData = await fetchMovieById(id);
+        // Run all fetch requests in parallel
+        const [
+          movieData,
+          movieImages,
+          keywordsData,
+          creditData,
+          movieMediaData,
+        ] = await Promise.all([
+          fetchMovieById(id),
+          fetchMovieImages(id),
+          fetchMovieKeywords(id),
+          fetchMovieCredits(id),
+          fetchMediaForMovie(id),
+        ]);
 
-        // fetch movie images
-        const movieImages = await fetchMovieImages(id);
         setImages(movieImages);
+        // Rest of your code remains the same
 
-        // Fetch credits separately
-        const creditData = await fetchMovieCredits(id);
-
-        // Fetch external media links
-        const movieMediaData = await fetchMediaForMovie(id);
-
-        console.log(movieImages);
-
-        // Create a complete movie object with credits
         const completeMovie = {
           ...movieData,
           genres: movieData.genres ?? [],
           credits: creditData,
           MovieMediaData: movieMediaData,
+          keywords: keywordsData, // Add keywords to the movie object
         };
 
         setMovie(completeMovie);
@@ -215,22 +244,37 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [movie?.id]);
 
+  const contextValue = useMemo(
+    () => ({
+      movie,
+      loading,
+      error,
+      trailers,
+      videos,
+      images,
+      keywords,
+      selectedTrailer,
+      setSelectedTrailer,
+      isLoadingTrailers,
+      activeMediaTab,
+      setActiveMediaTab,
+    }),
+    [
+      movie,
+      loading,
+      error,
+      trailers,
+      videos,
+      keywords,
+      images,
+      selectedTrailer,
+      isLoadingTrailers,
+      activeMediaTab,
+    ]
+  );
+
   return (
-    <MovieContext.Provider
-      value={{
-        movie,
-        loading,
-        error,
-        trailers,
-        videos, // Add this line
-        images,
-        selectedTrailer,
-        setSelectedTrailer,
-        isLoadingTrailers,
-        activeMediaTab,
-        setActiveMediaTab,
-      }}
-    >
+    <MovieContext.Provider value={contextValue}>
       {children}
     </MovieContext.Provider>
   );

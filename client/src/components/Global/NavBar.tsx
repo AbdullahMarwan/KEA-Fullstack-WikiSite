@@ -178,6 +178,7 @@ const NavBar = () => {
                 bg="transparent"
                 _hover={{ bg: "white", color: "#032440" }}
                 padding="0px"
+                color={"white"}
                 h="100%"
                 px="10px"
                 onClick={(e) => {
