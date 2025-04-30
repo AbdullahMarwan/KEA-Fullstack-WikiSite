@@ -10,8 +10,11 @@ import {
   fetchTrendingMovies,
 } from "../../services/api";
 
-const movieSection = () => {
-  const trendingMoviesLinks = [
+interface MovieSectionProps {
+  sectionType: "popular" | "tv-series" | "trending";
+}
+
+const trendingMoviesLinks = [
     { name: "I dag", href: "#", value: "day" },
     { name: "Denne uge", href: "#", value: "week" },
   ];
@@ -27,10 +30,12 @@ const movieSection = () => {
     { name: "Kommende", href: "#", value: "upcoming" },
   ];
 
+// const movieSection = () => {
+const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
   const [activeLink, setActiveLink] = React.useState("Vises nu");
   const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
   const [links, setLinks] = useState<any[]>([]); // Initialize with popularMoviesLinks
-//   const [links, setLinks] = useState(popularMoviesLinks); // Initialize with popularMoviesLinks
+  //   const [links, setLinks] = useState(popularMoviesLinks); // Initialize with popularMoviesLinks
 
   const getFetchFunction = (category: string) => {
     switch (category) {
@@ -45,9 +50,25 @@ const movieSection = () => {
     }
   };
 
+  const updateLinks = (category: string) => {
+    switch (category) {
+      case "popular":
+        setLinks(popularMoviesLinks);
+        break;
+      case "tv-series":
+        setLinks(tvShowsMoviesLinks);
+        break;
+      case "trending":
+        setLinks(trendingMoviesLinks);
+        break;
+      default:
+        setLinks(trendingMoviesLinks);
+    }
+  };
+
   // Preload background image to prevent layout shifts
   useEffect(() => {
-    setLinks(trendingMoviesLinks);
+    updateLinks(sectionType)
     const img = new Image();
     img.src = background;
   }, []);
@@ -55,7 +76,6 @@ const movieSection = () => {
   console.log("Usestate in main", links);
 
   return (
-    
     <HStack
       display={"flex"}
       alignItems={"center"}
