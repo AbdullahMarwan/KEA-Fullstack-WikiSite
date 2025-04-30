@@ -22,13 +22,13 @@ export const Homepage = () => {
 
       <GridItem area={"main"}>
         <SearchMovieSection />
-        <TrendingMovies />
+        {/* <TrendingMovies /> */}
         <MovieSection sectionType="trending" />
-        {/* <LatestTrailers /> */}
-        <FilmSection />
+        <LatestTrailers />
+        {/* <FilmSection /> */}
         <MovieSection sectionType="popular" />
         <SignupSection />
-        <TvShows />
+        {/* <TvShows /> */}
         <MovieSection sectionType="tv-series" />
       </GridItem>
     </Grid>

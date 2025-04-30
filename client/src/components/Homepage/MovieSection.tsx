@@ -36,7 +36,7 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
   const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
   const [links, setLinks] = useState<any[]>([]); // Initialize with popularMoviesLinks
 
-  const getFetchFunction = (category: string) => {
+  const getFetchFunction = async (category: string) => {
     switch (category) {
       case "popular":
         return fetchPopularMovies;
@@ -62,9 +62,21 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
     }
   };
 
+  const fetchMovies = async () => {
+    try {
+      const fetchFunction = await getFetchFunction(sectionType); // Get the appropriate fetch function
+      const data = await fetchFunction(); // Call the fetch function to get the data
+      setMovies(data.results || data); // Update the movies state
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+    }
+  };
+
   // Preload background image to prevent layout shifts
   useEffect(() => {
     setLinks(returnLinks(sectionType));
+    fetchMovies();
+    
     const img = new Image();
     img.src = background;
   }, []);
