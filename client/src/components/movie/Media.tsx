@@ -1,124 +1,95 @@
-import React, { useState, useEffect } from "react";
-import {
-  Box,
-  HStack,
-  Heading,
-  Link,
-  Text,
-  AspectRatio,
-} from "@chakra-ui/react";
+import React from "react";
+import { Box, HStack, Heading, Link, Text } from "@chakra-ui/react";
 import { useMovie } from "../../context/MovieContext";
-import { fetchMovieTrailers } from "../../services/api";
-
-interface Trailer {
-  id: string;
-  key: string;
-  name: string;
-  site: string;
-  type: string;
-  published_at: string;
-  official: boolean;
-}
+import MediaVideos from "./MediaVideos";
 
 function Media() {
-  const { movie } = useMovie();
-  const [trailers, setTrailers] = useState<Trailer[]>([]);
-  const [selectedTrailer, setSelectedTrailer] = useState<Trailer | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const getTrailers = async () => {
-      if (!movie?.id) return;
-
-      setIsLoading(true);
-      try {
-        const trailerData = await fetchMovieTrailers(movie.id);
-
-        // Filter for YouTube trailers
-        const youtubeTrailers = trailerData.filter(
-          (video: Trailer) =>
-            video.site === "YouTube" && video.type.includes("Trailer")
-        );
-
-        // If no specific trailers, use any YouTube video
-        const youtubeVideos = trailerData.filter(
-          (video: Trailer) => video.site === "YouTube"
-        );
-
-        const filteredTrailers =
-          youtubeTrailers.length > 0 ? youtubeTrailers : youtubeVideos;
-        setTrailers(filteredTrailers);
-
-        // Set the first trailer as selected by default
-        if (filteredTrailers.length > 0) {
-          setSelectedTrailer(filteredTrailers[0]);
-        }
-      } catch (error) {
-        console.error("Error fetching trailers:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getTrailers();
-  }, [movie?.id]);
+  const { movie, videos, images, activeMediaTab, setActiveMediaTab } =
+    useMovie();
 
   // Safety check
   if (!movie) return null;
 
   return (
     <Box mt={10} borderTop="1px solid #d7d7d7" pt={10} width="100%">
-      <HStack mb={5}>
+      <HStack mb={5} alignItems={"flex-end"}>
         <Heading fontSize="1.75em" fontWeight={600} mr={5}>
           Media
         </Heading>
-        <Link fontSize="1.25em">Most Popular</Link>
-        <Link fontSize="1.25em">Videos</Link>
-        <Link fontSize="1.25em">Backdrops</Link>
-        <Link fontSize="1.25em">Posters</Link>
+        <HStack gap={".5em"}>
+          <Link
+            fontSize="1.15em"
+            _hover={{ textDecoration: "none" }}
+            onClick={() => setActiveMediaTab("popular")}
+            borderBottom={
+              activeMediaTab === "popular" ? "1px solid black" : "none"
+            }
+            fontWeight={activeMediaTab === "popular" ? "bold" : "normal"}
+          >
+            Most Popular
+          </Link>
+          <Link
+            fontSize="1.15em"
+            _hover={{ textDecoration: "none" }}
+            onClick={() => setActiveMediaTab("videos")}
+            borderBottom={
+              activeMediaTab === "videos" ? "1px solid black" : "none" // Fixed this line
+            }
+            fontWeight={activeMediaTab === "videos" ? "bold" : "normal"}
+          >
+            Videos{" "}
+            <Text
+              as={"span"}
+              fontSize={"0.75em"}
+              fontWeight={"600"}
+              color="gray.500"
+            >
+              ({videos?.length ? videos.length : 0})
+            </Text>{" "}
+          </Link>
+          <Link
+            fontSize="1.15em"
+            _hover={{ textDecoration: "none" }}
+            onClick={() => setActiveMediaTab("backdrops")}
+            borderBottom={
+              activeMediaTab === "backdrops" ? "1px solid black" : "none" // Fixed this line
+            }
+            fontWeight={activeMediaTab === "backdrops" ? "bold" : "normal"}
+          >
+            Backdrops{" "}
+            <Text
+              as={"span"}
+              fontSize={"0.75em"}
+              fontWeight={"600"}
+              color="gray.500"
+            >
+              ({images?.backdrops ? images.backdrops.length : 0})
+            </Text>
+          </Link>
+          <Link
+            fontSize="1.15em"
+            _hover={{ textDecoration: "none" }}
+            onClick={() => setActiveMediaTab("posters")}
+            borderBottom={
+              activeMediaTab === "posters" ? "1px solid black" : "none" // Fixed this line
+            }
+            fontWeight={activeMediaTab === "posters" ? "bold" : "normal"}
+          >
+            Posters{" "}
+            <Text
+              as={"span"}
+              fontSize={"0.75em"}
+              fontWeight={"600"}
+              color="gray.500"
+            >
+              ({images?.posters ? images.posters.length : 0})
+            </Text>
+          </Link>
+        </HStack>
       </HStack>
 
-      <HStack alignItems="flex-start">
-        <AspectRatio ratio={16 / 9} width="50%">
-          {isLoading ? (
-            <Box
-              bg="gray.100"
-              borderRadius="8px"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Text>Loading trailer...</Text>
-            </Box>
-          ) : selectedTrailer ? (
-            <iframe
-              title={`${movie.title} trailer`}
-              src={`https://www.youtube.com/embed/${selectedTrailer.key}`}
-              allowFullScreen
-              style={{ borderRadius: "8px" }}
-            />
-          ) : (
-            <Box
-              bg="gray.100"
-              borderRadius="8px"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Text>No trailer available</Text>
-            </Box>
-          )}
-        </AspectRatio>
-
-        <AspectRatio ratio={16 / 9} width="50%">
-          <Box
-            backgroundImage={`url(https://image.tmdb.org/t/p/w500${movie.backdrop_path})`}
-            backgroundSize="cover"
-            backgroundPosition="center"
-            borderRadius="8px"
-          />
-        </AspectRatio>
-      </HStack>
+      {/* Include MediaVideos component */}
+      <MediaVideos />
     </Box>
   );
 }

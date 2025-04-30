@@ -95,6 +95,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
           <Button
             background={"#022441"}
             ml={4}
+            color={"white"}
             _hover={{
               transform: "scale(1.05)",
               transition: "transform 0.2s ease-in-out",

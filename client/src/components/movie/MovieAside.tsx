@@ -39,7 +39,6 @@ interface MovieAsideProps {
 }
 
 function MovieAside({ movie, movieMediaData }: MovieAsideProps) {
-  console.log(movieMediaData);
   return (
     <>
       <Box
