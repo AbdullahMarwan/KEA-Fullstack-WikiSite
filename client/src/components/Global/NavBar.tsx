@@ -129,7 +129,7 @@ const NavBar = () => {
             <ListItem>
               <Link
                 as={ReactRouterLink}
-                to="/"
+                to="/persons"
                 width={"150px"}
                 _hover={{ textDecoration: "none" }}
               >
