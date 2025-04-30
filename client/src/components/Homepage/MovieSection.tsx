@@ -15,27 +15,26 @@ interface MovieSectionProps {
 }
 
 const trendingMoviesLinks = [
-    { name: "I dag", href: "#", value: "day" },
-    { name: "Denne uge", href: "#", value: "week" },
-  ];
-  const tvShowsMoviesLinks = [
-    { name: "Populært", href: "#", value: "popular" },
-    { name: "sendes i dag", href: "#", value: "airing_today" },
-    { name: "Bedste anmeldelser", href: "#", value: "top_rated" },
-  ];
-  const popularMoviesLinks = [
-    { name: "Vises nu", href: "#", value: "now_playing" },
-    { name: "Populært", href: "#", value: "popular" },
-    { name: "bedste anmeldelser", href: "#", value: "top_rated" },
-    { name: "Kommende", href: "#", value: "upcoming" },
-  ];
+  { name: "I dag", href: "#", value: "day" },
+  { name: "Denne uge", href: "#", value: "week" },
+];
+const tvShowsMoviesLinks = [
+  { name: "Populært", href: "#", value: "popular" },
+  { name: "sendes i dag", href: "#", value: "airing_today" },
+  { name: "Bedste anmeldelser", href: "#", value: "top_rated" },
+];
+const popularMoviesLinks = [
+  { name: "Vises nu", href: "#", value: "now_playing" },
+  { name: "Populært", href: "#", value: "popular" },
+  { name: "bedste anmeldelser", href: "#", value: "top_rated" },
+  { name: "Kommende", href: "#", value: "upcoming" },
+];
 
 // const movieSection = () => {
 const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
   const [activeLink, setActiveLink] = React.useState("Vises nu");
   const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
   const [links, setLinks] = useState<any[]>([]); // Initialize with popularMoviesLinks
-  //   const [links, setLinks] = useState(popularMoviesLinks); // Initialize with popularMoviesLinks
 
   const getFetchFunction = (category: string) => {
     switch (category) {
@@ -50,25 +49,22 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
     }
   };
 
-  const updateLinks = (category: string) => {
+  const returnLinks = (category: string) => {
     switch (category) {
       case "popular":
-        setLinks(popularMoviesLinks);
-        break;
+        return popularMoviesLinks;
       case "tv-series":
-        setLinks(tvShowsMoviesLinks);
-        break;
+        return tvShowsMoviesLinks;
       case "trending":
-        setLinks(trendingMoviesLinks);
-        break;
+        return trendingMoviesLinks;
       default:
-        setLinks(trendingMoviesLinks);
+        return trendingMoviesLinks;
     }
   };
 
   // Preload background image to prevent layout shifts
   useEffect(() => {
-    updateLinks(sectionType)
+    setLinks(returnLinks(sectionType));
     const img = new Image();
     img.src = background;
   }, []);
