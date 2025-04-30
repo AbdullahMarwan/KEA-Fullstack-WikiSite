@@ -30,11 +30,12 @@ const popularMoviesLinks = [
   { name: "Kommende", href: "#", value: "upcoming" },
 ];
 
-// const movieSection = () => {
+
 const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
   const [activeLink, setActiveLink] = React.useState("Vises nu");
   const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
   const [links, setLinks] = useState<any[]>([]); // Initialize with popularMoviesLinks
+  const [title, setTitle] = useState<string>("Trending"); // Initialize with an Trending string
 
   const getFetchFunction = async (category: string) => {
     switch (category) {
@@ -62,6 +63,19 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
     }
   };
 
+  const returnTitle = (category: string) => {
+    switch (category) {
+      case "popular":
+        return "Popular";
+      case "tv-series":
+        return "Tv Shows";
+      case "trending":
+        return "Trending";
+      default:
+        return "Trending";
+    }
+  };
+
   const fetchMovies = async () => {
     try {
       const fetchFunction = await getFetchFunction(sectionType); // Get the appropriate fetch function
@@ -75,6 +89,7 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
   // Preload background image to prevent layout shifts
   useEffect(() => {
     setLinks(returnLinks(sectionType));
+    setTitle(returnTitle(sectionType));
     fetchMovies();
     
     const img = new Image();
@@ -101,7 +116,7 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
           <Cards
             customData={movies} // Pass the fetched movies as customData
             maxItems={10}
-            title="Film"
+            title={title}
             showLinkSelector={true}
             links={links}
             defaultTimeWindow="popular"
