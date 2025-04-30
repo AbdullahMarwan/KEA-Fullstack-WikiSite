@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { HStack } from "@chakra-ui/react";
 import Cards from "./Cards";
 import background from "../../assets/trending-bg.svg";
@@ -11,10 +11,6 @@ import {
 } from "../../services/api";
 
 const movieSection = () => {
-  const [activeLink, setActiveLink] = React.useState("Vises nu");
-  const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
-  const [links, setLinks] = useState<any[]>([]); // State to store the movie array
-
   const trendingMoviesLinks = [
     { name: "I dag", href: "#", value: "day" },
     { name: "Denne uge", href: "#", value: "week" },
@@ -31,6 +27,11 @@ const movieSection = () => {
     { name: "Kommende", href: "#", value: "upcoming" },
   ];
 
+  const [activeLink, setActiveLink] = React.useState("Vises nu");
+  const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
+  const [links, setLinks] = useState<any[]>([]); // Initialize with popularMoviesLinks
+//   const [links, setLinks] = useState(popularMoviesLinks); // Initialize with popularMoviesLinks
+
   const getFetchFunction = (category: string) => {
     switch (category) {
       case "popular":
@@ -46,11 +47,15 @@ const movieSection = () => {
 
   // Preload background image to prevent layout shifts
   useEffect(() => {
+    setLinks(trendingMoviesLinks);
     const img = new Image();
     img.src = background;
   }, []);
 
+  console.log("Usestate in main", links);
+
   return (
+    
     <HStack
       display={"flex"}
       alignItems={"center"}
@@ -70,7 +75,7 @@ const movieSection = () => {
             maxItems={10}
             title="Film"
             showLinkSelector={true}
-            links={[links]}
+            links={links}
             defaultTimeWindow="popular"
           />
         </HStack>
