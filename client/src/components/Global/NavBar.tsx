@@ -21,7 +21,6 @@ import logo from "../../assets/logo.svg";
 import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
 import { Link as ReactRouterLink } from "react-router-dom";
 import LanguageContainer from "../Homepage/LanguageContainer";
-import AddMovie from "../Homepage/AddMovie";
 import { useSearch } from "../../context/SearchContext";
 import { IoSearchSharp } from "react-icons/io5";
 import logomobile from "../../assets/moviedb - logo vertical.svg";
@@ -156,7 +155,6 @@ const NavBar = () => {
         </HStack>
 
         <HStack height={"2em"} display={"flex"}>
-          <AddMovie />
 
           <UnorderedList
             display={displayLinks}
