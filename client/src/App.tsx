@@ -8,13 +8,11 @@ import { SearchProvider } from "./context/SearchContext";
 import PersonSingle from "./pages/Person";
 import MoviesSubPage from "./pages/MoviesSubPage";
 import Movie from "./pages/Movie";
-import ResetCSS from "./components/Global/ResetCSS";
 import Layout from "./components/Global/Layout";
 
 function App() {
   return (
     <>
-      <ResetCSS />
       <SearchProvider>
         <Routes>
           <Route path="/" element={<Layout />}>
