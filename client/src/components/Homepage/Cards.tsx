@@ -62,6 +62,7 @@ interface CardsProps {
   customData?: any[]; // For passing in cast or other pre-fetched data
   cardType?: "movie" | "person" | "cast" | "recommendations"; // Type of card to display
   cardSize?: "small" | "medium" | "large";
+  onLinkClick?: (linkName: string) => void; // Add the onLinkClick prop
 }
 
 const Cards: React.FC<CardsProps> = ({
@@ -77,6 +78,7 @@ const Cards: React.FC<CardsProps> = ({
   customData = null,
   cardType = "movie",
   cardSize = "medium",
+  onLinkClick,
 }) => {
   const [items, setItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -114,7 +116,10 @@ const Cards: React.FC<CardsProps> = ({
 
   // Handle link click to update active link
   const handleLinkClick = (linkName: string) => {
-    setActiveLink(linkName);
+    setActiveLink(linkName); // Update local state
+    if (onLinkClick) {
+      onLinkClick(linkName); // Call the parent callback
+    }
   };
 
   // Create a memoized fetch function that uses the current timeWindow
@@ -257,7 +262,7 @@ const Cards: React.FC<CardsProps> = ({
             <LinkSelector
               links={links}
               activeLink={activeLink}
-              onLinkClick={handleLinkClick}
+              onLinkClick={handleLinkClick} // Use the updated handler
               maxVisible={links.length}
               activeTextColor="linear-gradient(to right, #1ed5aa 0%, #c0fed0 100%)"
               inactiveTextColor="rgb(3, 37, 65)"

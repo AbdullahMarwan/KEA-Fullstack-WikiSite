@@ -128,6 +128,7 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
             showLinkSelector={true}
             links={links}
             defaultTimeWindow={activeLink}
+            onLinkClick={updateActiveLink} // Pass the callback to update activeLink
           />
         </HStack>
       </HStack>
