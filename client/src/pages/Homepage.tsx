@@ -20,6 +20,7 @@ export const Homepage = () => {
       </GridItem>
 
       <GridItem area={"main"}>
+        {/* <MovieSection /> */}
         <SearchMovieSection />
         <TrendingMovies />
         <LatestTrailers />
