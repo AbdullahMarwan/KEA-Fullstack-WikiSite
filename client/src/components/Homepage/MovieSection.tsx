@@ -15,24 +15,24 @@ interface MovieSectionProps {
 }
 
 const trendingMoviesLinks = [
-  { name: "I dag", href: "#", value: "day" },
-  { name: "Denne uge", href: "#", value: "week" },
+  { name: "Today", href: "#", value: "day" },
+  { name: "This Week", href: "#", value: "week" },
 ];
 const tvShowsMoviesLinks = [
-  { name: "Populært", href: "#", value: "popular" },
-  { name: "sendes i dag", href: "#", value: "airing_today" },
-  { name: "Bedste anmeldelser", href: "#", value: "top_rated" },
+  { name: "Popular", href: "#", value: "popular" },
+  { name: "Airing Today", href: "#", value: "airing_today" },
+  { name: "Top Rated", href: "#", value: "top_rated" },
 ];
 const popularMoviesLinks = [
-  { name: "Vises nu", href: "#", value: "now_playing" },
-  { name: "Populært", href: "#", value: "popular" },
-  { name: "bedste anmeldelser", href: "#", value: "top_rated" },
-  { name: "Kommende", href: "#", value: "upcoming" },
+  { name: "Now Playing", href: "#", value: "now_playing" },
+  { name: "Popular", href: "#", value: "popular" },
+  { name: "Top Rated", href: "#", value: "top_rated" },
+  { name: "Upcoming", href: "#", value: "upcoming" },
 ];
 
-
 const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
-  const [activeLink, setActiveLink] = React.useState("Vises nu");
+  //   const [activeLink, setActiveLink] = React.useState("Vises nu");
+  const [activeLink, setActiveLink] = useState<string>("Trending");
   const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
   const [links, setLinks] = useState<any[]>([]); // Initialize with popularMoviesLinks
   const [title, setTitle] = useState<string>("Trending"); // Initialize with an Trending string
@@ -86,17 +86,25 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
     }
   };
 
+  const updateActiveLink = (value: string) => {
+    
+    setActiveLink(value);
+  };
+
   // Preload background image to prevent layout shifts
   useEffect(() => {
     setLinks(returnLinks(sectionType));
     setTitle(returnTitle(sectionType));
     fetchMovies();
-    
+    updateActiveLink("Today");
+
     const img = new Image();
     img.src = background;
   }, []);
 
-  console.log("Usestate in main", links);
+  //Temp Console logs
+  console.log("Usestate in main", activeLink);
+  //   console.log("Usestate in main", links);
 
   return (
     <HStack
@@ -119,7 +127,7 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
             title={title}
             showLinkSelector={true}
             links={links}
-            defaultTimeWindow="popular"
+            defaultTimeWindow={activeLink}
           />
         </HStack>
       </HStack>
