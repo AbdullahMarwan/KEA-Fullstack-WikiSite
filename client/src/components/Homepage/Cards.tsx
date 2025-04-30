@@ -359,6 +359,9 @@ const Cards: React.FC<CardsProps> = ({
                       flex="0 0 auto"
                       marginRight="20px"
                       backgroundColor="transparent"
+                      boxShadow="none" // Explicitly remove box-shadow
+                      borderRadius="10px"
+                      overflow="hidden"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{
                         opacity: 1,
@@ -368,8 +371,6 @@ const Cards: React.FC<CardsProps> = ({
                           duration: 0.4,
                         },
                       }}
-                      borderRadius="10px"
-                      overflow="hidden"
                     >
                       <Box
                         as={ReactRouterLink}
@@ -417,6 +418,9 @@ const Cards: React.FC<CardsProps> = ({
                         height={"20%"}
                         display={"flex"}
                         alignItems={"center"}
+                        padding={
+                          cardType === "recommendations" ? "0px" : "15px"
+                        }
                       >
                         <Box
                           whiteSpace="normal"
@@ -438,6 +442,9 @@ const Cards: React.FC<CardsProps> = ({
                           }
                         >
                           <Heading
+                            fontWeight={
+                              cardType === "recommendations" ? "400" : "500"
+                            }
                             fontSize={
                               cardType === "recommendations" ? "0.9em" : "1em"
                             }
@@ -453,11 +460,17 @@ const Cards: React.FC<CardsProps> = ({
                           {details.subtitle && (
                             <Text
                               fontSize="0.9em"
-                              color="gray.500"
+                              color={
+                                cardType === "recommendations"
+                                  ? "#022441"
+                                  : "gray.500"
+                              }
                               noOfLines={1}
                               mt={cardType === "recommendations" ? 0 : "1"}
                             >
-                              {details.subtitle}
+                              {cardType === "recommendations"
+                                ? Math.round(details.rating * 10) + "%"
+                                : details.subtitle}
                             </Text>
                           )}
                         </Box>

@@ -12,7 +12,6 @@ function Recommendations() {
     if (!movie?.id) return;
     try {
       const response = await fetchRecommendations(movie.id);
-      console.log("Recommendations fetched:", response); // Handle response here
     } catch (error) {
       console.error("Error fetching recommendations:", error);
     } finally {

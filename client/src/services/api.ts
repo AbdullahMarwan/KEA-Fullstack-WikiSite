@@ -296,3 +296,19 @@ export const fetchRecommendations = async (movieId: number) => {
     throw error;
   }
 };
+
+////////////////////////////////////////////////////////////////////////
+/////////////////////// Fetching social media for movie ////////////////
+////////////////////////////////////////////////////////////////////////
+
+export const fetchMediaForMovie = async (movieId: string) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/movie/${movieId}/external_ids?api_key=${apiKey}`
+    );
+    return response.data; // Return the entire response object
+  } catch (error) {
+    console.error("Error fetching popular persons:", error);
+    throw error;
+  }
+};
