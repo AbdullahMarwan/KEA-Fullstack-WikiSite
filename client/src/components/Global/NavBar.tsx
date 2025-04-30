@@ -136,16 +136,6 @@ const NavBar = () => {
                 Personer
               </Link>
             </ListItem>
-            <ListItem>
-              <Link
-                as={ReactRouterLink}
-                to="/"
-                width={"150px"}
-                _hover={{ textDecoration: "none" }}
-              >
-                Mere
-              </Link>
-            </ListItem>
           </UnorderedList>
         </HStack>
 
