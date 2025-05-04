@@ -24,10 +24,13 @@ const Signup = () => {
         columnGap={6} // Add gap only between columns (side-to-side)
       >
         <GridItem area={"aside"}>
-          <Image></Image>
+        <SignupAside />
         </GridItem>
 
-        <GridItem area={"main"}></GridItem>
+        <GridItem area={"main"}>
+
+          <SignupForm />
+        </GridItem>
       </Grid>
     </Box>
   );
