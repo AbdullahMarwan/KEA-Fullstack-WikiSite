@@ -3,32 +3,33 @@ import { HStack } from "@chakra-ui/react";
 import Cards from "./Cards";
 import background from "../../assets/trending-bg.svg";
 import { useEffect } from "react";
-import { returnLinks, returnTitle, fetchMovies} from "../../utils/movieSectionhelper";
-
+import {
+  returnLinks,
+  returnTitle,
+  fetchMovies,
+} from "../../utils/movieSectionhelper";
 
 interface MovieSectionProps {
   sectionType: "popular" | "tv-series" | "trending";
 }
 
 const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
-  //   const [activeLink, setActiveLink] = React.useState("Vises nu");
-  const [activeLink, setActiveLink] = useState<string>("Trending");
+  const [activeLink, setActiveLink] = useState<string>("day"); // TODO Make this dynamic
   const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
   const [links, setLinks] = useState<any[]>([]); // Initialize with popularMoviesLinks
   const [title, setTitle] = useState<string>("Trending"); // Initialize with an Trending string
 
   const updateActiveLink = (value: string) => {
-    
     setActiveLink(value);
   };
 
   // Preload background image to prevent layout shifts
   useEffect(() => {
-    setLinks(returnLinks(sectionType))
+    setLinks(returnLinks(sectionType));
     setTitle(returnTitle(sectionType));
 
     // Fetch movies and update state
-    fetchMovies(sectionType, setMovies);
+    fetchMovies(sectionType, setMovies, activeLink);
 
     // Preload background image
     const img = new Image();
@@ -37,7 +38,6 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
 
   //Temp Console logs
   console.log("Usestate in main", activeLink);
-  //   console.log("Usestate in main", links);
 
   return (
     <HStack

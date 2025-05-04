@@ -65,8 +65,7 @@ export const fetchMovies = async (
   activeLink: string
 ) => {
   try {
-    const fetchFunction = await getFetchFunction(sectionType, activeLink); // Get the appropriate fetch function
-    const data = await fetchFunction(); // Call the fetch function to get the data
+    const data = await getFetchFunction(sectionType, activeLink); // Call the fetch function to get the data
     setMovies(data.results || data); // Update the movies state
   } catch (error) {
     console.error("Error fetching movies:", error);
