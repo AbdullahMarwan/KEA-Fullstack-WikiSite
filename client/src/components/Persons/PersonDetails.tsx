@@ -11,6 +11,16 @@ const genderMap: Record<number, string> = {
   3: "Non-binary",
 };
 
+interface Person {
+  name: string;
+  profile_path: string | null;
+  biography: string;
+  known_for_department: string;
+  gender: number;
+  birthday: string;
+  place_of_birth: string;
+}
+
 
 const PersonDetails = () => {
   const [combinedIds, setCombinedIds] = useState<string[]>([]);
@@ -18,15 +28,7 @@ const PersonDetails = () => {
   const [showFullBiography, setShowFullBiography] = useState(false);
   const [personJobs, setPersonJobs] = useState<string[]>([]);
   const { id } = useParams<{ id: string }>();
-  const [person, setPerson] = useState<{
-    name: string;
-    profile_path: string;
-    biography: string;
-    known_for_department: string;
-    gender: number;
-    birthday: string;
-    place_of_birth: string;
-  } | null>(null);
+  const [person, setPerson] = useState<Person | null>(null);
   const [credits, setCredits] = useState<
     { original_title: string; backdrop_path: string }[]
   >([]);
@@ -36,7 +38,7 @@ const PersonDetails = () => {
     if (!id) return;
   
     const personData = await fetchPersonDetails(id);
-    console.log("person" + personData)
+    console.log("person", personData)
     if (personData) {
       setPerson(personData);
     }

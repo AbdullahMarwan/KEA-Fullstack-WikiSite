@@ -456,17 +456,17 @@ export const fetchMediaForMovie = async (movieId: string) => {
       // Fetch crew jobs
       export const fetchCrewJobs = async (personId: string) => {
         try {
-          const response = await fetch(
+          const response = await axios.get(
             `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${apiKey}`
           );
-          const data = await response.json();
       
+          console.log("testing", response.data.crew)
           // Process crew data
-          const crew = data.crew
+          const crew = response.data.crew
             .map((crew: { job: string; title: string }) => ({
               type: "crew", // Add type to differentiate crew roles
               job: crew.job,
-              title: crew.title || crew.name,
+              title: crew.title || response.data.crew.name,
             }))
             .filter((crew: { job: string }) => crew.job);
       
@@ -480,23 +480,12 @@ export const fetchMediaForMovie = async (movieId: string) => {
   // Fetch person details
   export const fetchPersonDetails = async (personId: string) => {
     try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/person/${personId}?api_key=${apiKey}`
+      const response = await axios.get(
+        `${baseUrl}/person/${personId}?api_key=${apiKey}`
       );
-      const data = await response.json();
-      console.log("data", data)
-
-      return {
-        name: data.name,
-        profile_path: data.profile_path,
-        biography: data.biography,
-        known_for_department: data.known_for_department,
-        gender: data.gender,
-        birthday: data.birthday,
-        place_of_birth: data.place_of_birth,
-      };
+      return response.data; // Return the entire response object like fetchRecommendations
     } catch (error) {
-      console.error("Error fetching person details:", error);
-      return null;
+      console.error(`Error fetching person details for ID ${personId}:`, error);
+      throw error; // Throw the error to handle it in the calling function
     }
   };
