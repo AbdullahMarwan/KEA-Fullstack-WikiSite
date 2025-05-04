@@ -1,0 +1,73 @@
+import {
+  fetchPopularMovies,
+  fetchPopularTvSeries,
+  fetchTrendingMovies,
+} from "../services/api";
+
+const trendingMoviesLinks = [
+  { name: "Today", href: "#", value: "day" },
+  { name: "This Week", href: "#", value: "week" },
+];
+const tvShowsMoviesLinks = [
+  { name: "Popular", href: "#", value: "popular" },
+  { name: "Airing Today", href: "#", value: "airing_today" },
+  { name: "Top Rated", href: "#", value: "top_rated" },
+];
+const popularMoviesLinks = [
+  { name: "Now Playing", href: "#", value: "now_playing" },
+  { name: "Popular", href: "#", value: "popular" },
+  { name: "Top Rated", href: "#", value: "top_rated" },
+  { name: "Upcoming", href: "#", value: "upcoming" },
+];
+
+export const getFetchFunction = async (category: string) => {
+  switch (category) {
+    case "popular":
+      return fetchPopularMovies;
+    case "tv-series":
+      return fetchPopularTvSeries;
+    case "trending":
+      return fetchTrendingMovies;
+    default:
+      return fetchTrendingMovies;
+  }
+};
+
+export const returnLinks = (category: string) => {
+  switch (category) {
+    case "popular":
+      return popularMoviesLinks;
+    case "tv-series":
+      return tvShowsMoviesLinks;
+    case "trending":
+      return trendingMoviesLinks;
+    default:
+      return trendingMoviesLinks;
+  }
+};
+
+export const returnTitle = (category: string) => {
+  switch (category) {
+    case "popular":
+      return "Popular";
+    case "tv-series":
+      return "Tv Shows";
+    case "trending":
+      return "Trending";
+    default:
+      return "Trending";
+  }
+};
+
+export const fetchMovies = async (
+  sectionType: string,
+  setMovies: React.Dispatch<React.SetStateAction<any[]>>
+) => {
+  try {
+    const fetchFunction = await getFetchFunction(sectionType); // Get the appropriate fetch function
+    const data = await fetchFunction(); // Call the fetch function to get the data
+    setMovies(data.results || data); // Update the movies state
+  } catch (error) {
+    console.error("Error fetching movies:", error);
+  }
+};
