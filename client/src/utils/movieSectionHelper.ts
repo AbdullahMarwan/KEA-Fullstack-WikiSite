@@ -20,16 +20,16 @@ const popularMoviesLinks = [
   { name: "Upcoming", href: "#", value: "upcoming" },
 ];
 
-export const getFetchFunction = async (category: string) => {
+export const getFetchFunction = async (category: string, activeLink: string) => {
   switch (category) {
     case "popular":
-      return fetchPopularMovies;
+      return fetchPopularMovies(activeLink);
     case "tv-series":
-      return fetchPopularTvSeries;
+      return fetchPopularTvSeries(activeLink);
     case "trending":
-      return fetchTrendingMovies;
+      return fetchTrendingMovies(activeLink);
     default:
-      return fetchTrendingMovies;
+      return fetchTrendingMovies(activeLink);
   }
 };
 
@@ -61,13 +61,20 @@ export const returnTitle = (category: string) => {
 
 export const fetchMovies = async (
   sectionType: string,
-  setMovies: React.Dispatch<React.SetStateAction<any[]>>
+  setMovies: React.Dispatch<React.SetStateAction<any[]>>,
+  activeLink: string
 ) => {
   try {
-    const fetchFunction = await getFetchFunction(sectionType); // Get the appropriate fetch function
-    const data = await fetchFunction(); // Call the fetch function to get the data
+    const data = await getFetchFunction(sectionType, activeLink); // Call the fetch function to get the data
     setMovies(data.results || data); // Update the movies state
   } catch (error) {
     console.error("Error fetching movies:", error);
   }
+};
+
+export const updateActiveLink = (
+  value: string,
+  setActiveLink: React.Dispatch<React.SetStateAction<string>>
+) => {
+  setActiveLink(value);
 };
