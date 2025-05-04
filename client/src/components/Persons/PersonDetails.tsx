@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Heading, Box, Button, Grid, GridItem, Image, Select } from "@chakra-ui/react";
 import missingImgPlaceholder from "../../assets/missing-img-placeholder-16-9.jpg";
+import {fetchPersonDetails} from "../../services/api"
 
 const genderMap: Record<number, string> = {
   0: "Not specified",
@@ -22,7 +23,6 @@ const PersonDetails = () => {
   const [personJobs, setPersonJobs] = useState<string[]>([]);
   const { id } = useParams<{ id: string }>();
   const [person, setPerson] = useState<{
-
     name: string;
     profile_path: string;
     biography: string;
@@ -40,9 +40,11 @@ const PersonDetails = () => {
     if (!id) return;
   
     const personData = await fetchPersonDetails(id);
+    console.log("person" + personData)
     if (personData) {
       setPerson(personData);
     }
+
   
     const creditsData = await fetchCredits(id);
     setCredits(creditsData);
@@ -58,28 +60,6 @@ const PersonDetails = () => {
     setPersonJobs(allJobs);
   
     return allJobs; // Return combined jobs
-  };
-
-  // Fetch person details
-  const fetchPersonDetails = async (personId: string) => {
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/person/${personId}?api_key=${API_KEY}`
-      );
-      const data = await response.json();
-      return {
-        name: data.name,
-        profile_path: data.profile_path,
-        biography: data.biography,
-        known_for_department: data.known_for_department,
-        gender: data.gender,
-        birthday: data.birthday,
-        place_of_birth: data.place_of_birth,
-      };
-    } catch (error) {
-      console.error("Error fetching person details:", error);
-      return null;
-    }
   };
 
   // Fetch credits

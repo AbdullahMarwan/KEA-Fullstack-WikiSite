@@ -397,3 +397,36 @@ export const fetchMediaForMovie = async (movieId: string) => {
     throw error;
   }
 };
+
+
+
+
+////////////////////////////////////////////////////////////////////////
+/////////////////////// Fetching person details ////////////////
+////////////////////////////////////////////////////////////////////////
+
+
+
+  // Fetch person details
+  export const fetchPersonDetails = async (personId: string) => {
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/person/${personId}?api_key=${apiKey}`
+      );
+      const data = await response.json();
+      console.log("data", data)
+
+      return {
+        name: data.name,
+        profile_path: data.profile_path,
+        biography: data.biography,
+        known_for_department: data.known_for_department,
+        gender: data.gender,
+        birthday: data.birthday,
+        place_of_birth: data.place_of_birth,
+      };
+    } catch (error) {
+      console.error("Error fetching person details:", error);
+      return null;
+    }
+  };
