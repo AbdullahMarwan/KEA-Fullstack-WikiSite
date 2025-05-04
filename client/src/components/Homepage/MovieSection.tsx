@@ -23,16 +23,26 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
 
   // Preload background image to prevent layout shifts
   useEffect(() => {
-    setLinks(returnLinks(sectionType));
+    // Set links and title based on sectionType
+    const initialLinks = returnLinks(sectionType);
+    setLinks(initialLinks);
     setTitle(returnTitle(sectionType));
+  }, [sectionType]);
 
-    // Fetch movies and update state
-    fetchMovies(sectionType, setMovies, activeLink);
+  useEffect(() => {
+    // Ensure links are available before accessing the first value
+    if (links.length > 0) {
+      const firstLinkValue = links[0].value;
+      updateActiveLink(firstLinkValue, setActiveLink); // Update activeLink with the first value
+      fetchMovies(sectionType, setMovies, firstLinkValue); // Fetch movies with the first link value
+    }
+  }, [links]);
 
-    // Preload background image
+  // Preload background image
+  useEffect(() => {
     const img = new Image();
     img.src = background;
-  }, [sectionType]);
+  }, []);
 
   //Temp Console logs
   console.log("Usestate in main", activeLink);
