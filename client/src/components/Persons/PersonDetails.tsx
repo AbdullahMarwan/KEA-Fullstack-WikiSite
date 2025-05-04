@@ -11,10 +11,6 @@ const genderMap: Record<number, string> = {
   3: "Non-binary",
 };
 
-// TODO: Move API key to environment variable
-const API_KEY = "475f7c6aa70e55fd5a97a138977bb3cc";
-
-
 
 const PersonDetails = () => {
   const [combinedIds, setCombinedIds] = useState<string[]>([]);
