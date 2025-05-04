@@ -4,8 +4,6 @@ import TrailerCards from "./TrailerCards";
 import trailerBackground from "../../assets/images/latest-trailers-bg.webp"; // Your background image
 
 const LatestTrailers = () => {
-  let defaultTimeWindow = "popular";
-
   return (
     <HStack
       display="flex"

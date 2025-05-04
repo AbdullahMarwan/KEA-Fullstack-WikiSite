@@ -6,6 +6,7 @@ import LatestTrailers from "../components/Homepage/LatestTrailers";
 import FilmSection from "../components/Homepage/FilmSection";
 import TvShows from "../components/Homepage/TvShows";
 import SignupSection from "../components/Signup/SignupSection";
+import MovieSection from "../components/Homepage/MovieSection";
 
 export const Homepage = () => {
   return (
@@ -21,11 +22,14 @@ export const Homepage = () => {
 
       <GridItem area={"main"}>
         <SearchMovieSection />
-        <TrendingMovies />
+        {/* <TrendingMovies /> */}
+        <MovieSection sectionType="trending" />
         <LatestTrailers />
-        <FilmSection />
+        {/* <FilmSection /> */}
+        <MovieSection sectionType="popular" />
         <SignupSection />
-        <TvShows />
+        {/* <TvShows /> */}
+        <MovieSection sectionType="tv-series" />
       </GridItem>
     </Grid>
   );

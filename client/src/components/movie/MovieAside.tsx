@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, HStack, Link, Text } from "@chakra-ui/react";
+import { Box, HStack, Link, Text, Wrap, Tag } from "@chakra-ui/react";
 import {
   FaFacebook,
   FaInstagram,
@@ -8,38 +8,13 @@ import {
   FaImdb,
 } from "react-icons/fa6";
 import { SiWikidata } from "react-icons/si";
+import { Movie } from "../../context/MovieContext";
 
-interface Movie {
-  id: number;
-  title: string;
-  overview: string;
-  release_date: string;
-  vote_average: number;
-  poster_path: string;
-  backdrop_path: string;
-  runtime?: number;
-  tagline: string;
-  status: string;
-  original_language: string;
-  budget: number;
-  revenue: number;
-  homepage: string;
-}
-interface MovieMediaData {
-  id: number;
-  imdb_id: string;
-  wikidata_id: string;
-  facebook_id: string;
-  instagram_id: string;
-  twitter_id: string;
-}
 interface MovieAsideProps {
   movie: Movie;
-  movieMediaData: MovieMediaData;
 }
 
-function MovieAside({ movie, movieMediaData }: MovieAsideProps) {
-  console.log(movieMediaData);
+function MovieAside({ movie }: MovieAsideProps) {
   return (
     <>
       <Box
@@ -49,9 +24,9 @@ function MovieAside({ movie, movieMediaData }: MovieAsideProps) {
         alignItems={"flex-start"}
         gap={3}
       >
-        {movieMediaData?.facebook_id && (
+        {movie.MovieMediaData?.facebook_id && (
           <Link
-            href={`https://facebook.com/${movieMediaData.facebook_id}`}
+            href={`https://facebook.com/${movie.MovieMediaData.facebook_id}`}
             target="_blank"
             borderRight={"1px solid #d7d7d7"}
             pr={3}
@@ -60,9 +35,9 @@ function MovieAside({ movie, movieMediaData }: MovieAsideProps) {
           </Link>
         )}
 
-        {movieMediaData?.imdb_id && (
+        {movie.MovieMediaData?.imdb_id && (
           <Link
-            href={`https://www.imdb.com/title/${movieMediaData.imdb_id}`}
+            href={`https://www.imdb.com/title/${movie.MovieMediaData.imdb_id}`}
             target="_blank"
             borderRight={"1px solid #d7d7d7"}
             pr={3}
@@ -71,9 +46,9 @@ function MovieAside({ movie, movieMediaData }: MovieAsideProps) {
           </Link>
         )}
 
-        {movieMediaData?.wikidata_id && (
+        {movie.MovieMediaData?.wikidata_id && (
           <Link
-            href={`https://www.wikidata.org/wiki/${movieMediaData.wikidata_id}`}
+            href={`https://www.wikidata.org/wiki/${movie.MovieMediaData.wikidata_id}`}
             target="_blank"
             borderRight={"1px solid #d7d7d7"}
             pr={3}
@@ -82,9 +57,9 @@ function MovieAside({ movie, movieMediaData }: MovieAsideProps) {
           </Link>
         )}
 
-        {movieMediaData?.twitter_id && (
+        {movie.MovieMediaData?.twitter_id && (
           <Link
-            href={`https://twitter.com/${movieMediaData.twitter_id}`}
+            href={`https://twitter.com/${movie.MovieMediaData.twitter_id}`}
             target="_blank"
             borderRight={"1px solid #d7d7d7"}
             pr={3}
@@ -93,9 +68,9 @@ function MovieAside({ movie, movieMediaData }: MovieAsideProps) {
           </Link>
         )}
 
-        {movieMediaData?.instagram_id && (
+        {movie.MovieMediaData?.instagram_id && (
           <Link
-            href={`https://instagram.com/${movieMediaData.instagram_id}`}
+            href={`https://instagram.com/${movie.MovieMediaData.instagram_id}`}
             target="_blank"
             borderRight={"1px solid #d7d7d7"}
             pr={3}
@@ -105,7 +80,7 @@ function MovieAside({ movie, movieMediaData }: MovieAsideProps) {
         )}
 
         <Link
-          href={`${movie.homepage}`}
+          href={`${movie?.homepage}`}
           target="_blank"
           borderRight={"1px solid #d7d7d7"}
           pr={3}
@@ -136,6 +111,26 @@ function MovieAside({ movie, movieMediaData }: MovieAsideProps) {
           <Text fontWeight={700}>Revenue</Text>
           <Text>${movie.revenue.toLocaleString("en-US")}</Text>
         </Box>
+
+        {movie.keywords &&
+          movie.keywords.keywords &&
+          movie.keywords.keywords.length > 0 && (
+            <Box>
+              <Text fontWeight={700}>Keywords</Text>
+              <Wrap spacing={2} mt={2}>
+                {movie.keywords.keywords.map((keyword) => (
+                  <Tag
+                    key={keyword.id}
+                    padding={2}
+                    color={"#000000"}
+                    backgroundColor={"##efefef"}
+                  >
+                    {keyword.name}
+                  </Tag>
+                ))}
+              </Wrap>
+            </Box>
+          )}
       </HStack>
     </>
   );

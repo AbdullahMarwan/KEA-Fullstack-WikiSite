@@ -21,7 +21,6 @@ import logo from "../../assets/logo.svg";
 import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
 import { Link as ReactRouterLink } from "react-router-dom";
 import LanguageContainer from "../Homepage/LanguageContainer";
-import AddMovie from "../Homepage/AddMovie";
 import { useSearch } from "../../context/SearchContext";
 import { IoSearchSharp } from "react-icons/io5";
 import logomobile from "../../assets/moviedb - logo vertical.svg";
@@ -31,11 +30,6 @@ const NavBar = () => {
   const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
   const displayIcons = useBreakpointValue({ base: "flex", md: "none" });
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    isOpen: LanguageisOpen,
-    onOpen: LanguageonOpen,
-    onClose: LanguageonClose,
-  } = useDisclosure();
 
   return (
     <HStack
@@ -135,29 +129,17 @@ const NavBar = () => {
             <ListItem>
               <Link
                 as={ReactRouterLink}
-                to="/"
+                to="/persons"
                 width={"150px"}
                 _hover={{ textDecoration: "none" }}
               >
                 Personer
               </Link>
             </ListItem>
-            <ListItem>
-              <Link
-                as={ReactRouterLink}
-                to="/"
-                width={"150px"}
-                _hover={{ textDecoration: "none" }}
-              >
-                Mere
-              </Link>
-            </ListItem>
           </UnorderedList>
         </HStack>
 
         <HStack height={"2em"} display={"flex"}>
-          <AddMovie />
-
           <UnorderedList
             display={displayLinks}
             styleType="none"
@@ -172,33 +154,6 @@ const NavBar = () => {
               },
             }}
           >
-            <ListItem position={"relative"}>
-              <Button
-                border="1px solid white"
-                bg="transparent"
-                _hover={{ bg: "white", color: "#032440" }}
-                padding="0px"
-                h="100%"
-                px="10px"
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent click event from propagating
-                  LanguageisOpen ? LanguageonClose() : LanguageonOpen();
-                }}
-              >
-                DA
-              </Button>
-              {LanguageisOpen && (
-                <Box
-                  position="absolute"
-                  top="100%"
-                  right="0"
-                  zIndex="10"
-                  onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the container
-                >
-                  <LanguageContainer />
-                </Box>
-              )}
-            </ListItem>
             <ListItem>
               <Link
                 as={ReactRouterLink}
