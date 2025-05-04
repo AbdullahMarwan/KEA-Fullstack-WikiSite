@@ -7,6 +7,7 @@ import {
   returnLinks,
   returnTitle,
   fetchMovies,
+  updateActiveLink,
 } from "../../utils/movieSectionhelper";
 import LinkSelector from "./LinkSelector";
 
@@ -19,18 +20,6 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
   const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
   const [links, setLinks] = useState<any[]>([]); // Initialize with popularMoviesLinks
   const [title, setTitle] = useState<string>("Trending"); // Initialize with an Trending string
-
-  const updateActiveLink = (value: string) => {
-    setActiveLink(value);
-  };
-
-  // // Handle link click to update active link
-  // const handleLinkClick = (linkName: string) => {
-  //   setActiveLink(linkName); // Update local state
-  //   if (onLinkClick) {
-  //     onLinkClick(linkName); // Call the parent callback
-  //   }
-  // };
 
   // Preload background image to prevent layout shifts
   useEffect(() => {
@@ -74,7 +63,7 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
               <LinkSelector
                 links={links}
                 activeLink={activeLink}
-                onLinkClick={(linkName: string) => updateActiveLink(linkName)} // Pass a valid function
+                onLinkClick={(linkName: string) => updateActiveLink(linkName, setActiveLink)} // Pass setActiveLink to the helper function
                 maxVisible={links.length}
                 activeTextColor="linear-gradient(to right, #1ed5aa 0%, #c0fed0 100%)"
                 inactiveTextColor="rgb(3, 37, 65)"

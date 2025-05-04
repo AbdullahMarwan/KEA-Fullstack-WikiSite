@@ -71,3 +71,10 @@ export const fetchMovies = async (
     console.error("Error fetching movies:", error);
   }
 };
+
+export const updateActiveLink = (
+  value: string,
+  setActiveLink: React.Dispatch<React.SetStateAction<string>>
+) => {
+  setActiveLink(value);
+};
