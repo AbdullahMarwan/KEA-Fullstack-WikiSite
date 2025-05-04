@@ -216,6 +216,8 @@ const PersonDetails = () => {
               borderRadius="1em"
               width="66%"
               height="66%"
+              maxWidth="66vw"
+
             />
           </Box>
         )}
@@ -250,7 +252,7 @@ const PersonDetails = () => {
         <Heading as="h2" size="xl" textAlign="center">
           {person.name}
         </Heading>
-        <Heading as="h3" size="md" mt={"2em"}>
+        <Heading as="h3" size="md" mt={"2em"} maxWidth="66vw">
           Biography
         </Heading>
         <p>{showFullBiography ? person.biography : truncatedBiography}</p>
@@ -264,7 +266,7 @@ const PersonDetails = () => {
         >
           Known For
         </Heading>
-        <Box display="flex" overflowX="auto" gap="1em" p="0em"
+        <Box display="flex" overflowX="auto" gap="1em" p="0em" maxWidth="66vw"
         /* TODO: Make background linear gradient like in cards */
         >
 
