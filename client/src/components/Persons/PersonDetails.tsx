@@ -313,11 +313,11 @@ const PersonDetails = () => {
         </Box>
 
         {personJobs.some((job) => job.type === "cast") && (
-  <Box>
-    <Heading as="h3" size="md" mt={10}>
+  <Box >
+    <Heading as="h3" size="md" mt={10} backgroundColor="gray.100" pb={4}>
       Acting Roles
     </Heading>
-    <Box>
+    <Box backgroundColor="gray.100" overflowY="scroll" maxHeight="50vh">
       <ul>
         {personJobs
           .filter((job) => job.type === "cast")
@@ -332,11 +332,11 @@ const PersonDetails = () => {
 )}
 
 {personJobs.some((job) => job.type === "crew") && (
-  <Box>
-    <Heading as="h3" size="md" mt={10}>
+  <Box overflowY="scroll" maxHeight="50vh">
+    <Heading as="h3" size="md" mt={10} backgroundColor="gray.100" pb={4}>
       Production
     </Heading>
-    <Box>
+    <Box backgroundColor="gray.100" overflowY="scroll" maxHeight="50vh">
       <ul>
         {personJobs
           .filter((job) => job.type === "crew")
