@@ -63,7 +63,10 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
               <LinkSelector
                 links={links}
                 activeLink={activeLink}
-                onLinkClick={(linkName: string) => updateActiveLink(linkName, setActiveLink)} // Pass setActiveLink to the helper function
+                onLinkClick={(linkName: string) => {
+                  updateActiveLink(linkName, setActiveLink); // Update the activeLink state
+                  fetchMovies(sectionType, setMovies, linkName); // Refetch movies with the new activeLink
+                }}
                 maxVisible={links.length}
                 activeTextColor="linear-gradient(to right, #1ed5aa 0%, #c0fed0 100%)"
                 inactiveTextColor="rgb(3, 37, 65)"
@@ -75,11 +78,7 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
           <Cards
             customData={movies} // Pass the fetched movies as customData
             maxItems={10}
-            // title={title}
             showLinkSelector={false}
-            // links={links}
-            // defaultTimeWindow={activeLink}
-            // onLinkClick={updateActiveLink} // Pass the callback to update activeLink
           />
         </HStack>
       </HStack>

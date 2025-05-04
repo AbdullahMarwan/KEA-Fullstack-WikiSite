@@ -16,12 +16,13 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 interface LinkItem {
   name: string;
   href: string;
+  value: string; // Add the value property
 }
 
 interface LinkSelectorProps {
   links: LinkItem[];
   activeLink: string;
-  onLinkClick: (linkName: string) => void;
+  onLinkClick: (linkValue: string) => void; // Update to return the value
   maxVisible?: number;
   activeTextColor?: string;
   inactiveTextColor?: string;
@@ -67,7 +68,7 @@ export const LinkSelector: React.FC<LinkSelectorProps> = ({
       >
         {displayLinks.map((link) => (
           <ListItem
-            key={link.name}
+            key={link.value} // Use value as the key
             borderRadius="25px"
             height="1.875em"
             display="flex"
@@ -75,7 +76,7 @@ export const LinkSelector: React.FC<LinkSelectorProps> = ({
             justifyContent="center"
             cursor="pointer"
             background={
-              activeLink === link.name ? activeBgColor : "transparent"
+              activeLink === link.value ? activeBgColor : "transparent"
             }
             fontWeight={600}
           >
@@ -85,11 +86,11 @@ export const LinkSelector: React.FC<LinkSelectorProps> = ({
               _hover={"text-decoration: none"}
               onClick={(e) => {
                 e.preventDefault();
-                onLinkClick(link.name);
+                onLinkClick(link.value); // Pass the value instead of the name
               }}
               sx={{
                 textDecoration: "none",
-                ...(activeLink === link.name &&
+                ...(activeLink === link.value &&
                 activeTextColor.includes("gradient")
                   ? {
                       background: activeTextColor,
@@ -99,7 +100,7 @@ export const LinkSelector: React.FC<LinkSelectorProps> = ({
                     }
                   : {
                       color:
-                        activeLink === link.name
+                        activeLink === link.value
                           ? activeTextColor
                           : inactiveTextColor,
                     }),
@@ -127,14 +128,14 @@ export const LinkSelector: React.FC<LinkSelectorProps> = ({
             <MenuList bg="rgb(3, 37, 65)" border={`1px solid ${borderColor}`}>
               {dropdownLinks.map((link) => (
                 <MenuItem
-                  key={link.name}
-                  bg={activeLink === link.name ? activeBgColor : "transparent"}
+                  key={link.value} // Use value as the key
+                  bg={activeLink === link.value ? activeBgColor : "transparent"}
                   _hover={{
                     bg: "rgba(30, 213, 170, 0.2)",
                   }}
-                  onClick={() => onLinkClick(link.name)}
+                  onClick={() => onLinkClick(link.value)} // Pass the value instead of the name
                   sx={{
-                    ...(activeLink === link.name &&
+                    ...(activeLink === link.value &&
                     activeTextColor.includes("gradient")
                       ? {
                           background: activeTextColor,
@@ -144,7 +145,7 @@ export const LinkSelector: React.FC<LinkSelectorProps> = ({
                         }
                       : {
                           color:
-                            activeLink === link.name
+                            activeLink === link.value
                               ? activeTextColor
                               : inactiveTextColor,
                         }),
