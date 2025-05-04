@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Heading, Box, Button, Grid, GridItem, Image, Select } from "@chakra-ui/react";
 import missingImgPlaceholder from "../../assets/missing-img-placeholder-16-9.jpg";
-import {fetchPersonDetails} from "../../services/api"
+import {fetchPersonDetails, fetchCredits, fetchCombinedCredits, fetchCrewJobs} from "../../services/api"
 
 const genderMap: Record<number, string> = {
   0: "Not specified",
@@ -62,73 +62,10 @@ const PersonDetails = () => {
     return allJobs; // Return combined jobs
   };
 
-  // Fetch credits
-  const fetchCredits = async (personId: string) => {
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${API_KEY}`
-      );
-      const data = await response.json();
-      return data.cast
-        .map((item: { original_title: string; backdrop_path: string }) => ({
-          original_title: item.original_title,
-          backdrop_path: item.backdrop_path,
-        }))
-        .filter((item) => item.original_title);
-    } catch (error) {
-      console.error("Error fetching credits:", error);
-      return [];
-    }
-  };
 
-  // Fetch combined credits
-  const fetchCombinedCredits = async (personId: string) => {
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${API_KEY}`
-      );
-      const data = await response.json();
-  
-      // Process cast data
-      const cast = data.cast
-        .map((cast: { character: string; original_title: string; release_date: string }) => ({
-          type: "cast", // Add type to differentiate cast roles
-          character: cast.character,
-          title: cast.original_title,
-          release_date: cast.release_date,
-        }))
-        .filter((item: { character: string; title: string }) => item.character && item.title);
-  
-      return cast;
-    } catch (error) {
-      console.error("Error fetching combined credits:", error);
-      return [];
-    }
-  };
 
-  // Fetch crew jobs
-  const fetchCrewJobs = async (personId: string) => {
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${API_KEY}`
-      );
-      const data = await response.json();
-  
-      // Process crew data
-      const crew = data.crew
-        .map((crew: { job: string; title: string }) => ({
-          type: "crew", // Add type to differentiate crew roles
-          job: crew.job,
-          title: crew.title || crew.name,
-        }))
-        .filter((crew: { job: string }) => crew.job);
-  
-      return crew;
-    } catch (error) {
-      console.error("Error fetching crew jobs:", error);
-      return [];
-    }
-  };
+
+
 
   useEffect(() => {
     fetchData();
