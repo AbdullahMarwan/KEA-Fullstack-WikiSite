@@ -31,7 +31,7 @@ interface LinkSelectorProps {
   gradientTextValue?: string;
 }
 
-const LinkSelector: React.FC<LinkSelectorProps> = ({
+export const LinkSelector: React.FC<LinkSelectorProps> = ({
   links,
   activeLink,
   onLinkClick,

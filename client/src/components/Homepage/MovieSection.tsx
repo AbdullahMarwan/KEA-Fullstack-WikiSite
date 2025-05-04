@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { HStack } from "@chakra-ui/react";
+import { HStack, Heading } from "@chakra-ui/react";
 import Cards from "./Cards";
 import background from "../../assets/trending-bg.svg";
 import { useEffect } from "react";
@@ -8,6 +8,7 @@ import {
   returnTitle,
   fetchMovies,
 } from "../../utils/movieSectionhelper";
+import LinkSelector from "./LinkSelector";
 
 interface MovieSectionProps {
   sectionType: "popular" | "tv-series" | "trending";
@@ -22,6 +23,14 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
   const updateActiveLink = (value: string) => {
     setActiveLink(value);
   };
+
+  // // Handle link click to update active link
+  // const handleLinkClick = (linkName: string) => {
+  //   setActiveLink(linkName); // Update local state
+  //   if (onLinkClick) {
+  //     onLinkClick(linkName); // Call the parent callback
+  //   }
+  // };
 
   // Preload background image to prevent layout shifts
   useEffect(() => {
@@ -53,15 +62,35 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
         flexDirection={"column"}
         maxWidth={"1300px"}
       >
-        <HStack w="100%">
+        <HStack w="100%" flexDirection={"column"}>
+          <HStack spacing={4} mb={4} width="100%" >
+            {title && (
+              <Heading fontSize="1.5rem" fontWeight="500" color="black">
+                {title}
+              </Heading>
+            )}
+
+            {links.length > 0 && (
+              <LinkSelector
+                links={links}
+                activeLink={activeLink}
+                onLinkClick={(linkName: string) => updateActiveLink(linkName)} // Pass a valid function
+                maxVisible={links.length}
+                activeTextColor="linear-gradient(to right, #1ed5aa 0%, #c0fed0 100%)"
+                inactiveTextColor="rgb(3, 37, 65)"
+                borderColor="rgb(3, 37, 65)"
+                activeBgColor="rgb(3, 37, 65)"
+              />
+            )}
+          </HStack>
           <Cards
             customData={movies} // Pass the fetched movies as customData
             maxItems={10}
-            title={title}
-            showLinkSelector={true}
-            links={links}
-            defaultTimeWindow={activeLink}
-            onLinkClick={updateActiveLink} // Pass the callback to update activeLink
+            // title={title}
+            showLinkSelector={false}
+            // links={links}
+            // defaultTimeWindow={activeLink}
+            // onLinkClick={updateActiveLink} // Pass the callback to update activeLink
           />
         </HStack>
       </HStack>
