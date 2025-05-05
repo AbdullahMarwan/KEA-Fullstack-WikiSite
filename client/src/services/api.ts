@@ -22,7 +22,7 @@ export const fetchTemplate = async (
     case "tv":
       url = `${baseUrl}/discover/tv?api_key=${apiKey}`;
     case "now-playing":
-      url = `${baseUrl}/movie/now_playing?api_key=${apiKey}`
+      url = `${baseUrl}/movie/now_playing?api_key=${apiKey}`;
       break;
     case "top-rated":
       url = `${baseUrl}/movie/top_rated?api_key=${apiKey}`;
@@ -50,15 +50,25 @@ export const fetchMovieIdTemplate = async (
   let url = "https://api.themoviedb.org/3";
   switch (type) {
     case "movie-trailer":
-      url = `${baseUrl}/movie/${movieId}/videos?api_key=${apiKey}`
+      url = `${baseUrl}/movie/${movieId}/videos?api_key=${apiKey}`;
       break;
     case "movie-images":
-      url = `${baseUrl}/movie/${movieId}/images?api_key=${apiKey}`
+      url = `${baseUrl}/movie/${movieId}/images?api_key=${apiKey}`;
       break;
     case "movie-keywords":
-      url = `${baseUrl}/movie/${movieId}/keywords?api_key=${apiKey}`
+      url = `${baseUrl}/movie/${movieId}/keywords?api_key=${apiKey}`;
+      break;
+    case "movie-media":
+      url = `${baseUrl}/movie/${movieId}/external_ids?api_key=${apiKey}`;
+      break;
+    case "movie-by-id":
+      url = `${baseUrl}/movie/${movieId}?api_key=${apiKey}`;
+      break;
+    case "movie-credits":
+      url = `${baseUrl}/movie/${movieId}/credits?api_key=${apiKey}`;
+      break;
     default:
-      url
+      url;
       break;
   }
   try {
@@ -66,50 +76,6 @@ export const fetchMovieIdTemplate = async (
     return await response.json();
   } catch (error) {
     console.error(`Error fetching movieID ${movieId} movies:`, error);
-    // throw error;
-    return { results: [] };
-  }
-};
-
-////////////////////////////////////////////////////////////////////////
-/////////////////////// Individual movie fetches ///////////////////////
-////////////////////////////////////////////////////////////////////////
-
-// Fetch trailers for a specific movie
-export const fetchMovieTrailers = async (movieId: string | number) => {
-  try {
-    const response = await fetch(
-      `${baseUrl}/movie/${movieId}/videos?api_key=${apiKey}`
-    );
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching movie trailers:", error);
-    return { results: [] };
-  }
-};
-
-// Fetch images for a specific movie
-export const fetchMovieImages = async (movieId: string | number) => {
-  try {
-    const response = await fetch(
-      `${baseUrl}/movie/${movieId}/images?api_key=${apiKey}`
-    );
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching movie trailers:", error);
-    return { results: [] };
-  }
-};
-
-// Fetch Keywords for a specific movie
-export const fetchMovieKeywords = async (movieId: string | number) => {
-  try {
-    const response = await fetch(
-      `${baseUrl}/movie/${movieId}/keywords?api_key=${apiKey}`
-    );
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching movie trailers:", error);
     return { results: [] };
   }
 };
@@ -127,7 +93,7 @@ export const fetchPopularTrailers = async () => {
     // For each movie, fetch its trailers
     const moviesWithTrailers = await Promise.all(
       movies.map(async (movie: any) => {
-        const trailersResponse = await fetchMovieTrailers(movie.id);
+        const trailersResponse = await fetchMovieTrailers(movie.id); // TODO: Update with new fetch
 
         // Ensure we have a results array to work with
         const trailerResults = trailersResponse?.results || [];
@@ -251,34 +217,6 @@ export const fetchUpcomingTrailers = async () => {
 
 // fetch specific movie by ID
 
-// In your api.ts file
-export const fetchMovieById = async (movieId: string) => {
-  try {
-    const response = await axios.get(
-      `${baseUrl}/movie/${movieId}?api_key=${apiKey}`
-    );
-    return response.data;
-  } catch (error) {
-    console.error(`Error fetching movie with ID ${movieId}:`, error);
-    throw error;
-  }
-};
-
-// fetch specific movie by ID
-
-// In your api.ts file
-export const fetchMovieCredits = async (movieId: string) => {
-  try {
-    const response = await axios.get(
-      `${baseUrl}/movie/${movieId}/credits?api_key=${apiKey}`
-    );
-    return response.data;
-  } catch (error) {
-    console.error(`Error fetching movie with ID ${movieId}:`, error);
-    throw error;
-  }
-};
-
 ////////////////////////////////////////////////////////////////////////
 /////////////////////// Fetching TV shows //////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -344,6 +282,7 @@ export const fetchMovieReviews = async (movieId: number) => {
 ////////////////////////////////////////////////////////////////////////
 
 export const fetchRecommendations = async (movieId: number) => {
+  //TODO
   try {
     const response = await axios.get(
       `${baseUrl}/movie/${movieId}/recommendations?api_key=${apiKey}`
@@ -358,15 +297,3 @@ export const fetchRecommendations = async (movieId: number) => {
 ////////////////////////////////////////////////////////////////////////
 /////////////////////// Fetching social media for movie ////////////////
 ////////////////////////////////////////////////////////////////////////
-
-export const fetchMediaForMovie = async (movieId: string) => {
-  try {
-    const response = await axios.get(
-      `${baseUrl}/movie/${movieId}/external_ids?api_key=${apiKey}`
-    );
-    return response.data; // Return the entire response object
-  } catch (error) {
-    console.error("Error fetching popular persons:", error);
-    throw error;
-  }
-};
