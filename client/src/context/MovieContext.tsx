@@ -11,8 +11,6 @@ import {
   fetchMovieCredits,
   fetchMediaForMovie,
   fetchMovieIdTemplate,
-  fetchMovieImages,
-  fetchMovieKeywords,
 } from "../services/api";
 
 // Define your interfaces
@@ -175,8 +173,10 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
           movieMediaData,
         ] = await Promise.all([
           fetchMovieById(id),
-          fetchMovieImages(id),
-          fetchMovieKeywords(id),
+          // fetchMovieImages(id),
+          fetchMovieIdTemplate(id, "movie-images"),
+          fetchMovieIdTemplate(id, "movie-keywords"),
+          // fetchMovieKeywords(id),
           fetchMovieCredits(id),
           fetchMediaForMovie(id),
         ]);
