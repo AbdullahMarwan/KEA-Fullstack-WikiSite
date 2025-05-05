@@ -43,41 +43,29 @@ export const fetchTemplate = async (
   }
 };
 
-// Fetching now playing movies
-export const fetchNowPlayingMovies = async () => {
-  try {
-    const response = await axios.get(
-      `${baseUrl}/movie/now_playing?api_key=${apiKey}`
-    );
-    return { data: response.data, results: response.data.results };
-  } catch (error) {
-    console.error("Error fetching now playing movies:", error);
-    throw error;
+export const fetchMovieIdTemplate = async (
+  movieId: string | number,
+  type: string
+) => {
+  let url = "https://api.themoviedb.org/3";
+  switch (type) {
+    case "movie-trailer":
+      url = `${baseUrl}/movie/${movieId}/videos?api_key=${apiKey}`
+      break;
+    case "movie-images":
+      url = `${baseUrl}/movie/${movieId}/images?api_key=${apiKey}`
+      break;
+    case "movie-keywords":
+      url = `${baseUrl}/movie/${movieId}/keywords?api_key=${apiKey}`
+    default:
+      url
+      break;
   }
-};
-
-// Fetching top rated movies
-export const fetchTopRatedMovies = async () => {
   try {
-    const response = await axios.get(
-      `${baseUrl}/movie/top_rated?api_key=${apiKey}`
-    );
+    const response = await axios.get(url);
     return { data: response.data, results: response.data.results };
   } catch (error) {
-    console.error("Error fetching top rated movies:", error);
-    throw error;
-  }
-};
-
-// Fetching upcoming movies
-export const fetchUpcomingMovies = async () => {
-  try {
-    const response = await axios.get(
-      `${baseUrl}/movie/upcoming?api_key=${apiKey}`
-    );
-    return { data: response.data, results: response.data.results };
-  } catch (error) {
-    console.error("Error fetching upcoming movies:", error);
+    console.error(`Error fetching trending ${movieId} movies:`, error);
     throw error;
   }
 };
@@ -114,19 +102,6 @@ export const fetchMovieImages = async (movieId: string | number) => {
 
 // Fetch Keywords for a specific movie
 export const fetchMovieKeywords = async (movieId: string | number) => {
-  try {
-    const response = await fetch(
-      `${baseUrl}/movie/${movieId}/keywords?api_key=${apiKey}`
-    );
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching movie trailers:", error);
-    return { results: [] };
-  }
-};
-
-// Fetch Keywords for a specific movie
-export const fetchMoviePopularityChart = async (movieId: string | number) => {
   try {
     const response = await fetch(
       `${baseUrl}/movie/${movieId}/keywords?api_key=${apiKey}`
