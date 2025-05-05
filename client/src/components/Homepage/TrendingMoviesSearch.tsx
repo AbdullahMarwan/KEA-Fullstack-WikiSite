@@ -17,7 +17,7 @@ const TrendingMoviesSearch = () => {
   useEffect(() => {
     const getMovies = async () => {
       try {
-        const data = await fetchTemplate("", "trending");
+        const data = await fetchTemplate("day", "trending");
         setMovies(data.results); // Access the results array
       } catch (error) {
         console.error("Error fetching movies:", error);

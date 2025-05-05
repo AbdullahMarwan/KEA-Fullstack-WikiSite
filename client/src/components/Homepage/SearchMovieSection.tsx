@@ -17,7 +17,7 @@ const SearchMovieSection = () => {
     const getRandomBackdrop = async () => {
       try {
         setIsLoading(true);
-        const data = await fetchTemplate("", "trending");
+        const data = await fetchTemplate("day", "trending");
         // Get a random movie from the results that has a backdrop image
         const movies = data.results.filter(
           (movie: Movie) => movie.backdrop_path
