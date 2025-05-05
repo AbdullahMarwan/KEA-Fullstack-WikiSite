@@ -73,7 +73,7 @@ const MoviesSubPage = () => {
       case "top-rated":
         return fetchTemplate("", "top-rated");
       default:
-        return fetchTemplate("", "trending");
+        return fetchTemplate("day", "trending");
     }
   };
 
