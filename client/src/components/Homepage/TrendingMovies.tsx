@@ -1,6 +1,6 @@
 import { HStack, Box } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import { fetchTrendingMovies } from "../../services/api";
+import { fetchTemplate } from "../../services/api";
 import Cards from "./Cards";
 import background from "../../assets/trending-bg.svg";
 
@@ -31,7 +31,7 @@ const TrendingMovies = () => {
           borderRadius="8px"
         >
           <Cards
-            fetchFunction={fetchTrendingMovies}
+            fetchFunction={() => fetchTemplate("day", "trending")} // Pass as a function reference
             maxItems={10}
             title="Trending"
             showLinkSelector={true}

@@ -1,7 +1,4 @@
 import {
-  fetchPopularMovies,
-  fetchPopularTvSeries,
-  fetchTrendingMovies,
   fetchTemplate,
 } from "../services/api";
 

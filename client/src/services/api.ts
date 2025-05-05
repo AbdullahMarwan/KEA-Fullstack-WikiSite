@@ -43,47 +43,6 @@ export const fetchTemplate = async (
   }
 };
 
-
-
-export const fetchTvShows = async () => {
-  try {
-    const response = await axios.get(
-      `${baseUrl}/discover/tv?api_key=${apiKey}`
-    );
-    return { data: response.data, results: response.data.results };
-  } catch (error) {
-    console.error("Error fetching trending movies:", error);
-    throw error;
-  }
-};
-
-// Fetching Trending movies - for both day and week
-export const fetchTrendingMovies = async (timeWindow: string = "day") => {
-  try {
-    const response = await axios.get(
-      `${baseUrl}/trending/movie/${timeWindow}?api_key=${apiKey}`
-    );
-    return { data: response.data, results: response.data.results };
-  } catch (error) {
-    console.error(`Error fetching trending ${timeWindow} movies:`, error);
-    throw error;
-  }
-};
-
-// fetching popular movies
-
-export const fetchPopularMovies = async (timeWindow: string = "popular") => {
-  try {
-    const response = await axios.get(
-      `${baseUrl}/movie/${timeWindow}?api_key=${apiKey}`
-    );
-    return { data: response.data, results: response.data.results };
-  } catch (error) {
-    console.error("Error fetching popular movies:", error);
-    throw error;
-  }
-};
-
 // Fetching now playing movies
 export const fetchNowPlayingMovies = async () => {
   try {

@@ -29,11 +29,7 @@ import { sortByDate, sortByPopularity } from "../utils/sortingHelper";
 
 import Cards from "../components/Homepage/Cards";
 import {
-  fetchTrendingMovies,
-  fetchPopularMovies,
-  fetchNowPlayingMovies,
-  fetchTopRatedMovies,
-  fetchUpcomingMovies,
+  fetchTemplate,
 } from "../services/api";
 
 const MoviesSubPage = () => {
@@ -69,15 +65,15 @@ const MoviesSubPage = () => {
   const getFetchFunction = () => {
     switch (category) {
       case "popular":
-        return fetchPopularMovies;
+        return fetchTemplate("", "popular");
       case "now-playing":
-        return fetchNowPlayingMovies;
+        return fetchTemplate("", "now-playing");
       case "upcoming":
-        return fetchUpcomingMovies;
+        return fetchTemplate("", "upcoming");
       case "top-rated":
-        return fetchTopRatedMovies;
+        return fetchTemplate("", "top-rated");
       default:
-        return fetchTrendingMovies;
+        return fetchTemplate("", "trending");
     }
   };
 
