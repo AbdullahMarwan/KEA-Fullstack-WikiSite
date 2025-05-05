@@ -65,13 +65,13 @@ const MoviesSubPage = () => {
   const getFetchFunction = () => {
     switch (category) {
       case "popular":
-        return fetchTemplate("", "popular");
+        return fetchTemplate("popular", "popular");
       case "now-playing":
-        return fetchTemplate("", "now-playing");
+        return fetchTemplate("now_playing", "now-playing");
       case "upcoming":
-        return fetchTemplate("", "upcoming");
+        return fetchTemplate("upcoming", "upcoming");
       case "top-rated":
-        return fetchTemplate("", "top-rated");
+        return fetchTemplate("top_rated", "top-rated");
       default:
         return fetchTemplate("day", "trending");
     }
@@ -97,7 +97,7 @@ const MoviesSubPage = () => {
     const fetchMovies = async () => {
       try {
         const fetchFunction = getFetchFunction(); // Get the appropriate fetch function
-        const data = await fetchFunction(); // Fetch the movies
+        const data = await fetchFunction; // Await the promise returned by fetchTemplate
         setMovies(data.results || data); // Update the movies state
       } catch (error) {
         console.error("Error fetching movies:", error);
