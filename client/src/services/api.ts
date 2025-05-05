@@ -62,11 +62,12 @@ export const fetchMovieIdTemplate = async (
       break;
   }
   try {
-    const response = await axios.get(url);
-    return { data: response.data, results: response.data.results };
+    const response = await fetch(url);
+    return await response.json();
   } catch (error) {
-    console.error(`Error fetching trending ${movieId} movies:`, error);
-    throw error;
+    console.error(`Error fetching movieID ${movieId} movies:`, error);
+    // throw error;
+    return { results: [] };
   }
 };
 

@@ -10,7 +10,7 @@ import {
   fetchMovieById,
   fetchMovieCredits,
   fetchMediaForMovie,
-  fetchMovieTrailers,
+  fetchMovieIdTemplate,
   fetchMovieImages,
   fetchMovieKeywords,
 } from "../services/api";
@@ -213,7 +213,7 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setIsLoadingTrailers(true);
       try {
-        const trailerData = await fetchMovieTrailers(movie.id);
+        const trailerData = await fetchMovieIdTemplate(movie.id, "movie-trailer");
 
         // Make sure we're accessing the right property
         const allVideos = trailerData.results || [];
