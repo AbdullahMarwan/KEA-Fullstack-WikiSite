@@ -292,17 +292,25 @@ const MoviesSubPage = () => {
           <Box>
             <Grid
               templateColumns={{
-                base: "repeat(2, 1fr)", // 2 cards per row on small screens
-                md: "repeat(3, 1fr)", // 3 cards per row on medium screens
-                lg: "repeat(4, 1fr)", // 4 cards per row on large screens
+              base: "repeat(2, 1fr)", // 2 cards per row on small screens
+              md: "repeat(3, 1fr)", // 3 cards per row on medium screens
+              lg: "repeat(4, 1fr)", // 4 cards per row on large screens
               }}
               gap={6} // Space between cards
+              maxWidth={{
+              base: "90vw", // Full width on mobile
+              md: "50vw", // Apply maxWidth on medium screens and up
+              }}
+              overflowX={{
+              base: "scroll",
+              md: "scroll", 
+              }}
             >
               <Cards
-                customData={movies} // Pass the fetched movies as customData
-                maxItems={10}
-                showLinkSelector={false}
-                defaultTimeWindow={defaultTimeWindow}
+              customData={movies} // Pass the fetched movies as customData
+              maxItems={10}
+              showLinkSelector={false}
+              defaultTimeWindow={defaultTimeWindow}
               />
             </Grid>
           </Box>

@@ -81,6 +81,7 @@ const SignupForm = () => {
           backgroundColor={"#dee2e6"}
           color={"black"}
           _hover={{ backgroundColor: "#ced4da" }}
+          as={ReactRouterLink} to="/" 
         >
           Tilmeld dig
         </Button>
