@@ -8,7 +8,7 @@ import {
   returnTitle,
   fetchMovies,
   updateActiveLink,
-} from "../../utils/movieSectionhelper";
+} from "../../utils/movieSectionHelper";
 import LinkSelector from "./LinkSelector";
 
 interface MovieSectionProps {

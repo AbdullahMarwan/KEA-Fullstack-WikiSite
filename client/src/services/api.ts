@@ -20,7 +20,8 @@ export const fetchTemplate = async (
       url = `${baseUrl}/movie/${timeWindow}?api_key=${apiKey}`;
       break;
     case "tv":
-      url = `${baseUrl}/discover/tv?api_key=${apiKey}`;
+      url = `${baseUrl}/tv/${timeWindow}?api_key=${apiKey}`;
+      break;
     case "now-playing":
       url = `${baseUrl}/movie/now_playing?api_key=${apiKey}`;
       break;
@@ -93,7 +94,7 @@ export const fetchPopularTrailers = async () => {
     // For each movie, fetch its trailers
     const moviesWithTrailers = await Promise.all(
       movies.map(async (movie: any) => {
-        const trailersResponse = await fetchMovieTrailers(movie.id); // TODO: Update with new fetch
+        const trailersResponse = await fetchMovieIdTemplate(movie.id, "movie-trailer"); // TODO: Update with new fetch
 
         // Ensure we have a results array to work with
         const trailerResults = trailersResponse?.results || [];
@@ -160,7 +161,7 @@ export const fetchUpcomingTrailers = async () => {
 
     const moviesWithTrailers = await Promise.all(
       movies.map(async (movie: any) => {
-        const trailersResponse = await fetchMovieTrailers(movie.id);
+        const trailersResponse = await fetchMovieIdTemplate(movie.id, "movie-trailer");
 
         // Ensure we have a results array to work with
         const trailerResults = trailersResponse?.results || [];
