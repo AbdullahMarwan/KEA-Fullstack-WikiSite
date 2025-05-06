@@ -56,12 +56,12 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
   const [trailers, setTrailers] = useState<Trailer[]>([]);
   const [trendingMovies, setTrendingMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeLink, setActiveLink] = useState(links[0].name);
+  const [activeLink, setActiveLink] = useState(links[0].value);
   const [timeWindow, setTimeWindow] = useState(defaultTimeWindow);
 
   // Update timeWindow when activeLink changes
   useEffect(() => {
-    const selected = links.find((link) => link.name === activeLink);
+    const selected = links.find((link) => link.value === activeLink);
     if (selected && selected.value) {
       setTimeWindow(selected.value);
     }
