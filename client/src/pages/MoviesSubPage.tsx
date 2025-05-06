@@ -29,11 +29,7 @@ import { sortByDate, sortByPopularity } from "../utils/sortingHelper";
 
 import Cards from "../components/Homepage/Cards";
 import {
-  fetchTrendingMovies,
-  fetchPopularMovies,
-  fetchNowPlayingMovies,
-  fetchTopRatedMovies,
-  fetchUpcomingMovies,
+  fetchTemplate,
 } from "../services/api";
 
 const MoviesSubPage = () => {
@@ -69,15 +65,15 @@ const MoviesSubPage = () => {
   const getFetchFunction = () => {
     switch (category) {
       case "popular":
-        return fetchPopularMovies;
+        return fetchTemplate("popular", "popular");
       case "now-playing":
-        return fetchNowPlayingMovies;
+        return fetchTemplate("now_playing", "now-playing");
       case "upcoming":
-        return fetchUpcomingMovies;
+        return fetchTemplate("upcoming", "upcoming");
       case "top-rated":
-        return fetchTopRatedMovies;
+        return fetchTemplate("top_rated", "top-rated");
       default:
-        return fetchTrendingMovies;
+        return fetchTemplate("day", "trending");
     }
   };
 
@@ -101,7 +97,7 @@ const MoviesSubPage = () => {
     const fetchMovies = async () => {
       try {
         const fetchFunction = getFetchFunction(); // Get the appropriate fetch function
-        const data = await fetchFunction(); // Fetch the movies
+        const data = await fetchFunction; // Await the promise returned by fetchTemplate
         setMovies(data.results || data); // Update the movies state
       } catch (error) {
         console.error("Error fetching movies:", error);

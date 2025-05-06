@@ -10,9 +10,7 @@ import {
   fetchMovieById,
   fetchMovieCredits,
   fetchMediaForMovie,
-  fetchMovieTrailers,
-  fetchMovieImages,
-  fetchMovieKeywords,
+  fetchMovieIdTemplate,
 } from "../services/api";
 
 // Define your interfaces
@@ -174,11 +172,11 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
           creditData,
           movieMediaData,
         ] = await Promise.all([
-          fetchMovieById(id),
-          fetchMovieImages(id),
-          fetchMovieKeywords(id),
-          fetchMovieCredits(id),
-          fetchMediaForMovie(id),
+          fetchMovieIdTemplate(id, "movie-by-id"),
+          fetchMovieIdTemplate(id, "movie-images"),
+          fetchMovieIdTemplate(id, "movie-keywords"),
+          fetchMovieIdTemplate(id, "movie-credits"),
+          fetchMovieIdTemplate(id, "movie-media"),
         ]);
 
         setImages(movieImages);
@@ -213,7 +211,7 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setIsLoadingTrailers(true);
       try {
-        const trailerData = await fetchMovieTrailers(movie.id);
+        const trailerData = await fetchMovieIdTemplate(movie.id, "movie-trailer");
 
         // Make sure we're accessing the right property
         const allVideos = trailerData.results || [];

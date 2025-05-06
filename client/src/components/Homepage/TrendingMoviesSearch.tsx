@@ -2,7 +2,7 @@ import { Heading, ListItem, UnorderedList, Box, Link } from "@chakra-ui/react";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { IoSearchSharp } from "react-icons/io5";
 import { Link as ReactRouterLink } from "react-router-dom";
-import { fetchTrendingMovies } from "../../services/api";
+import { fetchTemplate } from "../../services/api";
 import { useState, useEffect } from "react";
 
 const TrendingMoviesSearch = () => {
@@ -17,7 +17,7 @@ const TrendingMoviesSearch = () => {
   useEffect(() => {
     const getMovies = async () => {
       try {
-        const data = await fetchTrendingMovies();
+        const data = await fetchTemplate("day", "trending");
         setMovies(data.results); // Access the results array
       } catch (error) {
         console.error("Error fetching movies:", error);

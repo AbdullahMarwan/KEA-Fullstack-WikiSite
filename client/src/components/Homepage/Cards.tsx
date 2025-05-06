@@ -12,7 +12,7 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { fetchTrendingMovies } from "../../services/api";
+import { fetchTemplate } from "../../services/api";
 import VoteAverageRing from "./voteAverageRing";
 import MenuOnCards from "./MenuOnCards";
 import LinkSelector from "./LinkSelector";
@@ -53,7 +53,7 @@ interface TvShow {
 // Enhanced props to include links and custom data
 interface CardsProps {
   movieId?: number; // Optional movieId prop for fetching specific movie data
-  fetchFunction?: (timeWindow?: string) => Promise<any>; // Updated to accept timeWindow parameter
+  fetchFunction?: (timeWindow?: string, type?: string) => Promise<any>; // Updated to accept timeWindow parameter
   maxItems?: number;
   title?: string;
   showLinkSelector?: boolean; // Whether to show the link selector
@@ -66,7 +66,7 @@ interface CardsProps {
 }
 
 const Cards: React.FC<CardsProps> = ({
-  fetchFunction = fetchTrendingMovies,
+  fetchFunction = () => fetchTemplate("day", "trending"),
   maxItems = 10,
   title = "",
   showLinkSelector = false,
@@ -124,7 +124,7 @@ const Cards: React.FC<CardsProps> = ({
 
   // Create a memoized fetch function that uses the current timeWindow
   const fetchWithTimeWindow = useCallback(() => {
-    return fetchFunction(timeWindow);
+    return typeof fetchFunction === "function" ? fetchFunction(timeWindow) : Promise.resolve(fetchFunction);
   }, [fetchFunction, timeWindow]);
 
   // Fetch data or use provided custom data

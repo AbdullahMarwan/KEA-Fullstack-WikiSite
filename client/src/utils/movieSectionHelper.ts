@@ -1,7 +1,5 @@
 import {
-  fetchPopularMovies,
-  fetchPopularTvSeries,
-  fetchTrendingMovies,
+  fetchTemplate,
 } from "../services/api";
 
 const trendingMoviesLinks = [
@@ -20,16 +18,19 @@ const popularMoviesLinks = [
   { name: "Upcoming", href: "#", value: "upcoming" },
 ];
 
-export const getFetchFunction = async (category: string, activeLink: string) => {
+export const getFetchFunction = async (
+  category: string,
+  activeLink: string
+) => {
   switch (category) {
     case "popular":
-      return fetchPopularMovies(activeLink);
+      return fetchTemplate(activeLink, "popular");
     case "tv-series":
-      return fetchPopularTvSeries(activeLink);
+      return fetchTemplate(activeLink, "tv");
     case "trending":
-      return fetchTrendingMovies(activeLink);
+      return fetchTemplate(activeLink, "trending");
     default:
-      return fetchTrendingMovies(activeLink);
+      return fetchTemplate(activeLink, "trending");
   }
 };
 
