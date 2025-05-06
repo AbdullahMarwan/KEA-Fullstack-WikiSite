@@ -22,15 +22,6 @@ export const fetchTemplate = async (
     case "tv":
       url = `${baseUrl}/tv/${timeWindow}?api_key=${apiKey}`;
       break;
-    case "now-playing":
-      url = `${baseUrl}/movie/now_playing?api_key=${apiKey}`;
-      break;
-    case "top-rated":
-      url = `${baseUrl}/movie/top_rated?api_key=${apiKey}`;
-      break;
-    case "upcoming":
-      url = `${baseUrl}/movie/upcoming?api_key=${apiKey}`;
-      break;
     default:
       `${baseUrl}/movie/${timeWindow}?api_key=${apiKey}`;
       break;
