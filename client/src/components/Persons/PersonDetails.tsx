@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Heading, Box, Button, Grid, GridItem, Image, Select } from "@chakra-ui/react";
 import missingImgPlaceholder from "../../assets/missing-img-placeholder-16-9.jpg";
-// import {fetchPersonDetails, fetchCredits, fetchCombinedCredits, fetchCrewJobs} from "../../services/api"
+import {fetchPersonDetails, fetchCredits, fetchCombinedCredits, fetchCrewJobs} from "../../services/api"
 
 const genderMap: Record<number, string> = {
   0: "Not specified",

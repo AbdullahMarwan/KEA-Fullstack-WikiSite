@@ -289,3 +289,96 @@ export const fetchRecommendations = async (movieId: number) => {
 ////////////////////////////////////////////////////////////////////////
 /////////////////////// Fetching social media for movie ////////////////
 ////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////
+/////////////////////// Fetching person details ////////////////
+////////////////////////////////////////////////////////////////////////
+
+
+  // Fetch credits
+  export const fetchCredits = async (personId: string) => {
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${apiKey}`
+      );
+      const data = await response.json();
+      return data.cast
+        .map((item: { original_title: string; backdrop_path: string }) => ({
+          original_title: item.original_title,
+          backdrop_path: item.backdrop_path,
+        }))
+        .filter((item) => item.original_title);
+    } catch (error) {
+      console.error("Error fetching credits:", error);
+      return [];
+    }
+  };
+
+
+    // Fetch combined credits
+    export const fetchCombinedCredits = async (personId: string) => {
+      try {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${apiKey}`
+        );
+        const data = await response.json();
+    
+        // Process cast data
+        const cast = data.cast
+          .map((cast: { character: string; original_title: string; release_date: string }) => ({
+            type: "cast", // Add type to differentiate cast roles
+            character: cast.character,
+            title: cast.original_title,
+            release_date: cast.release_date,
+          }))
+          .filter((item: { character: string; title: string }) => item.character && item.title);
+    
+        return cast;
+      } catch (error) {
+        console.error("Error fetching combined credits:", error);
+        return [];
+      }
+    };
+
+
+    
+      // Fetch crew jobs
+      export const fetchCrewJobs = async (personId: string) => {
+        try {
+          const response = await axios.get(
+            `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${apiKey}`
+          );
+      
+          console.log("testing", response.data.crew)
+          // Process crew data
+          const crew = response.data.crew
+            .map((crew: { job: string; title: string }) => ({
+              type: "crew", // Add type to differentiate crew roles
+              job: crew.job,
+              title: crew.title || response.data.crew.name,
+            }))
+            .filter((crew: { job: string }) => crew.job);
+      
+          return crew;
+        } catch (error) {
+          console.error("Error fetching crew jobs:", error);
+          return [];
+        }
+      };
+
+  // Fetch person details
+  export const fetchPersonDetails = async (personId: string) => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}/person/${personId}?api_key=${apiKey}`
+      );
+      return response.data; // Return the entire response object like fetchRecommendations
+    } catch (error) {
+      console.error(`Error fetching person details for ID ${personId}:`, error);
+      throw error; // Throw the error to handle it in the calling function
+    }
+  };
