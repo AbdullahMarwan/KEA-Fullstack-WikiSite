@@ -23,7 +23,7 @@ export const fetchTemplate = async (
       url = `${baseUrl}/tv/${timeWindow}?api_key=${apiKey}`;
       break;
     default:
-      `${baseUrl}/movie/${timeWindow}?api_key=${apiKey}`;
+      url
       break;
   }
   try {
