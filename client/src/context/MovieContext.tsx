@@ -210,8 +210,13 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
       try {
         const trailerData = await fetchMovieIdTemplate(movie.id, "movie-trailer");
 
-        // Make sure we're accessing the right property
-        const allVideos = trailerData.results || [];
+        // Log the response to inspect its structure
+        console.log("Trailer Data:", trailerData);
+
+        // Ensure trailerData is an array or extract the array from the response
+        const allVideos = Array.isArray(trailerData)
+          ? trailerData.slice(0, 4) // If it's an array, slice it
+          : trailerData.results?.slice(0, 4) || []; // If it's an object, access the results property
 
         // Filter for YouTube trailers
         const youtubeTrailers = allVideos.filter(
