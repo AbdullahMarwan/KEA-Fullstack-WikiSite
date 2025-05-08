@@ -160,27 +160,6 @@ export const fetchTrailerTemplate = async (type: string) => {
 };
 
 ////////////////////////////////////////////////////////////////////////
-/////////////////////// Fetching TV shows //////////////////////////////
-////////////////////////////////////////////////////////////////////////
-
-// Fetching Trending movies - for both day and week
-export const fetchPopularTvSeries = async (category: string = "popular") => {
-  // Validate the category to ensure it's one of the allowed options
-  const validCategories = ["popular", "top_rated", "airing_today"];
-  const endpoint = validCategories.includes(category) ? category : "popular";
-
-  try {
-    const response = await axios.get(
-      `${baseUrl}/tv/${endpoint}?api_key=${apiKey}`
-    );
-    return { data: response.data, results: response.data.results };
-  } catch (error) {
-    console.error(`Error fetching TV shows for category ${category}:`, error);
-    throw error;
-  }
-};
-
-////////////////////////////////////////////////////////////////////////
 /////////////////////// Fetching Persons ///////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
@@ -202,40 +181,3 @@ export const fetchPopularPersons = async () => {
     throw error;
   }
 };
-
-////////////////////////////////////////////////////////////////////////
-/////////////////////// Fetching Movie Reviews /////////////////////////
-////////////////////////////////////////////////////////////////////////
-
-// export const fetchMovieReviews = async (movieId: number) => {
-//   try {
-//     const response = await axios.get(
-//       `${baseUrl}/movie/${movieId}/reviews?api_key=${apiKey}`
-//     );
-//     return response.data; // Return the entire response object
-//   } catch (error) {
-//     console.error("Error fetching popular persons:", error);
-//     throw error;
-//   }
-// };
-
-// ////////////////////////////////////////////////////////////////////////
-// /////////////////////// Fetching recommendations ///////////////////////
-// ////////////////////////////////////////////////////////////////////////
-
-// export const fetchRecommendations = async (movieId: number) => {
-//   //TODO
-//   try {
-//     const response = await axios.get(
-//       `${baseUrl}/movie/${movieId}/recommendations?api_key=${apiKey}`
-//     );
-//     return response.data; // Return the entire response object
-//   } catch (error) {
-//     console.error("Error fetching popular persons:", error);
-//     throw error;
-//   }
-// };
-
-////////////////////////////////////////////////////////////////////////
-/////////////////////// Fetching social media for movie ////////////////
-////////////////////////////////////////////////////////////////////////
