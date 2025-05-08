@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Heading, Box, Button, Grid, GridItem, Image, Select } from "@chakra-ui/react";
 import missingImgPlaceholder from "../../assets/missing-img-placeholder-16-9.jpg";
 import {fetchPersonDetails, fetchCredits, fetchCombinedCredits, fetchCrewJobs} from "../../services/api"
+import { doSorting } from "../../utils/sortingJobs";
 
 const genderMap: Record<number, string> = {
   0: "Not specified",
@@ -84,37 +85,7 @@ const PersonDetails = () => {
 
 
 
-  const doSorting = async (value: string) => {
-    if (!id) {
-      console.warn("ID is undefined");
-      return;
-    }
-
-    switch (value.toLowerCase()) {
-      case "all":
-        // Combine cast and crew jobs
-        const combinedCredits = await fetchCombinedCredits(id);
-        const crewJobsData = await fetchCrewJobs(id);
-        setPersonJobs([...combinedCredits, ...crewJobsData]);
-        break;
-
-      case "cast":
-        // Fetch only cast jobs
-        const castJobs = await fetchCombinedCredits(id);
-        setPersonJobs(castJobs);
-        break;
-
-      case "crew":
-        // Fetch only crew jobs
-        const crewJobsOnly = await fetchCrewJobs(id);
-        setPersonJobs(crewJobsOnly);
-        break;
-
-      default:
-        console.warn("Invalid sorting option");
-        break;
-    }
-  };
+// TODO. use do sorting here 
 
 
 
@@ -219,14 +190,14 @@ const PersonDetails = () => {
             Filter Roles
           </Heading>
           <Select
-            placeholder="Select option"
-            mt={2}
-            onChange={(e) => doSorting(e.target.value)}
-          >
-            <option value="all">All</option>
-            <option value="cast">Cast</option>
-            <option value="crew">Crew</option>
-          </Select>
+  placeholder="Select option"
+  mt={2}
+  onChange={(e) => doSorting(e.target.value, id!, setPersonJobs)}
+>
+  <option value="all">All</option>
+  <option value="cast">Cast</option>
+  <option value="crew">Crew</option>
+</Select>
         </Box>
 
         {personJobs.some((job) => job.type === "cast") && (
