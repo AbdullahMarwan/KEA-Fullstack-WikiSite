@@ -11,8 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  fetchPopularTrailers,
-  fetchUpcomingTrailers,
+  fetchTrailerTemplate
 } from "../../services/api";
 import MenuOnCards from "./MenuOnCards";
 import LinkSelector from "./LinkSelector";
@@ -56,12 +55,12 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
   const [trailers, setTrailers] = useState<Trailer[]>([]);
   const [trendingMovies, setTrendingMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeLink, setActiveLink] = useState(links[0].name);
+  const [activeLink, setActiveLink] = useState(links[0].value);
   const [timeWindow, setTimeWindow] = useState(defaultTimeWindow);
 
   // Update timeWindow when activeLink changes
   useEffect(() => {
-    const selected = links.find((link) => link.name === activeLink);
+    const selected = links.find((link) => link.value === activeLink);
     if (selected && selected.value) {
       setTimeWindow(selected.value);
     }
@@ -76,12 +75,12 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
   const getFetchFunction = useCallback(() => {
     switch (timeWindow) {
       case "popular":
-        return fetchPopularTrailers;
+        return fetchTrailerTemplate("popular-trailer");
       case "upcoming":
-        return fetchUpcomingTrailers;
+        return fetchTrailerTemplate("upcoming-trailer");
       // Add more cases for other categories
       default:
-        return fetchPopularTrailers;
+        return fetchTrailerTemplate("popular-trailer");
     }
   }, [timeWindow]);
 
@@ -91,7 +90,7 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
     try {
       console.log(`Fetching data for timeWindow: ${timeWindow}`);
       const fetchFunction = getFetchFunction();
-      let trailerData = await fetchFunction();
+      let trailerData = await fetchFunction;
       console.log(`Received ${trailerData.length} trailers for ${timeWindow}`);
 
       // Filter out movies without backdrop images

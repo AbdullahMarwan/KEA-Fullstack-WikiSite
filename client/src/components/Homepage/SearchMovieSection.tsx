@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Input, Button, HStack, Box } from "@chakra-ui/react";
 import { MAX_WIDTH } from "../../utils/constants";
-import { fetchTrendingMovies } from "../../services/api";
+import { fetchTemplate } from "../../services/api";
 
 interface Movie {
   id: number;
@@ -17,7 +17,7 @@ const SearchMovieSection = () => {
     const getRandomBackdrop = async () => {
       try {
         setIsLoading(true);
-        const data = await fetchTrendingMovies();
+        const data = await fetchTemplate("day", "trending");
         // Get a random movie from the results that has a backdrop image
         const movies = data.results.filter(
           (movie: Movie) => movie.backdrop_path

@@ -7,12 +7,7 @@ import React, {
 } from "react";
 import { useParams } from "react-router-dom";
 import {
-  fetchMovieById,
-  fetchMovieCredits,
-  fetchMediaForMovie,
-  fetchMovieTrailers,
-  fetchMovieImages,
-  fetchMovieKeywords,
+  fetchMovieIdTemplate,
 } from "../services/api";
 
 // Define your interfaces
@@ -174,11 +169,11 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
           creditData,
           movieMediaData,
         ] = await Promise.all([
-          fetchMovieById(id),
-          fetchMovieImages(id),
-          fetchMovieKeywords(id),
-          fetchMovieCredits(id),
-          fetchMediaForMovie(id),
+          fetchMovieIdTemplate(id, "movie-by-id"),
+          fetchMovieIdTemplate(id, "movie-images"),
+          fetchMovieIdTemplate(id, "movie-keywords"),
+          fetchMovieIdTemplate(id, "movie-credits"),
+          fetchMovieIdTemplate(id, "movie-media"),
         ]);
 
         setImages(movieImages);
@@ -213,10 +208,15 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setIsLoadingTrailers(true);
       try {
-        const trailerData = await fetchMovieTrailers(movie.id);
+        const trailerData = await fetchMovieIdTemplate(movie.id, "movie-trailer");
 
-        // Make sure we're accessing the right property
-        const allVideos = trailerData.results || [];
+        // Log the response to inspect its structure
+        console.log("Trailer Data:", trailerData);
+
+        // Ensure trailerData is an array or extract the array from the response
+        const allVideos = Array.isArray(trailerData)
+          ? trailerData.slice(0, 4) // If it's an array, slice it
+          : trailerData.results?.slice(0, 4) || []; // If it's an object, access the results property
 
         // Filter for YouTube trailers
         const youtubeTrailers = allVideos.filter(

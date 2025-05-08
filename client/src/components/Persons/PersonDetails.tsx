@@ -2,6 +2,8 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Heading, Box, Button, Grid, GridItem, Image, Select } from "@chakra-ui/react";
 import missingImgPlaceholder from "../../assets/missing-img-placeholder-16-9.jpg";
+import {fetchPersonDetails, fetchCredits, fetchCombinedCredits, fetchCrewJobs} from "../../services/api"
+import { doSorting } from "../../utils/sortingJobs";
 
 const genderMap: Record<number, string> = {
   0: "Not specified",
@@ -10,9 +12,15 @@ const genderMap: Record<number, string> = {
   3: "Non-binary",
 };
 
-// TODO: Move API key to environment variable
-const API_KEY = "475f7c6aa70e55fd5a97a138977bb3cc";
-
+interface Person {
+  name: string;
+  profile_path: string | null;
+  biography: string;
+  known_for_department: string;
+  gender: number;
+  birthday: string;
+  place_of_birth: string;
+}
 
 
 const PersonDetails = () => {
@@ -21,16 +29,7 @@ const PersonDetails = () => {
   const [showFullBiography, setShowFullBiography] = useState(false);
   const [personJobs, setPersonJobs] = useState<string[]>([]);
   const { id } = useParams<{ id: string }>();
-  const [person, setPerson] = useState<{
-
-    name: string;
-    profile_path: string;
-    biography: string;
-    known_for_department: string;
-    gender: number;
-    birthday: string;
-    place_of_birth: string;
-  } | null>(null);
+  const [person, setPerson] = useState<Person | null>(null);
   const [credits, setCredits] = useState<
     { original_title: string; backdrop_path: string }[]
   >([]);
@@ -40,9 +39,11 @@ const PersonDetails = () => {
     if (!id) return;
   
     const personData = await fetchPersonDetails(id);
+    console.log("person", personData)
     if (personData) {
       setPerson(personData);
     }
+
   
     const creditsData = await fetchCredits(id);
     setCredits(creditsData);
@@ -60,95 +61,10 @@ const PersonDetails = () => {
     return allJobs; // Return combined jobs
   };
 
-  // Fetch person details
-  const fetchPersonDetails = async (personId: string) => {
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/person/${personId}?api_key=${API_KEY}`
-      );
-      const data = await response.json();
-      return {
-        name: data.name,
-        profile_path: data.profile_path,
-        biography: data.biography,
-        known_for_department: data.known_for_department,
-        gender: data.gender,
-        birthday: data.birthday,
-        place_of_birth: data.place_of_birth,
-      };
-    } catch (error) {
-      console.error("Error fetching person details:", error);
-      return null;
-    }
-  };
 
-  // Fetch credits
-  const fetchCredits = async (personId: string) => {
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${API_KEY}`
-      );
-      const data = await response.json();
-      return data.cast
-        .map((item: { original_title: string; backdrop_path: string }) => ({
-          original_title: item.original_title,
-          backdrop_path: item.backdrop_path,
-        }))
-        .filter((item) => item.original_title);
-    } catch (error) {
-      console.error("Error fetching credits:", error);
-      return [];
-    }
-  };
 
-  // Fetch combined credits
-  const fetchCombinedCredits = async (personId: string) => {
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${API_KEY}`
-      );
-      const data = await response.json();
-  
-      // Process cast data
-      const cast = data.cast
-        .map((cast: { character: string; original_title: string; release_date: string }) => ({
-          type: "cast", // Add type to differentiate cast roles
-          character: cast.character,
-          title: cast.original_title,
-          release_date: cast.release_date,
-        }))
-        .filter((item: { character: string; title: string }) => item.character && item.title);
-  
-      return cast;
-    } catch (error) {
-      console.error("Error fetching combined credits:", error);
-      return [];
-    }
-  };
 
-  // Fetch crew jobs
-  const fetchCrewJobs = async (personId: string) => {
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/person/${personId}/combined_credits?api_key=${API_KEY}`
-      );
-      const data = await response.json();
-  
-      // Process crew data
-      const crew = data.crew
-        .map((crew: { job: string; title: string }) => ({
-          type: "crew", // Add type to differentiate crew roles
-          job: crew.job,
-          title: crew.title || crew.name,
-        }))
-        .filter((crew: { job: string }) => crew.job);
-  
-      return crew;
-    } catch (error) {
-      console.error("Error fetching crew jobs:", error);
-      return [];
-    }
-  };
+
 
   useEffect(() => {
     fetchData();
@@ -169,37 +85,7 @@ const PersonDetails = () => {
 
 
 
-  const doSorting = async (value: string) => {
-    if (!id) {
-      console.warn("ID is undefined");
-      return;
-    }
-
-    switch (value.toLowerCase()) {
-      case "all":
-        // Combine cast and crew jobs
-        const combinedCredits = await fetchCombinedCredits(id);
-        const crewJobsData = await fetchCrewJobs(id);
-        setPersonJobs([...combinedCredits, ...crewJobsData]);
-        break;
-
-      case "cast":
-        // Fetch only cast jobs
-        const castJobs = await fetchCombinedCredits(id);
-        setPersonJobs(castJobs);
-        break;
-
-      case "crew":
-        // Fetch only crew jobs
-        const crewJobsOnly = await fetchCrewJobs(id);
-        setPersonJobs(crewJobsOnly);
-        break;
-
-      default:
-        console.warn("Invalid sorting option");
-        break;
-    }
-  };
+// TODO. use do sorting here 
 
 
 
@@ -216,6 +102,8 @@ const PersonDetails = () => {
               borderRadius="1em"
               width="66%"
               height="66%"
+              maxWidth="66vw"
+
             />
           </Box>
         )}
@@ -250,7 +138,7 @@ const PersonDetails = () => {
         <Heading as="h2" size="xl" textAlign="center">
           {person.name}
         </Heading>
-        <Heading as="h3" size="md" mt={"2em"}>
+        <Heading as="h3" size="md" mt={"2em"} maxWidth="66vw">
           Biography
         </Heading>
         <p>{showFullBiography ? person.biography : truncatedBiography}</p>
@@ -264,7 +152,7 @@ const PersonDetails = () => {
         >
           Known For
         </Heading>
-        <Box display="flex" overflowX="auto" gap="1em" p="0em"
+        <Box display="flex" overflowX="auto" gap="1em" p="0em" maxWidth="66vw"
         /* TODO: Make background linear gradient like in cards */
         >
 
@@ -302,22 +190,22 @@ const PersonDetails = () => {
             Filter Roles
           </Heading>
           <Select
-            placeholder="Select option"
-            mt={2}
-            onChange={(e) => doSorting(e.target.value)}
-          >
-            <option value="all">All</option>
-            <option value="cast">Cast</option>
-            <option value="crew">Crew</option>
-          </Select>
+  placeholder="Select option"
+  mt={2}
+  onChange={(e) => doSorting(e.target.value, id!, setPersonJobs)}
+>
+  <option value="all">All</option>
+  <option value="cast">Cast</option>
+  <option value="crew">Crew</option>
+</Select>
         </Box>
 
         {personJobs.some((job) => job.type === "cast") && (
-  <Box>
-    <Heading as="h3" size="md" mt={10}>
+  <Box >
+    <Heading as="h3" size="md" mt={10} backgroundColor="gray.100" pb={4}>
       Acting Roles
     </Heading>
-    <Box>
+    <Box backgroundColor="gray.100" overflowY="scroll" maxHeight="50vh">
       <ul>
         {personJobs
           .filter((job) => job.type === "cast")
@@ -332,11 +220,11 @@ const PersonDetails = () => {
 )}
 
 {personJobs.some((job) => job.type === "crew") && (
-  <Box>
-    <Heading as="h3" size="md" mt={10}>
+  <Box overflowY="scroll" maxHeight="50vh">
+    <Heading as="h3" size="md" mt={10} backgroundColor="gray.100" pb={4}>
       Production
     </Heading>
-    <Box>
+    <Box backgroundColor="gray.100" overflowY="scroll" maxHeight="50vh">
       <ul>
         {personJobs
           .filter((job) => job.type === "crew")
