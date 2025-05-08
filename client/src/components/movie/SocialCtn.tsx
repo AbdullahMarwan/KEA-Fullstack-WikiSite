@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Box, Heading, HStack, Link, Image, Text } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
-import { fetchMovieReviews } from "../../services/api"; // Adjust the import path as necessary
+import { fetchMovieIdTemplate } from "../../services/api"; // Adjust the import path as necessary
 import { IoIosStar } from "react-icons/io";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
@@ -72,7 +72,7 @@ function SocialCtn() {
 
       try {
         // Fetch movie details
-        let movieReviews = await fetchMovieReviews(Number(id));
+        let movieReviews = await fetchMovieIdTemplate(Number(id), "movie-review");
 
         movieReviews = movieReviews.results;
 

@@ -23,7 +23,7 @@ export const fetchTemplate = async (
       url = `${baseUrl}/tv/${timeWindow}?api_key=${apiKey}`;
       break;
     default:
-      url
+      url;
       break;
   }
   try {
@@ -59,6 +59,12 @@ export const fetchMovieIdTemplate = async (
     case "movie-credits":
       url = `${baseUrl}/movie/${movieId}/credits?api_key=${apiKey}`;
       break;
+    case "movie-review":
+      url = `${baseUrl}/movie/${movieId}/reviews?api_key=${apiKey}`;
+      break;
+    case "movie-recommendations":
+      url = `${baseUrl}/movie/${movieId}/recommendations?api_key=${apiKey}`;
+      break;
     default:
       url;
       break;
@@ -73,9 +79,7 @@ export const fetchMovieIdTemplate = async (
 };
 
 // Updated version of fetchPopularTrailers with actual YouTube links
-export const fetchTrailerTemplate = async (
-  type: string
-) => {
+export const fetchTrailerTemplate = async (type: string) => {
   let url = "https://api.themoviedb.org/3";
   switch (type) {
     case "popular-trailer":
@@ -90,16 +94,17 @@ export const fetchTrailerTemplate = async (
   }
   try {
     // First get popular movies
-    const response = await axios.get(
-      url
-    );
+    const response = await axios.get(url);
 
     const movies = response.data.results.slice(0, 4); // Limit to 4 movies for performance
 
     // For each movie, fetch its trailers
     const moviesWithTrailers = await Promise.all(
       movies.map(async (movie: any) => {
-        const trailersResponse = await fetchMovieIdTemplate(movie.id, "movie-trailer"); // TODO: Update with new fetch
+        const trailersResponse = await fetchMovieIdTemplate(
+          movie.id,
+          "movie-trailer"
+        ); // TODO: Update with new fetch
 
         // Ensure we have a results array to work with
         const trailerResults = trailersResponse?.results || [];
@@ -202,34 +207,34 @@ export const fetchPopularPersons = async () => {
 /////////////////////// Fetching Movie Reviews /////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-export const fetchMovieReviews = async (movieId: number) => {
-  try {
-    const response = await axios.get(
-      `${baseUrl}/movie/${movieId}/reviews?api_key=${apiKey}`
-    );
-    return response.data; // Return the entire response object
-  } catch (error) {
-    console.error("Error fetching popular persons:", error);
-    throw error;
-  }
-};
+// export const fetchMovieReviews = async (movieId: number) => {
+//   try {
+//     const response = await axios.get(
+//       `${baseUrl}/movie/${movieId}/reviews?api_key=${apiKey}`
+//     );
+//     return response.data; // Return the entire response object
+//   } catch (error) {
+//     console.error("Error fetching popular persons:", error);
+//     throw error;
+//   }
+// };
 
-////////////////////////////////////////////////////////////////////////
-/////////////////////// Fetching recommendations ///////////////////////
-////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// /////////////////////// Fetching recommendations ///////////////////////
+// ////////////////////////////////////////////////////////////////////////
 
-export const fetchRecommendations = async (movieId: number) => {
-  //TODO
-  try {
-    const response = await axios.get(
-      `${baseUrl}/movie/${movieId}/recommendations?api_key=${apiKey}`
-    );
-    return response.data; // Return the entire response object
-  } catch (error) {
-    console.error("Error fetching popular persons:", error);
-    throw error;
-  }
-};
+// export const fetchRecommendations = async (movieId: number) => {
+//   //TODO
+//   try {
+//     const response = await axios.get(
+//       `${baseUrl}/movie/${movieId}/recommendations?api_key=${apiKey}`
+//     );
+//     return response.data; // Return the entire response object
+//   } catch (error) {
+//     console.error("Error fetching popular persons:", error);
+//     throw error;
+//   }
+// };
 
 ////////////////////////////////////////////////////////////////////////
 /////////////////////// Fetching social media for movie ////////////////

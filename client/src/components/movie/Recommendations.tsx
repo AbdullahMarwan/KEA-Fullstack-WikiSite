@@ -1,4 +1,4 @@
-import { fetchRecommendations } from "../../services/api";
+import { fetchMovieIdTemplate } from "../../services/api";
 import { useMovie } from "../../context/MovieContext";
 import React, { useState, useEffect } from "react";
 import Cards from "../Homepage/Cards";
@@ -11,7 +11,7 @@ function Recommendations() {
   const getRecommendations = async () => {
     if (!movie?.id) return;
     try {
-      const response = await fetchRecommendations(movie.id);
+      const response = await fetchMovieIdTemplate(movie.id, "movie-recommendations");
     } catch (error) {
       console.error("Error fetching recommendations:", error);
     } finally {
@@ -33,7 +33,7 @@ function Recommendations() {
           <p>Loading recommendations...</p>
         ) : movie ? (
           <Cards
-            fetchFunction={() => fetchRecommendations(movie.id)}
+            fetchFunction={() => fetchMovieIdTemplate(movie.id, "movie-recommendations")}
             movieId={movie.id}
             cardType="recommendations"
           />
