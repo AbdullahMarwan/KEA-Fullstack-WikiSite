@@ -20,7 +20,6 @@ import {
 import logo from "../../assets/logo.svg";
 import BurgerMenu from "./BurgerMenu"; // Import the BurgerMenu component
 import { Link as ReactRouterLink } from "react-router-dom";
-import LanguageContainer from "../Homepage/LanguageContainer";
 import { useSearch } from "../../context/SearchContext";
 import { IoSearchSharp } from "react-icons/io5";
 import logomobile from "../../assets/moviedb - logo vertical.svg";
@@ -55,7 +54,6 @@ const NavBar = () => {
           </svg>
         </Box>
         <HStack justifyContent="center">
-          ;
           <Link as={ReactRouterLink} to="/" width={"150px"}>
             <Image
               src={useBreakpointValue({ base: logomobile, md: logo })}
@@ -86,7 +84,7 @@ const NavBar = () => {
                   color="white"
                   fontWeight="600"
                 >
-                  Film
+                  Movies
                 </MenuButton>
                 <MenuList>
                   <MenuItem
@@ -123,7 +121,7 @@ const NavBar = () => {
                 width={"150px"}
                 _hover={{ textDecoration: "none" }}
               >
-                TV-serier
+                TV Shows
               </Link>
             </ListItem>
             <ListItem>
@@ -133,7 +131,7 @@ const NavBar = () => {
                 width={"150px"}
                 _hover={{ textDecoration: "none" }}
               >
-                Personer
+                People
               </Link>
             </ListItem>
           </UnorderedList>
@@ -162,7 +160,7 @@ const NavBar = () => {
                 fontWeight={"600"}
                 _hover={{ textDecoration: "none" }}
               >
-                Log ind
+                Log In
               </Link>
             </ListItem>
             <ListItem>
@@ -172,7 +170,7 @@ const NavBar = () => {
                 width={"150px"}
                 _hover={{ textDecoration: "none" }}
               >
-                Bliv medlem af TMDB
+                Join TMDB
               </Link>
             </ListItem>
           </UnorderedList>

@@ -21,35 +21,35 @@ const Footer = () => {
     {
       title: "The Basics",
       links: [
-        { text: "Om TMDB", href: "#" },
-        { text: "Kontakt os", href: "#" },
+        { text: "About TMDB", href: "#" },
+        { text: "Contact Us", href: "#" },
         { text: "Support Forums", href: "#" },
         { text: "API Documentation", href: "#" },
-        { text: "System status", href: "#" },
+        { text: "System Status", href: "#" },
       ],
     },
     {
-      title: "Bliv involveret",
+      title: "Get Involved",
       links: [
-        { text: "Bidragsbibel", href: "#" },
-        { text: "Tilføj ny film", href: "#" },
-        { text: "Tilføj ny serie", href: "#" },
+        { text: "Contribution Bible", href: "#" },
+        { text: "Add New Movie", href: "#" },
+        { text: "Add New TV Show", href: "#" },
       ],
     },
     {
-      title: "Fællesskab",
+      title: "Community",
       links: [
-        { text: "Retningslinjer", href: "#" },
-        { text: "Diskussioner", href: "#" },
+        { text: "Guidelines", href: "#" },
+        { text: "Discussions", href: "#" },
         { text: "Leaderboard", href: "#" },
       ],
     },
     {
       title: "Legal",
       links: [
-        { text: "Betingelser for brug", href: "#" },
-        { text: "API-vilkår for brug", href: "#" },
-        { text: "Fortrolighedspolitik", href: "#" },
+        { text: "Terms of Use", href: "#" },
+        { text: "API Terms of Use", href: "#" },
+        { text: "Privacy Policy", href: "#" },
         { text: "DMCA Policy", href: "#" },
       ],
     },

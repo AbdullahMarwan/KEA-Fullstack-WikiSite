@@ -88,7 +88,7 @@ const SearchMovieSection = () => {
               textAlign: "left",
             }}
           >
-            Velkommen.
+            Welcome.
           </h2>
           <h3
             style={{
@@ -98,7 +98,7 @@ const SearchMovieSection = () => {
               lineHeight: "1",
             }}
           >
-            Millioner af film, TV-serier og personer at opdage. Udforsk nu.
+            Millions of movies, TV shows, and people to discover. Explore now.
           </h3>
         </HStack>
         <HStack
@@ -110,7 +110,7 @@ const SearchMovieSection = () => {
           padding={0}
         >
           <Input
-            placeholder="Søg efter en film, TV-serie, person..."
+            placeholder="Search for a movie, TV show, or person..."
             color="grey"
             _placeholder={{ color: "gray.500" }}
             height="100%"

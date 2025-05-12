@@ -62,7 +62,7 @@ const SearchBar = () => {
             <Input
               ref={searchInputRef} // Connect to the ref from context
               border={"none"}
-              placeholder="Søg efter en film, TV-serie, person"
+              placeholder="Search for a movie, TV show, or person"
               fontSize={"1em"}
               bg="white"
               borderRadius="none"
