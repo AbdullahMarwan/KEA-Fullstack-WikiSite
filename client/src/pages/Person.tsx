@@ -1,4 +1,4 @@
-import { Box, Button, Grid, GridItem, Heading, Select, Image } from "@chakra-ui/react";
+import { Box, Button, Grid, GridItem, Heading, Select, Image, Center } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import missingImgPlaceholder from "../assets/missing-img-placeholder-16-9.jpg";
@@ -84,12 +84,18 @@ export const PersonSingle = () => {
         marginBottom={100}
         marginTop={100}
         maxWidth={{ base: "80vw", lg: "90vw" }}
+        
+        textAlign={{sm: "center", md:"left"}}
+        justifyContent={{sm: "center", md:"left"}}
       >
-        <Heading>{person.name}</Heading>
+        <Heading >{person.name}</Heading>
         <Grid templateColumns={{ base: "1fr", md: "20vw 40vw" }} gap={0}>
           <GridItem>
             {person.profile_path && (
-              <Box display="flex" justifyContent="left" mb={4}>
+                <Box 
+                display={{ base: "flex", md: "flex" }} 
+                justifyContent={{ sm:"center", md: "flex-start" }}
+                mb={4}>
                 <Image
                   src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
                   alt={`${person.name}'s profile`}
@@ -99,7 +105,7 @@ export const PersonSingle = () => {
                   height="66%"
                   maxWidth="66vw"
                 />
-              </Box>
+                </Box>
             )}
             <div>
               <Heading as="h3" size="md">
@@ -130,9 +136,7 @@ export const PersonSingle = () => {
           </GridItem>
 
           <GridItem>
-            <Heading as="h2" size="xl" textAlign="center">
-              {person.name}
-            </Heading>
+
             <Heading as="h3" size="md" mt={"2em"} maxWidth="66vw">
               Biography
             </Heading>
