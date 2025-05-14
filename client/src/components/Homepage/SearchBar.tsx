@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import {
   Button,
   HStack,
@@ -12,11 +12,32 @@ import {
 import { useSearch } from "../../context/SearchContext";
 import TrendingMoviesSearch from "./TrendingMoviesSearch";
 import { IoSearchSharp } from "react-icons/io5";
+
 const SearchBar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { searchInputRef } = useSearch();
+  const searchBarRef = useRef<HTMLDivElement>(null); // Ref for the search bar container
+
+  // Close the dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchBarRef.current &&
+        !searchBarRef.current.contains(event.target as Node)
+      ) {
+        onClose(); // Close the dropdown if the click is outside
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]);
+
   return (
     <HStack
+      ref={searchBarRef} // Attach the ref to the container
       h={"50px"}
       bg={"white"}
       w={"100%"}
@@ -76,8 +97,8 @@ const SearchBar = () => {
               w={"100%"}
               onClick={(e) => {
                 e.stopPropagation();
-                isOpen ? onClose() : onOpen();
-              }} // Open the trending movies search
+                onOpen(); // Open the dropdown when clicking inside the input
+              }}
             />
           </InputGroup>
         </FormControl>
