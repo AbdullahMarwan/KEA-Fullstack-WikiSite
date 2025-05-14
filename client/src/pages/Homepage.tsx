@@ -13,11 +13,17 @@ export const Homepage = () => {
       gridTemplateRows={"auto 1fr"}
       width="100%"
     >
-      <GridItem area={"header"} bg="#032440">
+      <GridItem 
+      area={"header"} bg="#032440">
         <SearchBar />
       </GridItem>
 
-      <GridItem area={"main"}>
+      <GridItem 
+      area={"main"}
+      // display={"none"} // Uncomment and adjust as needed
+      max-width={"100vw  "} // Uncomment and adjust as needed
+      overflow={"hidden"}
+      >
         <SearchMovieSection />
         <MovieSection sectionType="trending" />
         <LatestTrailers />

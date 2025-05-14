@@ -288,7 +288,8 @@ const Cards: React.FC<CardsProps> = ({
 
         {/* Scrollable content */}
         <Box
-          overflowX="auto"
+          maxWidth="80vw"
+          overflowX="scroll"
           whiteSpace="nowrap"
           padding="10px"
           boxSizing="border-box"
@@ -350,8 +351,7 @@ const Cards: React.FC<CardsProps> = ({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                width="100%"
-              >
+                width="100%"              >
                 {items.slice(0, maxItems).map((item, index) => {
                   const details = getItemDetails(item);
 
