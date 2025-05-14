@@ -51,7 +51,12 @@ function MovieContent() {
   }
 
   return (
-    <>
+    
+    <Box 
+    maxWidth={"100vw"}
+    overflow={"scroll"}
+    >
+      
       <Banner movie={{ ...movie, genres: movie.genres || [] }} />
 
       <HStack
@@ -62,7 +67,7 @@ function MovieContent() {
         pt="30px"
         pb="30px"
       >
-        <Box maxW="1300px" width="100%">
+        <Box maxW="100vw" width="100%">
           <HStack width="100%" align="flex-start" spacing={10}>
             <Box flex="7" width="70%">
               <TopCast />
@@ -87,7 +92,7 @@ function MovieContent() {
           </HStack>
         </Box>
       </HStack>
-    </>
+      </Box>
   );
 }
 
