@@ -35,11 +35,21 @@ export const fetchTemplate = async (
       url;
       break;
   }
+
+  const url = `${baseUrl}${endpoint}?api_key=${apiKey}`;
+
   try {
     const response = await axios.get(url);
-    return { data: response.data, results: response.data.results };
+
+    // Ensure `results` is always an array
+    const results = Array.isArray(response.data?.results)
+      ? response.data.results
+      : [];
+
+    console.log("results", results);
+    return { data: response.data, results };
   } catch (error) {
-    console.error(`Error fetching trending ${timeWindow} movies:`, error);
+    console.error(`Error fetching ${type} ${timeWindow} movies:`, error);
     throw error;
   }
 };

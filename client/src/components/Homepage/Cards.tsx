@@ -124,7 +124,9 @@ const Cards: React.FC<CardsProps> = ({
 
   // Create a memoized fetch function that uses the current timeWindow
   const fetchWithTimeWindow = useCallback(() => {
-    return typeof fetchFunction === "function" ? fetchFunction(timeWindow) : Promise.resolve(fetchFunction);
+    return typeof fetchFunction === "function"
+      ? fetchFunction(timeWindow)
+      : Promise.resolve(fetchFunction);
   }, [fetchFunction, timeWindow]);
 
   // Fetch data or use provided custom data
