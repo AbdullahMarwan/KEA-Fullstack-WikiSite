@@ -67,8 +67,11 @@ function MovieContent() {
         pt="30px"
         pb="30px"
       >
-        <Box maxW="100vw" width="100%">
-          <HStack width="100%" align="flex-start" spacing={10}>
+        <Box width="100%">
+          <HStack 
+          maxWidth={{ sm:"90%", base: "100%"}} 
+          margin={{ sm:"1em", base: "none"}} 
+          align="flex-start" spacing={10}>
             <Box flex="7" width="70%">
               <TopCast />
               <Link
@@ -83,10 +86,14 @@ function MovieContent() {
               <Media />
               <Recommendations />
             </Box>
-            <Box flex="3" width="30%">
+            <Box
+              flex="3"
+              width="30%"
+              display={{ sm: "none", md:"block", base: "block" }}
+            >
               <MovieAside
-                movie={movie}
-                movieMediaData={movie.MovieMediaData} // Pass movieMediaData to MovieAside
+              movie={movie}
+              movieMediaData={movie.MovieMediaData} // Pass movieMediaData to MovieAside
               />
             </Box>
           </HStack>
