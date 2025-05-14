@@ -44,9 +44,6 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
     img.src = background;
   }, []);
 
-  //Temp Console logs
-  console.log("Usestate in main", activeLink);
-
   return (
     <HStack
       display={"flex"}
@@ -62,7 +59,7 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
         maxWidth={"1300px"}
       >
         <HStack w="100%" flexDirection={"column"}>
-          <HStack spacing={4} mb={4} width="100%" >
+          <HStack spacing={4} mb={4} width="100%">
             {title && (
               <Heading fontSize="1.5rem" fontWeight="500" color="black">
                 {title}

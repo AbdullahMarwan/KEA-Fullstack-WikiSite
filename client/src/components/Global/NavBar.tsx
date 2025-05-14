@@ -103,14 +103,14 @@ const NavBar = () => {
                 <MenuList
                   marginTop={"-5px"}
                   backgroundColor={"white"}
-                  onMouseEnter={moviesMenuDisclosure.onOpen} // Keep the menu open when hovering over the list
-                  onMouseLeave={moviesMenuDisclosure.onClose} // Close the menu when the mouse leaves the list
+                  onMouseEnter={moviesMenuDisclosure.onOpen}
+                  onMouseLeave={moviesMenuDisclosure.onClose}
                 >
                   <MenuItem
                     as={ReactRouterLink}
                     to="/moviesSubPage?type=movie&category=popular"
                     backgroundColor={"white"}
-                    _hover={{ backgroundColor: "gray.200" }} // Add hover effect
+                    _hover={{ backgroundColor: "gray.200" }}
                   >
                     Popular
                   </MenuItem>
@@ -118,7 +118,7 @@ const NavBar = () => {
                     as={ReactRouterLink}
                     to="/moviesSubPage?type=movie&category=now-playing"
                     backgroundColor={"white"}
-                    _hover={{ backgroundColor: "gray.200" }} // Add hover effect
+                    _hover={{ backgroundColor: "gray.200" }}
                   >
                     Now Playing
                   </MenuItem>
@@ -126,7 +126,7 @@ const NavBar = () => {
                     as={ReactRouterLink}
                     to="/moviesSubPage?type=movie&category=upcoming"
                     backgroundColor={"white"}
-                    _hover={{ backgroundColor: "gray.200" }} // Add hover effect
+                    _hover={{ backgroundColor: "gray.200" }}
                   >
                     Upcoming
                   </MenuItem>
@@ -134,7 +134,7 @@ const NavBar = () => {
                     as={ReactRouterLink}
                     to="/moviesSubPage?type=movie&category=top-rated"
                     backgroundColor={"white"}
-                    _hover={{ backgroundColor: "gray.200" }} // Add hover effect
+                    _hover={{ backgroundColor: "gray.200" }}
                   >
                     Top Rated
                   </MenuItem>

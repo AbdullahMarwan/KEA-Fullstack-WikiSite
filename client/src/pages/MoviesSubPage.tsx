@@ -52,11 +52,11 @@ const MoviesSubPage = () => {
       switch (category) {
         case "popular":
           return "Popular TV Shows";
-        case "top-rated":
+        case "top_rated":
           return "Top Rated TV Shows";
-        case "on-the-air":
+        case "on_the_air":
           return "Currently Airing TV Shows";
-        case "airing-today":
+        case "airing_today":
           return "TV Shows Airing Today";
         default:
           return "TV Shows";
@@ -65,11 +65,11 @@ const MoviesSubPage = () => {
       switch (category) {
         case "popular":
           return "Popular Movies";
-        case "now-playing":
+        case "now_playing":
           return "Now Playing Movies";
         case "upcoming":
           return "Upcoming Movies";
-        case "top-rated":
+        case "top_rated":
           return "Top Rated Movies";
         default:
           return "Movies";
@@ -84,12 +84,12 @@ const MoviesSubPage = () => {
       switch (category) {
         case "popular":
           return await fetchTemplate("popular", "tv");
-        case "top-rated":
-          return await fetchTemplate("top-rated", "tv");
-        case "on-the-air":
-          return await fetchTemplate("on-the-air", "tv");
-        case "airing-today":
-          return await fetchTemplate("airing-today", "tv");
+        case "top_rated":
+          return await fetchTemplate("top_rated", "tv");
+        case "on_the_air":
+          return await fetchTemplate("on_the_air", "tv");
+        case "airing_today":
+          return await fetchTemplate("airing_today", "tv");
         default:
           return await fetchTemplate("popular", "tv");
       }

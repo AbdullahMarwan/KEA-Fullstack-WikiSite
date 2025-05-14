@@ -11,7 +11,7 @@ export const fetchTemplate = async (
   category: string = "popular", // Default to "popular"
   type: string = "movie" // Default to "movie"
 ) => {
-  console.log("fetchtemplate:", category, type);
+  console.log("fetchTemplate called with:", { category, type });
   let url = "";
 
   // Construct the URL based on the type and category
@@ -24,14 +24,17 @@ export const fetchTemplate = async (
         case "popular":
           url = `${baseUrl}/movie/popular?api_key=${apiKey}`;
           break;
-        case "now-playing":
+        case "now_playing":
           url = `${baseUrl}/movie/now_playing?api_key=${apiKey}`;
           break;
         case "upcoming":
           url = `${baseUrl}/movie/upcoming?api_key=${apiKey}`;
           break;
-        case "top-rated":
+        case "top_rated":
           url = `${baseUrl}/movie/top_rated?api_key=${apiKey}`;
+          break;
+        case "now_playing":
+          url = `${baseUrl}/movie/now_playing?api_key=${apiKey}`;
           break;
         default:
           throw new Error(`Invalid movie category: ${category}`);
@@ -40,19 +43,16 @@ export const fetchTemplate = async (
 
     case "tv":
       switch (category) {
-        case "trending":
-          url = `${baseUrl}/trending/tv/day?api_key=${apiKey}`;
-          break;
         case "popular":
           url = `${baseUrl}/tv/popular?api_key=${apiKey}`;
           break;
-        case "on-the-air":
-          url = `${baseUrl}/tv/on_the_air?api_key=${apiKey}`;
-          break;
-        case "airing-today":
+        case "airing_today":
           url = `${baseUrl}/tv/airing_today?api_key=${apiKey}`;
           break;
-        case "top-rated":
+        case "on_the_air":
+          url = `${baseUrl}/tv/on_the_air?api_key=${apiKey}`;
+          break;
+        case "top_rated":
           url = `${baseUrl}/tv/top_rated?api_key=${apiKey}`;
           break;
         default:
@@ -66,12 +66,9 @@ export const fetchTemplate = async (
 
   try {
     const response = await axios.get(url);
-
-    // Ensure `results` is always an array
     const results = Array.isArray(response.data?.results)
       ? response.data.results
       : [];
-
     console.log("Fetched results:", results);
     return { data: response.data, results };
   } catch (error) {

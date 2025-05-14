@@ -1,6 +1,4 @@
-import {
-  fetchTemplate,
-} from "../services/api";
+import { fetchTemplate } from "../services/api";
 
 const trendingMoviesLinks = [
   { name: "Today", href: "#", value: "day" },
@@ -24,13 +22,13 @@ export const getFetchFunction = async (
 ) => {
   switch (category) {
     case "popular":
-      return fetchTemplate(activeLink, "popular");
+      return fetchTemplate(activeLink, "movie"); // "movie" is the type for popular movies
     case "tv-series":
-      return fetchTemplate(activeLink, "tv");
+      return fetchTemplate(activeLink, "tv"); // "tv" is the type for TV series
     case "trending":
-      return fetchTemplate(activeLink, "trending");
+      return fetchTemplate("trending", "movie"); // "trending" is a category for movies
     default:
-      return fetchTemplate(activeLink, "trending");
+      return fetchTemplate("trending", "movie"); // Default to trending movies
   }
 };
 
@@ -66,8 +64,18 @@ export const fetchMovies = async (
   activeLink: string
 ) => {
   try {
-    const data = await getFetchFunction(sectionType, activeLink); // Call the fetch function to get the data
-    setMovies(data.results || data); // Update the movies state
+    let category = activeLink;
+    let type = "movie"; // Default to "movie"
+
+    if (sectionType === "tv-series") {
+      type = "tv"; // Set type to "tv" for TV series
+    } else if (sectionType === "trending") {
+      category = "trending"; // Set category to "trending" for trending movies
+    }
+
+    console.log("Fetching movies with:", { category, type });
+    const data = await fetchTemplate(category, type);
+    setMovies(data.results || []);
   } catch (error) {
     console.error("Error fetching movies:", error);
   }
