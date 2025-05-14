@@ -36,8 +36,6 @@ export const fetchTemplate = async (
       break;
   }
 
-  const url = `${baseUrl}${endpoint}?api_key=${apiKey}`;
-
   try {
     const response = await axios.get(url);
 
