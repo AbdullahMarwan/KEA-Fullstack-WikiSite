@@ -24,6 +24,7 @@ function App() {
             <Route path="/persons" element={<Persons />} />
             <Route path="/person/:id" element={<PersonSingle />} />
             <Route path="/moviesSubPage" element={<MoviesSubPage />} />
+            <Route path="/tv" element={<MoviesSubPage />} />
           </Route>
         </Routes>
       </SearchProvider>

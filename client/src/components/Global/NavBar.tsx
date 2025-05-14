@@ -28,7 +28,12 @@ const NavBar = () => {
   const { focusSearchInput } = useSearch();
   const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
   const displayIcons = useBreakpointValue({ base: "flex", md: "none" });
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // Separate state for the burger menu
+  const burgerMenuDisclosure = useDisclosure();
+
+  // Separate state for the dropdown menu
+  const moviesMenuDisclosure = useDisclosure();
+  const tvMenuDisclosure = useDisclosure();
 
   return (
     <HStack
@@ -41,7 +46,7 @@ const NavBar = () => {
         <Box
           boxSize="1.5em"
           display={displayIcons}
-          onClick={onOpen}
+          onClick={burgerMenuDisclosure.onOpen}
           cursor="pointer"
         >
           <svg
@@ -76,53 +81,125 @@ const NavBar = () => {
               },
             }}
           >
-            <ListItem>
-              <Menu>
+            <ListItem
+              onMouseEnter={moviesMenuDisclosure.onOpen}
+              onMouseLeave={moviesMenuDisclosure.onClose}
+            >
+              <Menu
+                isOpen={moviesMenuDisclosure.isOpen}
+                onOpen={moviesMenuDisclosure.onOpen}
+                onClose={moviesMenuDisclosure.onClose}
+              >
                 <MenuButton
-                  as={Link}
+                  as={ReactRouterLink}
+                  to="/moviesSubPage"
+                  height={"100%"}
                   _hover={{ textDecoration: "none", color: "gray.300" }}
                   color="white"
                   fontWeight="600"
                 >
                   Movies
                 </MenuButton>
-                <MenuList>
+                <MenuList
+                  marginTop={"-5px"}
+                  backgroundColor={"white"}
+                  onMouseEnter={moviesMenuDisclosure.onOpen} // Keep the menu open when hovering over the list
+                  onMouseLeave={moviesMenuDisclosure.onClose} // Close the menu when the mouse leaves the list
+                >
                   <MenuItem
                     as={ReactRouterLink}
-                    to="/moviesSubPage?category=popular"
+                    to="/moviesSubPage?type=movie&category=popular"
+                    backgroundColor={"white"}
+                    _hover={{ backgroundColor: "gray.200" }} // Add hover effect
                   >
                     Popular
                   </MenuItem>
                   <MenuItem
                     as={ReactRouterLink}
-                    to="/moviesSubPage?category=now-playing"
+                    to="/moviesSubPage?type=movie&category=now-playing"
+                    backgroundColor={"white"}
+                    _hover={{ backgroundColor: "gray.200" }} // Add hover effect
                   >
                     Now Playing
                   </MenuItem>
                   <MenuItem
                     as={ReactRouterLink}
-                    to="/moviesSubPage?category=upcoming"
+                    to="/moviesSubPage?type=movie&category=upcoming"
+                    backgroundColor={"white"}
+                    _hover={{ backgroundColor: "gray.200" }} // Add hover effect
                   >
                     Upcoming
                   </MenuItem>
                   <MenuItem
                     as={ReactRouterLink}
-                    to="/moviesSubPage?category=top-rated"
+                    to="/moviesSubPage?type=movie&category=top-rated"
+                    backgroundColor={"white"}
+                    _hover={{ backgroundColor: "gray.200" }} // Add hover effect
                   >
                     Top Rated
                   </MenuItem>
                 </MenuList>
               </Menu>
             </ListItem>
-            <ListItem>
-              <Link
-                as={ReactRouterLink}
-                to="/"
-                width={"150px"}
-                _hover={{ textDecoration: "none" }}
+            <ListItem
+              onMouseEnter={tvMenuDisclosure.onOpen}
+              onMouseLeave={tvMenuDisclosure.onClose}
+            >
+              <Menu
+                isOpen={tvMenuDisclosure.isOpen}
+                onOpen={tvMenuDisclosure.onOpen}
+                onClose={tvMenuDisclosure.onClose}
               >
-                TV Shows
-              </Link>
+                <MenuButton
+                  as={ReactRouterLink}
+                  to="/tv?type=tv"
+                  height={"100%"}
+                  _hover={{ textDecoration: "none", color: "gray.300" }}
+                  color="white"
+                  fontWeight="600"
+                >
+                  Tv shows
+                </MenuButton>
+                <MenuList
+                  marginTop={"-5px"}
+                  backgroundColor={"white"}
+                  onMouseEnter={tvMenuDisclosure.onOpen}
+                  onMouseLeave={tvMenuDisclosure.onClose}
+                >
+                  <MenuItem
+                    as={ReactRouterLink}
+                    to="/moviesSubPage?type=tv&category=popular"
+                    backgroundColor={"white"}
+                    _hover={{ backgroundColor: "gray.200" }}
+                  >
+                    Popular
+                  </MenuItem>
+                  <MenuItem
+                    as={ReactRouterLink}
+                    to="/moviesSubPage?type=tv&category=on-the-air"
+                    backgroundColor={"white"}
+                    _hover={{ backgroundColor: "gray.200" }}
+                  >
+                    On The Air
+                  </MenuItem>
+                  <MenuItem
+                    as={ReactRouterLink}
+                    to="/moviesSubPage?type=tv&category=airing-today"
+                    backgroundColor={"white"}
+                    _hover={{ backgroundColor: "gray.200" }}
+                  >
+                    Airing Today
+                  </MenuItem>
+                  <MenuItem
+                    as={ReactRouterLink}
+                    to="/moviesSubPage?type=tv&category=top-rated"
+                    backgroundColor={"white"}
+                    _hover={{ backgroundColor: "gray.200" }}
+                  >
+                    Top Rated
+                  </MenuItem>
+                </MenuList>
+              </Menu>
             </ListItem>
             <ListItem>
               <Link
@@ -199,7 +276,11 @@ const NavBar = () => {
           </Box>
         </HStack>
       </HStack>
-      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+      <Drawer
+        isOpen={burgerMenuDisclosure.isOpen}
+        placement="left"
+        onClose={burgerMenuDisclosure.onClose}
+      >
         <DrawerOverlay />
         <DrawerContent
           mt={"65px"}

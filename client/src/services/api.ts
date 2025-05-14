@@ -8,32 +8,60 @@ const baseUrl = "https://api.themoviedb.org/3";
 ////////////////////////////////////////////////////////////////////////
 
 export const fetchTemplate = async (
-  timeWindow: string = "day",
-  type: string
+  category: string = "popular", // Default to "popular"
+  type: string = "movie" // Default to "movie"
 ) => {
-  let url = "https://api.themoviedb.org/3";
+  console.log("fetchtemplate:", category, type);
+  let url = "";
+
+  // Construct the URL based on the type and category
   switch (type) {
-    case "trending":
-      url = `${baseUrl}/trending/movie/${timeWindow}?api_key=${apiKey}`;
+    case "movie":
+      switch (category) {
+        case "trending":
+          url = `${baseUrl}/trending/movie/day?api_key=${apiKey}`;
+          break;
+        case "popular":
+          url = `${baseUrl}/movie/popular?api_key=${apiKey}`;
+          break;
+        case "now-playing":
+          url = `${baseUrl}/movie/now_playing?api_key=${apiKey}`;
+          break;
+        case "upcoming":
+          url = `${baseUrl}/movie/upcoming?api_key=${apiKey}`;
+          break;
+        case "top-rated":
+          url = `${baseUrl}/movie/top_rated?api_key=${apiKey}`;
+          break;
+        default:
+          throw new Error(`Invalid movie category: ${category}`);
+      }
       break;
-    case "popular":
-      url = `${baseUrl}/movie/${timeWindow}?api_key=${apiKey}`;
-      break;
-    case "now-playing":
-      url = `${baseUrl}/movie/${timeWindow}?api_key=${apiKey}`;
-      break;
-    case "upcoming":
-      url = `${baseUrl}/movie/${timeWindow}?api_key=${apiKey}`;
-      break;
-    case "top-rated":
-      url = `${baseUrl}/movie/${timeWindow}?api_key=${apiKey}`;
-      break;
+
     case "tv":
-      url = `${baseUrl}/tv/${timeWindow}?api_key=${apiKey}`;
+      switch (category) {
+        case "trending":
+          url = `${baseUrl}/trending/tv/day?api_key=${apiKey}`;
+          break;
+        case "popular":
+          url = `${baseUrl}/tv/popular?api_key=${apiKey}`;
+          break;
+        case "on-the-air":
+          url = `${baseUrl}/tv/on_the_air?api_key=${apiKey}`;
+          break;
+        case "airing-today":
+          url = `${baseUrl}/tv/airing_today?api_key=${apiKey}`;
+          break;
+        case "top-rated":
+          url = `${baseUrl}/tv/top_rated?api_key=${apiKey}`;
+          break;
+        default:
+          throw new Error(`Invalid TV category: ${category}`);
+      }
       break;
+
     default:
-      url;
-      break;
+      throw new Error(`Invalid type: ${type}`);
   }
 
   try {
@@ -44,10 +72,10 @@ export const fetchTemplate = async (
       ? response.data.results
       : [];
 
-    console.log("results", results);
+    console.log("Fetched results:", results);
     return { data: response.data, results };
   } catch (error) {
-    console.error(`Error fetching ${type} ${timeWindow} movies:`, error);
+    console.error(`Error fetching ${type} ${category}:`, error);
     throw error;
   }
 };
