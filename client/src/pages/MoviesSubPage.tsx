@@ -35,9 +35,6 @@ const MoviesSubPage = () => {
   const category = queryParams.get("category") || "popular"; // Default to "popular"
   const type = queryParams.get("type") || "movie"; // Default to "movie" (can be "movie" or "tv")
 
-  console.log("Location search:", location.search);
-  console.log("Query params:", { category, type });
-
   const [items, setItems] = useState<any[]>([]); // State to store the fetched data
 
   const sortingOptions = [
@@ -84,12 +81,12 @@ const MoviesSubPage = () => {
       switch (category) {
         case "popular":
           return await fetchTemplate("popular", "tv");
-        case "top_rated":
-          return await fetchTemplate("top_rated", "tv");
-        case "on_the_air":
-          return await fetchTemplate("on_the_air", "tv");
-        case "airing_today":
-          return await fetchTemplate("airing_today", "tv");
+        case "top-rated":
+          return await fetchTemplate("top-rated", "tv");
+        case "on-the-air":
+          return await fetchTemplate("on-the-air", "tv");
+        case "airing-today":
+          return await fetchTemplate("airing-today", "tv");
         default:
           return await fetchTemplate("popular", "tv");
       }

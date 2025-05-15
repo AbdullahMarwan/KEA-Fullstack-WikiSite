@@ -9,9 +9,9 @@ const baseUrl = "https://api.themoviedb.org/3";
 
 export const fetchTemplate = async (
   category: string = "popular", // Default to "popular"
-  type: string = "movie" // Default to "movie"
+  type: string = "movie", // Default to "movie"
+  timeWindow: string = "day" // Default to "day"
 ) => {
-  console.log("fetchTemplate called with:", { category, type });
   let url = "";
 
   // Construct the URL based on the type and category
@@ -19,21 +19,21 @@ export const fetchTemplate = async (
     case "movie":
       switch (category) {
         case "trending":
-          url = `${baseUrl}/trending/movie/day?api_key=${apiKey}`;
+          url = `${baseUrl}/trending/movie/${timeWindow}?api_key=${apiKey}`;
           break;
         case "popular":
           url = `${baseUrl}/movie/popular?api_key=${apiKey}`;
           break;
-        case "now_playing":
+        case "now-playing":
           url = `${baseUrl}/movie/now_playing?api_key=${apiKey}`;
           break;
         case "upcoming":
           url = `${baseUrl}/movie/upcoming?api_key=${apiKey}`;
           break;
-        case "top_rated":
+        case "top-rated":
           url = `${baseUrl}/movie/top_rated?api_key=${apiKey}`;
           break;
-        case "now_playing":
+        case "now-playing":
           url = `${baseUrl}/movie/now_playing?api_key=${apiKey}`;
           break;
         default:
@@ -46,13 +46,13 @@ export const fetchTemplate = async (
         case "popular":
           url = `${baseUrl}/tv/popular?api_key=${apiKey}`;
           break;
-        case "airing_today":
+        case "airing-today":
           url = `${baseUrl}/tv/airing_today?api_key=${apiKey}`;
           break;
-        case "on_the_air":
+        case "on-the-air":
           url = `${baseUrl}/tv/on_the_air?api_key=${apiKey}`;
           break;
-        case "top_rated":
+        case "top-rated":
           url = `${baseUrl}/tv/top_rated?api_key=${apiKey}`;
           break;
         default:
@@ -69,7 +69,7 @@ export const fetchTemplate = async (
     const results = Array.isArray(response.data?.results)
       ? response.data.results
       : [];
-    console.log("Fetched results:", results);
+    console.log(results);
     return { data: response.data, results };
   } catch (error) {
     console.error(`Error fetching ${type} ${category}:`, error);

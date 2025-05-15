@@ -6,13 +6,13 @@ const trendingMoviesLinks = [
 ];
 const tvShowsMoviesLinks = [
   { name: "Popular", href: "#", value: "popular" },
-  { name: "Airing Today", href: "#", value: "airing_today" },
-  { name: "Top Rated", href: "#", value: "top_rated" },
+  { name: "Airing Today", href: "#", value: "airing-today" },
+  { name: "Top Rated", href: "#", value: "top-rated" },
 ];
 const popularMoviesLinks = [
-  { name: "Now Playing", href: "#", value: "now_playing" },
+  { name: "Now Playing", href: "#", value: "now-playing" },
   { name: "Popular", href: "#", value: "popular" },
-  { name: "Top Rated", href: "#", value: "top_rated" },
+  { name: "Top Rated", href: "#", value: "top-rated" },
   { name: "Upcoming", href: "#", value: "upcoming" },
 ];
 
@@ -61,20 +61,23 @@ export const returnTitle = (category: string) => {
 export const fetchMovies = async (
   sectionType: string,
   setMovies: React.Dispatch<React.SetStateAction<any[]>>,
-  activeLink: string
+  activeLink: string,
+  timeWindow?: string
 ) => {
   try {
     let category = activeLink;
     let type = "movie"; // Default to "movie"
+    let usedTimeWindow = timeWindow || "day"; // Default to week if not provided
 
     if (sectionType === "tv-series") {
       type = "tv"; // Set type to "tv" for TV series
     } else if (sectionType === "trending") {
       category = "trending"; // Set category to "trending" for trending movies
+      // Use timeWindow only for trending
+      usedTimeWindow = activeLink;
     }
 
-    console.log("Fetching movies with:", { category, type });
-    const data = await fetchTemplate(category, type);
+    const data = await fetchTemplate(category, type, usedTimeWindow);
     setMovies(data.results || []);
   } catch (error) {
     console.error("Error fetching movies:", error);

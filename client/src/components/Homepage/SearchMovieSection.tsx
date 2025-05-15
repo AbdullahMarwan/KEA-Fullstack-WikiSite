@@ -12,12 +12,13 @@ interface Movie {
 const SearchMovieSection = () => {
   const [randomMovie, setRandomMovie] = useState<Movie | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  console.log(randomMovie);
 
   useEffect(() => {
     const getRandomBackdrop = async () => {
       try {
         setIsLoading(true);
-        const data = await fetchTemplate("day", "trending");
+        const data = await fetchTemplate("popular", "movie");
         // Get a random movie from the results that has a backdrop image
         const movies = data.results.filter(
           (movie: Movie) => movie.backdrop_path
