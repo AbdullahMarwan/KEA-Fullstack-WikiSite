@@ -231,7 +231,9 @@ function MovieContent() {
         pt="30px"
         pb="30px"
       >
-        <Box maxW="1300px" width="100%">
+        <Box maxW="1300px" width="90%"
+        marginLeft={{ sm: "25%", md: "unset" }}
+        >
           <HStack width="100%" align="flex-start" spacing={10}>
             <Box flex="7" width="70%">
               <TopCast />
@@ -249,13 +251,13 @@ function MovieContent() {
             </Box>
             <Box flex="3" width="30%">
               {/* MovieAside content */}
-                <Box
+              <Box
                 boxSize={"100%"}
                 fontSize={"1.5em"}
-                display={{ sm: "none", md: "flex" }}
+                      display={{ sm: "none", md: "flex" }}
                 alignItems={"flex-start"}
                 gap={3}
-                >
+              >
                 {movie.MovieMediaData?.facebook_id && (
                   <Link
                     href={`https://facebook.com/${movie.MovieMediaData.facebook_id}`}
@@ -323,7 +325,7 @@ function MovieContent() {
               <HStack
                 mt={10}
                 gap={3}
-                display={"flex"}
+                display={{ sm: "none", md: "flex" }}
                 flexDirection={"column"}
                 alignItems={"flex-start"}
               >
