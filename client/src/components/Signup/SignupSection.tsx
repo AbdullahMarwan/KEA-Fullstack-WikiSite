@@ -26,7 +26,7 @@ const SignupSection = () => {
         alignItems={"flex-start"}
         gap={"20px"}
       >
-        <Heading color={"white"}>Bliv medlem i dag</Heading>
+        <Heading color={"white"}>Join today!</Heading>
         <Text color={"white"}>
           Get access to maintain your own{" "}
           <Text as="span" opacity={"0.7"}>
@@ -52,7 +52,7 @@ const SignupSection = () => {
             color: "white",
           }}
         >
-          Tilmeld dig
+          Join here
         </Button>
       </Box>
     </HStack>

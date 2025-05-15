@@ -20,7 +20,6 @@ import {
   Button,
   Grid,
   GridItem,
-  Divider,
 } from "@chakra-ui/react";
 
 import { sortByDate, sortByPopularity } from "../utils/sortingHelper";
@@ -28,17 +27,15 @@ import { sortByDate, sortByPopularity } from "../utils/sortingHelper";
 //import { createListCollection } from "@chakra-ui/select"; // Import from @chakra-ui/select
 
 import Cards from "../components/Homepage/Cards";
-import {
-  fetchTemplate,
-} from "../services/api";
+import { fetchTemplate } from "../services/api";
 
 const MoviesSubPage = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const category = queryParams.get("category") || "popular"; // Default to "popular"
-  const defaultTimeWindow = category === "popular" ? "popular" : category;
+  const type = queryParams.get("type") || "movie"; // Default to "movie" (can be "movie" or "tv")
 
-  const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
+  const [items, setItems] = useState<any[]>([]); // State to store the fetched data
 
   const sortingOptions = [
     { label: "Popularity Descending", value: "popularity.desc" },
@@ -48,78 +45,108 @@ const MoviesSubPage = () => {
   ];
 
   const getCategoryHeading = () => {
-    switch (category) {
-      case "popular":
-        return "Popular Movies";
-      case "now-playing":
-        return "Now Playing Movies";
-      case "upcoming":
-        return "Upcoming Movies";
-      case "top-rated":
-        return "Top Rated Movies";
-      default:
-        return "Movies";
+    if (type === "tv") {
+      switch (category) {
+        case "popular":
+          return "Popular TV Shows";
+        case "top-rated":
+          return "Top Rated TV Shows";
+        case "on-the-air":
+          return "Currently Airing TV Shows";
+        case "airing-today":
+          return "TV Shows Airing Today";
+        default:
+          return "TV Shows";
+      }
+    } else {
+      switch (category) {
+        case "popular":
+          return "Popular Movies";
+        case "now_playing":
+          return "Now Playing Movies";
+        case "upcoming":
+          return "Upcoming Movies";
+        case "top_rated":
+          return "Top Rated Movies";
+        default:
+          return "Movies";
+      }
     }
   };
 
-  const getFetchFunction = () => {
-    switch (category) {
-      case "popular":
-        return fetchTemplate("popular", "popular");
-      case "now-playing":
-        return fetchTemplate("now_playing", "now-playing");
-      case "upcoming":
-        return fetchTemplate("upcoming", "upcoming");
-      case "top-rated":
-        return fetchTemplate("top_rated", "top-rated");
-      default:
-        return fetchTemplate("day", "trending");
+  const getFetchFunction = async () => {
+    console.log("Fetching data for:", { type, category });
+
+    if (type === "tv") {
+      switch (category) {
+        case "popular":
+          return await fetchTemplate("popular", "tv");
+        case "top-rated":
+          return await fetchTemplate("top-rated", "tv");
+        case "on-the-air":
+          return await fetchTemplate("on-the-air", "tv");
+        case "airing-today":
+          return await fetchTemplate("airing-today", "tv");
+        default:
+          return await fetchTemplate("popular", "tv");
+      }
+    } else if (type === "movie") {
+      switch (category) {
+        case "popular":
+          return await fetchTemplate("popular", "movie");
+        case "now-playing":
+          return await fetchTemplate("now-playing", "movie");
+        case "upcoming":
+          return await fetchTemplate("upcoming", "movie");
+        case "top-rated":
+          return await fetchTemplate("top-rated", "movie");
+        default:
+          return await fetchTemplate("popular", "movie");
+      }
+    } else {
+      throw new Error(`Invalid type: ${type}`);
     }
   };
 
   const doSorting = (value: string) => {
     switch (value) {
       case "release_date.desc":
-        return sortByDate(movies, "desc");
+        return sortByDate(items, "desc");
       case "release_date.asc":
-        return sortByDate(movies, "asc");
+        return sortByDate(items, "asc");
       case "popularity.desc":
-        return sortByPopularity(movies, "desc");
+        return sortByPopularity(items, "desc");
       case "popularity.asc":
-        return sortByPopularity(movies, "asc"); 
+        return sortByPopularity(items, "asc");
       default:
         console.warn("Invalid sorting option");
-        return movies; 
+        return items;
     }
   };
 
   useEffect(() => {
-    const fetchMovies = async () => {
+    const fetchItems = async () => {
       try {
-        const fetchFunction = getFetchFunction(); // Get the appropriate fetch function
-        const data = await fetchFunction; // Await the promise returned by fetchTemplate
-        setMovies(data.results || data); // Update the movies state
+        console.log("Fetching data for:", { type, category });
+        const data = await getFetchFunction(); // Call the fetch function
+        setItems(data.results || []); // Update the items state
       } catch (error) {
-        console.error("Error fetching movies:", error);
+        console.error("Error fetching items:", error);
       }
     };
 
-    fetchMovies();
-  }, [category]); // Re-run the effect when the category changes
+    fetchItems();
+  }, [category, type]); // Re-run the effect when the category or type changes
 
   return (
     <Box padding="20px">
-      <Heading size="lg" mb={4}>
-        {getCategoryHeading()}
-      </Heading>
-
       <Grid
         templateAreas={{
           base: `"header" 
-                 "aside" 
-                 "main"`, // Stack vertically on mobile
+          "aside" 
+          "main"`, // Stack vertically on mobile
           md: `"header header" 
-               "aside main"`, // Side by side on medium screens and up
+          "aside main"`, // Side by side on medium screens and up
         }}
         gridTemplateColumns={{
           base: "1fr", // Full width single column on mobile
@@ -132,6 +159,9 @@ const MoviesSubPage = () => {
       >
         {/* Aside Section */}
         <GridItem area={"aside"}>
+          <Heading size="lg" mb={4}>
+            {getCategoryHeading()}
+          </Heading>
           {/* Sort Section */}
           <Box
             borderWidth="1px"
@@ -166,8 +196,8 @@ const MoviesSubPage = () => {
                     <Select
                       placeholder="Select sorting option"
                       onChange={(e: any) => {
-                        const sortedMovies = doSorting(e.target.value); // Get the sorted movies
-                        setMovies([...sortedMovies]); // Update the movies state with the sorted movies
+                        const sortedItems = doSorting(e.target.value); // Get the sorted movies
+                        setItems([...sortedItems]); // Update the movies state with the sorted movies
                       }}
                     >
                       {sortingOptions.map((option: any) => (
@@ -286,29 +316,13 @@ const MoviesSubPage = () => {
         {/* Main Section */}
         <GridItem area={"main"}>
           <Box>
-            <Grid
-              templateColumns={{
-              base: "repeat(2, 1fr)", // 2 cards per row on small screens
-              md: "repeat(3, 1fr)", // 3 cards per row on medium screens
-              lg: "repeat(4, 1fr)", // 4 cards per row on large screens
-              }}
-              gap={6} // Space between cards
-              maxWidth={{
-              base: "90vw", // Full width on mobile
-              md: "50vw", // Apply maxWidth on medium screens and up
-              }}
-              overflowX={{
-              base: "scroll",
-              md: "scroll", 
-              }}
-            >
-              <Cards
-              customData={movies} // Pass the fetched movies as customData
-              maxItems={10}
+            <Cards
+              customData={items} // Pass the fetched movies as customData
+              maxItems={20} // Show more items in grid layout
               showLinkSelector={false}
-              defaultTimeWindow={defaultTimeWindow}
-              />
-            </Grid>
+              defaultTimeWindow={category}
+              isGrid={true} // Enable grid layout
+            />
           </Box>
         </GridItem>
       </Grid>

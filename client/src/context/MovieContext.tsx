@@ -6,9 +6,7 @@ import React, {
   useMemo,
 } from "react";
 import { useParams } from "react-router-dom";
-import {
-  fetchMovieIdTemplate,
-} from "../services/api";
+import { fetchMovieIdTemplate } from "../services/api";
 
 // Define your interfaces
 interface Genre {
@@ -161,7 +159,6 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setLoading(true);
       try {
-        // Run all fetch requests in parallel
         const [
           movieData,
           movieImages,
@@ -172,19 +169,18 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
           fetchMovieIdTemplate(id, "movie-by-id"),
           fetchMovieIdTemplate(id, "movie-images"),
           fetchMovieIdTemplate(id, "movie-keywords"),
-          fetchMovieIdTemplate(id, "movie-credits"),
+          fetchMovieIdTemplate(id, "movie-credits"), // Fetch credits
           fetchMovieIdTemplate(id, "movie-media"),
         ]);
 
         setImages(movieImages);
-        // Rest of your code remains the same
 
         const completeMovie = {
           ...movieData,
           genres: movieData.genres ?? [],
-          credits: creditData,
+          credits: creditData, // Add credits to the movie object
           MovieMediaData: movieMediaData,
-          keywords: keywordsData, // Add keywords to the movie object
+          keywords: keywordsData,
         };
 
         setMovie(completeMovie);
@@ -200,49 +196,6 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
 
     getMovieDetails();
   }, [id]);
-
-  // Fetch trailers once we have the movie ID
-  useEffect(() => {
-    const getTrailers = async () => {
-      if (!movie?.id) return;
-
-      setIsLoadingTrailers(true);
-      try {
-        const trailerData = await fetchMovieIdTemplate(movie.id, "movie-trailer");
-
-        // Log the response to inspect its structure
-        console.log("Trailer Data:", trailerData);
-
-        // Ensure trailerData is an array or extract the array from the response
-        const allVideos = Array.isArray(trailerData)
-          ? trailerData.slice(0, 4) // If it's an array, slice it
-          : trailerData.results?.slice(0, 4) || []; // If it's an object, access the results property
-
-        // Filter for YouTube trailers
-        const youtubeTrailers = allVideos.filter(
-          (video: Trailer) =>
-            video.site === "YouTube" &&
-            (video.type.includes("Trailer") || video.type.includes("Teaser"))
-        );
-
-        setVideos(allVideos); // Store all videos
-        setTrailers(youtubeTrailers); // Store only trailers/teasers
-
-        // Set default trailer
-        if (youtubeTrailers.length > 0) {
-          setSelectedTrailer(youtubeTrailers[0]);
-        }
-      } catch (error) {
-        console.error("Error fetching trailers:", error);
-      } finally {
-        setIsLoadingTrailers(false);
-      }
-    };
-
-    if (movie?.id) {
-      getTrailers();
-    }
-  }, [movie?.id]);
 
   const contextValue = useMemo(
     () => ({

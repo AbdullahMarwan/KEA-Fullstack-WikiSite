@@ -28,7 +28,7 @@ const LatestTrailers = () => {
           title="Latest Trailers"
           showLinkSelector={true}
           links={[
-            { name: "Populært", href: "#", value: "popular" },
+            { name: "Popular", href: "#", value: "popular" },
             { name: "Upcoming", href: "#", value: "upcoming" },
             // Only include links that have corresponding API functions
           ]}

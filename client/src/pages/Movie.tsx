@@ -1,12 +1,33 @@
-import { Box, HStack, Link } from "@chakra-ui/react";
+import {
+  Box,
+  HStack,
+  Link,
+  Text,
+  Image,
+  Heading,
+  Button,
+  Wrap,
+  Tag,
+  VStack,
+  SimpleGrid,
+} from "@chakra-ui/react";
 import SecondaryNav from "../components/movie/SecondaryNav";
-import Banner from "../components/movie/Banner";
 import TopCast from "../components/movie/TopCast";
-import MovieAside from "../components/movie/MovieAside";
 import SocialCtn from "../components/movie/SocialCtn";
 import Media from "../components/movie/Media";
 import { MovieProvider, useMovie } from "../context/MovieContext";
 import Recommendations from "../components/movie/Recommendations";
+import VoteAverageRing from "../components/Homepage/voteAverageRing";
+import ToolTips from "../components/movie/ToolTips";
+import Emoji from "../components/movie/Emoji";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaLink,
+  FaTwitter,
+  FaImdb,
+} from "react-icons/fa6";
+import { SiWikidata } from "react-icons/si";
 
 function MovieContent() {
   const { movie, loading, error } = useMovie();
@@ -50,9 +71,151 @@ function MovieContent() {
     );
   }
 
+  // Organize crew by name to consolidate roles
+  const crewByName: {
+    [key: string]: { id: number; name: string; jobs: string[] };
+  } = {};
+
+  const importantJobs = [
+    "director",
+    "writer",
+    "screenplay",
+    "story",
+    "characters",
+  ];
+
+  // Group crew members by name and combine their jobs
+  movie.credits?.crew.forEach((person) => {
+    const jobLower = person.job.toLowerCase();
+    if (importantJobs.includes(jobLower)) {
+      if (crewByName[person.name]) {
+        // Person already exists, add this job if not already included
+        if (!crewByName[person.name].jobs.includes(person.job)) {
+          crewByName[person.name].jobs.push(person.job);
+        }
+      } else {
+        // Create new entry for this person
+        crewByName[person.name] = {
+          id: person.id,
+          name: person.name,
+          jobs: [person.job],
+        };
+      }
+    }
+  });
+
+  const consolidatedCrew = Object.values(crewByName);
+
   return (
     <>
-      <Banner movie={{ ...movie, genres: movie.genres || [] }} />
+      {/* Banner content */}
+      <Box
+        backgroundImage={`linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`}
+        backgroundSize="cover"
+        backgroundPosition="left calc((50vw - 170px) - 340px) top"
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        padding={"20px"}
+      >
+        {/* MovieDetails content */}
+        <HStack
+          width={"100%"}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          columnGap={10}
+          maxW={"1300px"}
+        >
+          <Image
+            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+            alt={movie.title}
+            height="500px"
+            borderRadius="10px"
+            objectFit="cover"
+          />
+          <Box
+            color={"white"}
+            height={"100%"}
+            width={"100%"}
+            display={"flex"}
+            alignItems={"space-around"}
+            flexDirection={"column"}
+            gap={5}
+          >
+            <Heading>
+              {movie.title}{" "}
+              <Box as="span" fontWeight={"400"} color="gray.300">
+                ({new Date(movie.release_date).getFullYear()})
+              </Box>
+            </Heading>
+            <Box as="span" fontWeight={"400"} color="gray.400">
+              {movie.release_date}
+              <Box as="span" mx={2}>
+                •
+              </Box>
+              {movie.genres && movie.genres.length > 0
+                ? movie.genres.map((genre) => genre.name).join(", ")
+                : "No genres available"}
+              <Box as="span" mx={2}>
+                •
+              </Box>
+              {movie.runtime
+                ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m`
+                : ""}
+            </Box>
+            <Box display={"flex"} alignItems={"center"} gap={2}>
+              <VoteAverageRing
+                radius={50}
+                stroke={4}
+                progress={Math.round(movie.vote_average * 10)}
+              />
+              <Text fontWeight={"700"} ml={2}>
+                User Score
+              </Text>
+              <Emoji />
+              <Button
+                background={"#022441"}
+                ml={4}
+                color={"white"}
+                _hover={{
+                  transform: "scale(1.05)",
+                  transition: "transform 0.2s ease-in-out",
+                }}
+              >
+                What's your vibe?
+              </Button>
+            </Box>
+            <ToolTips />
+            <Text fontSize="lg" fontStyle="italic" color="gray.300">
+              {movie.tagline}
+            </Text>
+            <Box>
+              <Heading fontSize={"1.5em"} fontWeight={600}>
+                Overview
+              </Heading>
+              <Text fontSize="lg" fontStyle="italic" color="gray.300">
+                {movie.overview}
+              </Text>
+            </Box>
+            <Box width="100%">
+              <VStack align="flex-start" spacing={6} width="100%">
+                {/* Key crew section */}
+                <SimpleGrid columns={[2, 3, 4]} spacing={4} width="100%">
+                  {consolidatedCrew.map((person) => (
+                    <Box key={`crew-${person.id}`} borderRadius="md">
+                      <Text fontWeight="semibold">{person.name}</Text>
+                      <Text fontSize="sm" color="gray.400">
+                        {person.jobs.join(", ")}
+                      </Text>
+                    </Box>
+                  ))}
+                </SimpleGrid>
+              </VStack>
+            </Box>
+          </Box>
+        </HStack>
+      </Box>
 
       <HStack
         spacing={4}
@@ -79,10 +242,122 @@ function MovieContent() {
               <Recommendations />
             </Box>
             <Box flex="3" width="30%">
-              <MovieAside
-                movie={movie}
-                movieMediaData={movie.MovieMediaData} // Pass movieMediaData to MovieAside
-              />
+              {/* MovieAside content */}
+              <Box
+                boxSize={"100%"}
+                fontSize={"1.5em"}
+                display="flex"
+                alignItems={"flex-start"}
+                gap={3}
+              >
+                {movie.MovieMediaData?.facebook_id && (
+                  <Link
+                    href={`https://facebook.com/${movie.MovieMediaData.facebook_id}`}
+                    target="_blank"
+                    borderRight={"1px solid #d7d7d7"}
+                    pr={3}
+                  >
+                    <FaFacebook color="#272627" />
+                  </Link>
+                )}
+
+                {movie.MovieMediaData?.imdb_id && (
+                  <Link
+                    href={`https://www.imdb.com/title/${movie.MovieMediaData.imdb_id}`}
+                    target="_blank"
+                    borderRight={"1px solid #d7d7d7"}
+                    pr={3}
+                  >
+                    <FaImdb />
+                  </Link>
+                )}
+
+                {movie.MovieMediaData?.wikidata_id && (
+                  <Link
+                    href={`https://www.wikidata.org/wiki/${movie.MovieMediaData.wikidata_id}`}
+                    target="_blank"
+                    borderRight={"1px solid #d7d7d7"}
+                    pr={3}
+                  >
+                    <SiWikidata color="#272627" />
+                  </Link>
+                )}
+
+                {movie.MovieMediaData?.twitter_id && (
+                  <Link
+                    href={`https://twitter.com/${movie.MovieMediaData.twitter_id}`}
+                    target="_blank"
+                    borderRight={"1px solid #d7d7d7"}
+                    pr={3}
+                  >
+                    <FaTwitter color="#272627" />
+                  </Link>
+                )}
+
+                {movie.MovieMediaData?.instagram_id && (
+                  <Link
+                    href={`https://instagram.com/${movie.MovieMediaData.instagram_id}`}
+                    target="_blank"
+                    borderRight={"1px solid #d7d7d7"}
+                    pr={3}
+                  >
+                    <FaInstagram color="#272627" />
+                  </Link>
+                )}
+
+                <Link
+                  href={`${movie?.homepage}`}
+                  target="_blank"
+                  borderRight={"1px solid #d7d7d7"}
+                  pr={3}
+                >
+                  <FaLink color="#272627" />
+                </Link>
+              </Box>
+              <HStack
+                mt={10}
+                gap={3}
+                display={"flex"}
+                flexDirection={"column"}
+                alignItems={"flex-start"}
+              >
+                <Box>
+                  <Text fontWeight={700}>Status</Text>
+                  <Text>{movie.status}</Text>
+                </Box>
+                <Box>
+                  <Text fontWeight={700}>Original Language</Text>
+                  <Text>{movie.original_language}</Text>
+                </Box>
+                <Box>
+                  <Text fontWeight={700}>Budget</Text>
+                  <Text>${movie.budget.toLocaleString("en-US")}</Text>
+                </Box>
+                <Box>
+                  <Text fontWeight={700}>Revenue</Text>
+                  <Text>${movie.revenue.toLocaleString("en-US")}</Text>
+                </Box>
+
+                {movie.keywords &&
+                  movie.keywords.keywords &&
+                  movie.keywords.keywords.length > 0 && (
+                    <Box>
+                      <Text fontWeight={700}>Keywords</Text>
+                      <Wrap spacing={2} mt={2}>
+                        {movie.keywords.keywords.map((keyword) => (
+                          <Tag
+                            key={keyword.id}
+                            padding={2}
+                            color={"#000000"}
+                            backgroundColor={"##efefef"}
+                          >
+                            {keyword.name}
+                          </Tag>
+                        ))}
+                      </Wrap>
+                    </Box>
+                  )}
+              </HStack>
             </Box>
           </HStack>
         </Box>
