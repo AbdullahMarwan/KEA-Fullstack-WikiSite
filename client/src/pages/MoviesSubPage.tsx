@@ -49,11 +49,11 @@ const MoviesSubPage = () => {
       switch (category) {
         case "popular":
           return "Popular TV Shows";
-        case "top_rated":
+        case "top-rated":
           return "Top Rated TV Shows";
-        case "on_the_air":
+        case "on-the-air":
           return "Currently Airing TV Shows";
-        case "airing_today":
+        case "airing-today":
           return "TV Shows Airing Today";
         default:
           return "TV Shows";
@@ -140,17 +140,13 @@ const MoviesSubPage = () => {
 
   return (
     <Box padding="20px">
-      <Heading size="lg" mb={4}>
-        {getCategoryHeading()}
-      </Heading>
-
       <Grid
         templateAreas={{
           base: `"header" 
-                 "aside" 
-                 "main"`, // Stack vertically on mobile
+          "aside" 
+          "main"`, // Stack vertically on mobile
           md: `"header header" 
-               "aside main"`, // Side by side on medium screens and up
+          "aside main"`, // Side by side on medium screens and up
         }}
         gridTemplateColumns={{
           base: "1fr", // Full width single column on mobile
@@ -163,6 +159,9 @@ const MoviesSubPage = () => {
       >
         {/* Aside Section */}
         <GridItem area={"aside"}>
+          <Heading size="lg" mb={4}>
+            {getCategoryHeading()}
+          </Heading>
           {/* Sort Section */}
           <Box
             borderWidth="1px"
