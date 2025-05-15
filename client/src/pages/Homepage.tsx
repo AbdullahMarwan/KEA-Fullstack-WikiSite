@@ -17,7 +17,12 @@ export const Homepage = () => {
         <SearchBar />
       </GridItem>
 
-      <GridItem area={"main"}>
+            <GridItem 
+      area={"main"}
+      // display={"none"} // Uncomment and adjust as needed
+      max-width={"100vw  "} // Uncomment and adjust as needed
+      overflow={"hidden"}
+      >
         <SearchMovieSection />
         <MovieSection sectionType="trending" />
         <LatestTrailers />
