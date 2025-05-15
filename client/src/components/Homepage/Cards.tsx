@@ -272,7 +272,10 @@ const Cards: React.FC<CardsProps> = ({
         </HStack>
       )}
 
-      <Box position="relative" width="100%">
+      <Box position="relative" width="100%" 
+                maxWidth="80vw"
+          overflowX="scroll"
+      >
         {isLoading ? (
           isGrid ? (
             // Grid layout for skeletons

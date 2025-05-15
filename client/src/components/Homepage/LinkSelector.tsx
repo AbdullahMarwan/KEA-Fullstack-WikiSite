@@ -75,6 +75,7 @@ export const LinkSelector: React.FC<LinkSelectorProps> = ({
             alignItems="center"
             justifyContent="center"
             cursor="pointer"
+            padding="  1.5em 0em 1.5em 0em"
             background={
               activeLink === link.value ? activeBgColor : "transparent"
             }
