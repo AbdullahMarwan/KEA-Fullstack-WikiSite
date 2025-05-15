@@ -110,6 +110,8 @@ function MovieContent() {
     <>
       {/* Banner content */}
       <Box
+        maxWidth={"100vw"}
+        overflow={"scroll"}
         backgroundImage={`linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`}
         backgroundSize="cover"
         backgroundPosition="left calc((50vw - 170px) - 340px) top"
@@ -120,19 +122,23 @@ function MovieContent() {
       >
         {/* MovieDetails content */}
         <HStack
-          width={"100%"}
+          width={"90%"}
           display={"flex"}
           justifyContent={"center"}
-          alignItems={"center"}
           columnGap={10}
-          maxW={"1300px"}
+          maxW="1300px"
+          flexDirection={{ base: "column", md: "row" }}
+          alignItems={{ base: "stretch", md: "center" }}
+          
         >
           <Image
             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
             alt={movie.title}
-            height="500px"
+            height={{ base: "auto", md: "500px" }}
+            maxW={{ base: "100%", md: "unset" }}
             borderRadius="10px"
             objectFit="cover"
+            mb={{ base: 4, md: 0 }}
           />
           <Box
             color={"white"}
@@ -243,13 +249,13 @@ function MovieContent() {
             </Box>
             <Box flex="3" width="30%">
               {/* MovieAside content */}
-              <Box
+                <Box
                 boxSize={"100%"}
                 fontSize={"1.5em"}
-                display="flex"
+                display={{ sm: "none", md: "flex" }}
                 alignItems={"flex-start"}
                 gap={3}
-              >
+                >
                 {movie.MovieMediaData?.facebook_id && (
                   <Link
                     href={`https://facebook.com/${movie.MovieMediaData.facebook_id}`}
