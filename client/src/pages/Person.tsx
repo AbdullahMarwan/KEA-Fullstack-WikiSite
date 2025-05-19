@@ -1,8 +1,21 @@
-import { Box, Button, Grid, GridItem, Heading, Select, Image } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Grid,
+  GridItem,
+  Heading,
+  Select,
+  Image,
+} from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import missingImgPlaceholder from "../assets/missing-img-placeholder-16-9.jpg";
-import { fetchPersonDetails, fetchCredits, fetchCombinedCredits, fetchCrewJobs } from "../services/api";
+import {
+  fetchPersonDetails,
+  fetchCredits,
+  fetchCombinedCredits,
+  fetchCrewJobs,
+} from "../services/api";
 import { doSorting } from "../utils/sortingJobs";
 
 const genderMap: Record<number, string> = {
@@ -22,6 +35,14 @@ interface Person {
   place_of_birth: string;
 }
 
+// Define the proper Job interface
+interface Job {
+  type: string;
+  title: string;
+  character?: string;
+  job?: string;
+}
+
 export const PersonSingle = () => {
   const { id } = useParams<{ id: string }>();
   const [person, setPerson] = useState<Person | null>(null);
@@ -30,7 +51,8 @@ export const PersonSingle = () => {
   >([]);
   const [combinedIds, setCombinedIds] = useState<string[]>([]);
   const [crewJobs, setCrewJobs] = useState<string[]>([]);
-  const [personJobs, setPersonJobs] = useState<string[]>([]);
+  // Updated type for personJobs
+  const [personJobs, setPersonJobs] = useState<Job[]>([]);
   const [showFullBiography, setShowFullBiography] = useState(false);
 
   useEffect(() => {
@@ -53,8 +75,8 @@ export const PersonSingle = () => {
         setCombinedIds(combinedCredits);
         setCrewJobs(crewJobsData);
 
-        // Combine cast and crew jobs
-        const allJobs = [...combinedCredits, ...crewJobsData];
+        // Combine cast and crew jobs - Make sure this returns Job[] objects
+        const allJobs = await fetchAllJobs(id);
         setPersonJobs(allJobs);
       } catch (error) {
         console.error("Error fetching person data:", error);
@@ -63,6 +85,24 @@ export const PersonSingle = () => {
 
     fetchData();
   }, [id]);
+
+  // Add this helper function to fetch properly formatted jobs
+  const fetchAllJobs = async (personId: string): Promise<Job[]> => {
+    try {
+      // This should return an array of properly formatted Job objects
+      // You'll need to update your API functions to return the right format
+      const castResponse = await fetch(`/api/person/${personId}/cast-credits`);
+      const castJobs = await castResponse.json();
+
+      const crewResponse = await fetch(`/api/person/${personId}/crew-credits`);
+      const crewJobs = await crewResponse.json();
+
+      return [...castJobs, ...crewJobs];
+    } catch (error) {
+      console.error("Error fetching all jobs:", error);
+      return [];
+    }
+  };
 
   if (!person) {
     return <div>Loading...</div>;

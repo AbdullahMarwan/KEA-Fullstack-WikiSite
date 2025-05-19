@@ -16,7 +16,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 interface LinkItem {
   name: string;
   href: string;
-  value: string; // Add the value property
+  value?: string; // Add the value property
 }
 
 interface LinkSelectorProps {
@@ -81,13 +81,16 @@ export const LinkSelector: React.FC<LinkSelectorProps> = ({
             }
             fontWeight={600}
           >
+            {/* Update the Link in the main list */}
             <Link
               href={link.href}
               padding="1em"
-              _hover={"text-decoration: none"}
+              _hover={{ textDecoration: "none" }} // Fixed the incorrect syntax
               onClick={(e) => {
-                e.preventDefault();
-                onLinkClick(link.value); // Pass the value instead of the name
+                e.preventDefault(); // Add this line to prevent default navigation
+                if (link.value) {
+                  onLinkClick(link.value);
+                }
               }}
               sx={{
                 textDecoration: "none",
@@ -134,7 +137,12 @@ export const LinkSelector: React.FC<LinkSelectorProps> = ({
                   _hover={{
                     bg: "rgba(30, 213, 170, 0.2)",
                   }}
-                  onClick={() => onLinkClick(link.value)} // Pass the value instead of the name
+                  onClick={(e) => {
+                    e.preventDefault(); // Add this line
+                    if (link.value) {
+                      onLinkClick(link.value);
+                    }
+                  }}
                   sx={{
                     ...(activeLink === link.value &&
                     activeTextColor.includes("gradient")

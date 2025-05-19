@@ -240,7 +240,7 @@ export const fetchCredits = async (personId: string) => {
         original_title: item.original_title,
         backdrop_path: item.backdrop_path,
       }))
-      .filter((item) => item.original_title);
+      .filter((item: { original_title?: string }) => item.original_title);
   } catch (error) {
     console.error("Error fetching credits:", error);
     return [];

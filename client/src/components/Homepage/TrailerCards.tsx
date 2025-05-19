@@ -10,9 +10,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  fetchTrailerTemplate
-} from "../../services/api";
+import { fetchTrailerTemplate } from "../../services/api";
 import MenuOnCards from "./MenuOnCards";
 import LinkSelector from "./LinkSelector";
 
@@ -102,26 +100,6 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
       if (validMovies.length < 4) {
         console.log("Not enough valid movies, fetching more...");
 
-        // Get the other fetch function to supplement
-        const backupFetchFunction =
-          timeWindow === "popular"
-            ? fetchUpcomingTrailers
-            : fetchPopularTrailers;
-
-        const additionalData = await backupFetchFunction();
-
-        // Filter these for valid backdrop paths too
-        const additionalValidMovies = additionalData.filter(
-          (movie: any) =>
-            movie.backdrop_path &&
-            movie.title &&
-            // Make sure we don't have duplicates
-            !validMovies.some((m: any) => m.movieId === movie.movieId)
-        );
-
-        // Combine the movies, ensuring we have unique ones
-        trailerData = [...validMovies, ...additionalValidMovies].slice(0, 4); // Ensure we only take what we need
-
         console.log(
           `After supplementing: ${trailerData.length} valid trailers`
         );
@@ -179,7 +157,7 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
           {showLinkSelector && (
             <LinkSelector
               links={links}
-              activeLink={activeLink}
+              activeLink={activeLink ?? ""}
               onLinkClick={handleLinkClick}
               maxVisible={5}
               activeTextColor="linear-gradient(to right, #1ed5aa 0%, #c0fed0 100%)"
