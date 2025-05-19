@@ -1,0 +1,84 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: tmdb-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: tmdbDatabase
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - backend
+
+  # seeder:
+  #   container_name: seeder
+  #   build:
+  #     context: ./seeder
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - mysql
+  #   environment:
+  #     MYSQL_URL: mysql://root:rootpassword@mysql:3306/tmdbDatabase
+  #   networks:
+  #     - backend
+  #   volumes:
+  #     - ./seeder:/app
+
+  # tmdb-server:
+  #   container_name: tmdb-server
+  #   build:
+  #     context: ./tmdb-server
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - mysql
+  #   environment:
+  #     DATABASE_URL: mysql://root:rootpassword@mysql:3306/tmdbDatabase
+  #   ports:
+  #     - "5000:5000"
+  #   networks:
+  #     - backend
+  #     - frontend
+  #   volumes:
+  #     - ./tmdb-server:/app
+
+  tmdb-client:
+    container_name: tmdb-client
+    build:
+      context: ./tmdb-client
+      dockerfile: Dockerfile
+    environment:
+      VITE_API_URL: http://localhost:5000
+      CHOKIDAR_USEPOLLING: true
+    # depends_on:
+    #   - tmdb-server
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend
+    volumes:
+      - ./tmdb-client:/app
+      - /app/node_modules
+
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - backend
+
+volumes:
+  mysql_data:
+
+networks:
+  backend:
+  frontend:
