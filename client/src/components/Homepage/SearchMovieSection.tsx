@@ -12,12 +12,13 @@ interface Movie {
 const SearchMovieSection = () => {
   const [randomMovie, setRandomMovie] = useState<Movie | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  console.log(randomMovie);
 
   useEffect(() => {
     const getRandomBackdrop = async () => {
       try {
         setIsLoading(true);
-        const data = await fetchTemplate("day", "trending");
+        const data = await fetchTemplate("popular", "movie");
         // Get a random movie from the results that has a backdrop image
         const movies = data.results.filter(
           (movie: Movie) => movie.backdrop_path
@@ -88,7 +89,7 @@ const SearchMovieSection = () => {
               textAlign: "left",
             }}
           >
-            Velkommen.
+            Welcome.
           </h2>
           <h3
             style={{
@@ -98,7 +99,7 @@ const SearchMovieSection = () => {
               lineHeight: "1",
             }}
           >
-            Millioner af film, TV-serier og personer at opdage. Udforsk nu.
+            Millions of movies, TV shows, and people to discover. Explore now.
           </h3>
         </HStack>
         <HStack
@@ -110,7 +111,7 @@ const SearchMovieSection = () => {
           padding={0}
         >
           <Input
-            placeholder="Søg efter en film, TV-serie, person..."
+            placeholder="Search for a movie, TV show, or person..."
             color="grey"
             _placeholder={{ color: "gray.500" }}
             height="100%"

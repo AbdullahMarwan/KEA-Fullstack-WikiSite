@@ -1,6 +1,4 @@
-import {
-  fetchTemplate,
-} from "../services/api";
+import { fetchTemplate } from "../services/api";
 
 const trendingMoviesLinks = [
   { name: "Today", href: "#", value: "day" },
@@ -8,13 +6,13 @@ const trendingMoviesLinks = [
 ];
 const tvShowsMoviesLinks = [
   { name: "Popular", href: "#", value: "popular" },
-  { name: "Airing Today", href: "#", value: "airing_today" },
-  { name: "Top Rated", href: "#", value: "top_rated" },
+  { name: "Airing Today", href: "#", value: "airing-today" },
+  { name: "Top Rated", href: "#", value: "top-rated" },
 ];
 const popularMoviesLinks = [
-  { name: "Now Playing", href: "#", value: "now_playing" },
+  { name: "Now Playing", href: "#", value: "now-playing" },
   { name: "Popular", href: "#", value: "popular" },
-  { name: "Top Rated", href: "#", value: "top_rated" },
+  { name: "Top Rated", href: "#", value: "top-rated" },
   { name: "Upcoming", href: "#", value: "upcoming" },
 ];
 
@@ -24,13 +22,13 @@ export const getFetchFunction = async (
 ) => {
   switch (category) {
     case "popular":
-      return fetchTemplate(activeLink, "popular");
+      return fetchTemplate(activeLink, "movie"); // "movie" is the type for popular movies
     case "tv-series":
-      return fetchTemplate(activeLink, "tv");
+      return fetchTemplate(activeLink, "tv"); // "tv" is the type for TV series
     case "trending":
-      return fetchTemplate(activeLink, "trending");
+      return fetchTemplate("trending", "movie"); // "trending" is a category for movies
     default:
-      return fetchTemplate(activeLink, "trending");
+      return fetchTemplate("trending", "movie"); // Default to trending movies
   }
 };
 
@@ -63,11 +61,24 @@ export const returnTitle = (category: string) => {
 export const fetchMovies = async (
   sectionType: string,
   setMovies: React.Dispatch<React.SetStateAction<any[]>>,
-  activeLink: string
+  activeLink: string,
+  timeWindow?: string
 ) => {
   try {
-    const data = await getFetchFunction(sectionType, activeLink); // Call the fetch function to get the data
-    setMovies(data.results || data); // Update the movies state
+    let category = activeLink;
+    let type = "movie"; // Default to "movie"
+    let usedTimeWindow = timeWindow || "day"; // Default to week if not provided
+
+    if (sectionType === "tv-series") {
+      type = "tv"; // Set type to "tv" for TV series
+    } else if (sectionType === "trending") {
+      category = "trending"; // Set category to "trending" for trending movies
+      // Use timeWindow only for trending
+      usedTimeWindow = activeLink;
+    }
+
+    const data = await fetchTemplate(category, type, usedTimeWindow);
+    setMovies(data.results || []);
   } catch (error) {
     console.error("Error fetching movies:", error);
   }

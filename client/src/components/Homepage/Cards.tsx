@@ -10,6 +10,7 @@ import {
   SkeletonCircle,
   Box,
   Image,
+  Grid,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { fetchTemplate } from "../../services/api";
@@ -63,6 +64,7 @@ interface CardsProps {
   cardType?: "movie" | "person" | "cast" | "recommendations"; // Type of card to display
   cardSize?: "small" | "medium" | "large";
   onLinkClick?: (linkName: string) => void; // Add the onLinkClick prop
+  isGrid?: boolean;
 }
 
 const Cards: React.FC<CardsProps> = ({
@@ -79,6 +81,7 @@ const Cards: React.FC<CardsProps> = ({
   cardType = "movie",
   cardSize = "medium",
   onLinkClick,
+  isGrid = false,
 }) => {
   const [items, setItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -91,6 +94,10 @@ const Cards: React.FC<CardsProps> = ({
   const getCardDimensions = () => {
     if (cardType === "recommendations") {
       return { width: "250px", height: "175px" };
+    }
+
+    if (isGrid === true) {
+      return { width: "100%", height: "100%" };
     }
 
     switch (cardSize) {
@@ -124,7 +131,9 @@ const Cards: React.FC<CardsProps> = ({
 
   // Create a memoized fetch function that uses the current timeWindow
   const fetchWithTimeWindow = useCallback(() => {
-    return typeof fetchFunction === "function" ? fetchFunction(timeWindow) : Promise.resolve(fetchFunction);
+    return typeof fetchFunction === "function"
+      ? fetchFunction(timeWindow)
+      : Promise.resolve(fetchFunction);
   }, [fetchFunction, timeWindow]);
 
   // Fetch data or use provided custom data
@@ -243,13 +252,7 @@ const Cards: React.FC<CardsProps> = ({
   };
 
   return (
-    <Box
-      position="relative" // Make the main container relative
-      width="100%"
-    >
-      {" "}
-      {/* Remove the maxW and use width 100% to respect parent container */}
-      {/* Title and Link Selector Header */}
+    <Box position="relative" width="100%">
       {(title || showLinkSelector) && (
         <HStack spacing={4} mb={4} width="100%">
           {title && (
@@ -262,241 +265,166 @@ const Cards: React.FC<CardsProps> = ({
             <LinkSelector
               links={links}
               activeLink={activeLink}
-              onLinkClick={handleLinkClick} // Use the updated handler
+              onLinkClick={handleLinkClick}
               maxVisible={links.length}
-              activeTextColor="linear-gradient(to right, #1ed5aa 0%, #c0fed0 100%)"
-              inactiveTextColor="rgb(3, 37, 65)"
-              borderColor="rgb(3, 37, 65)"
-              activeBgColor="rgb(3, 37, 65)"
             />
           )}
         </HStack>
       )}
-      {/* Container with blur overlay */}
-      <Box position="relative" width="100%">
-        {/* Fixed blur overlay */}
-        <Box
-          position="absolute"
-          top={0}
-          right={0}
-          height="100%"
-          width="60px"
-          zIndex={2}
-          pointerEvents="none" // Let events pass through
-          background="linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 70%, rgba(255,255,255,1) 100%)"
-        />
 
-        {/* Scrollable content */}
-        <Box
-          overflowX="auto"
-          whiteSpace="nowrap"
-          padding="10px"
-          boxSizing="border-box"
-          css={{
-            "&::-webkit-scrollbar": {
-              height: "4px",
-            },
-            "&::-webkit-scrollbar-track": {
-              background: "#f1f1f1",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              background: "#888",
-              borderRadius: "2px",
-            },
-            "&::-webkit-scrollbar-thumb:hover": {
-              background: "#555",
-            },
-          }}
-        >
-          <AnimatePresence mode="wait">
-            {isLoading ? (
-              <MotionBox
-                key="loading"
-                display="flex"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                width="100%"
-              >
-                {Array.from({ length: maxItems }).map((_, index) => (
-                  <Card
-                    key={index}
-                    display="inline-block"
-                    width={width}
-                    height={height}
-                    flex="0 0 auto"
-                    marginRight="20px"
-                    backgroundColor="transparent"
+      <Box position="relative" width="100%" 
+                maxWidth="80vw"
+          overflowX="scroll"
+      >
+        {isLoading ? (
+          isGrid ? (
+            // Grid layout for skeletons
+            <Grid
+              templateColumns={{
+                base: "repeat(2, 1fr)", // 2 skeletons per row on small screens
+                md: "repeat(3, 1fr)", // 3 skeletons per row on medium screens
+                lg: "repeat(4, 1fr)", // 4 skeletons per row on large screens
+              }}
+              gap={6} // Space between skeletons
+            >
+              {Array.from({ length: maxItems }).map((_, index) => (
+                <Card
+                  key={index}
+                  width="100%"
+                  height={height}
+                  backgroundColor="transparent"
+                >
+                  <Skeleton
+                    height={cardType === "cast" ? "225px" : "300px"}
+                    borderRadius="10px"
+                  />
+                  <CardBody p="4">
+                    <SkeletonText noOfLines={2} spacing="4" />
+                    {cardType !== "cast" && <SkeletonCircle size="10" mt="4" />}
+                  </CardBody>
+                </Card>
+              ))}
+            </Grid>
+          ) : (
+            // Horizontal scrolling layout for skeletons
+            <MotionBox
+              key="loading"
+              display="flex"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              width="100%"
+            >
+              {Array.from({ length: maxItems }).map((_, index) => (
+                <Card
+                  key={index}
+                  display="inline-block"
+                  width={width}
+                  height={height}
+                  flex="0 0 auto"
+                  marginRight="20px"
+                  backgroundColor="transparent"
+                >
+                  <Skeleton
+                    height={cardType === "cast" ? "225px" : "300px"}
+                    borderRadius="10px"
+                  />
+                  <CardBody p="4">
+                    <SkeletonText noOfLines={2} spacing="4" />
+                    {cardType !== "cast" && <SkeletonCircle size="10" mt="4" />}
+                  </CardBody>
+                </Card>
+              ))}
+            </MotionBox>
+          )
+        ) : (
+          // Render actual content
+          <MotionBox
+            key="content"
+            display={isGrid ? "grid" : "flex"}
+            gridTemplateColumns={
+              isGrid
+                ? {
+                    base: "repeat(2, 1fr)", // 2 cards per row on small screens
+                    md: "repeat(3, 1fr)", // 3 cards per row on medium screens
+                    lg: "repeat(4, 1fr)", // 4 cards per row on large screens
+                  }
+                : undefined
+            }
+            gap={isGrid ? 6 : undefined}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            width="100%"
+          >
+            {items.slice(0, maxItems).map((item, index) => {
+              const details = getItemDetails(item);
+
+              return (
+                <MotionCard
+                  key={`${details.id}-${index}`}
+                  display="inline-block"
+                  width={width}
+                  height={height}
+                  flex="0 0 auto"
+                  marginRight={isGrid ? undefined : "20px"}
+                  backgroundColor="transparent"
+                  boxShadow="none"
+                  borderRadius="10px"
+                  overflow="hidden"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                      delay: index * 0.05,
+                      duration: 0.4,
+                    },
+                  }}
+                >
+                  <Box
+                    as={ReactRouterLink}
+                    to={details.linkPath}
+                    position="relative"
+                    borderRadius="10px"
+                    overflow="hidden"
+                    height={cardType === "cast" ? "250px" : "350px"}
+                    width={"300px"}
                   >
-                    <Skeleton
-                      height={cardType === "cast" ? "225px" : "300px"}
+                    <Image
+                      src={`https://image.tmdb.org/t/p/w500${
+                        details.imagePath || ""
+                      }`}
+                      alt={details.name}
+                      width="100%"
+                      height="80%"
+                      objectFit="cover"
                       borderRadius="10px"
+                      fallbackSrc="/placeholder-image.jpg"
                     />
-                    <CardBody p="4">
-                      <SkeletonText noOfLines={2} spacing="4" />
-                      {cardType !== "cast" && (
-                        <SkeletonCircle size="10" mt="4" />
-                      )}
-                    </CardBody>
-                  </Card>
-                ))}
-              </MotionBox>
-            ) : (
-              <MotionBox
-                key="content"
-                display="flex"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                width="100%"
-              >
-                {items.slice(0, maxItems).map((item, index) => {
-                  const details = getItemDetails(item);
-
-                  return (
-                    <MotionCard
-                      key={`${details.id}-${index}`}
-                      display="inline-block"
-                      width={width}
-                      height={height}
-                      flex="0 0 auto"
-                      marginRight="20px"
-                      backgroundColor="transparent"
-                      boxShadow="none" // Explicitly remove box-shadow
-                      borderRadius="10px"
-                      overflow="hidden"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{
-                        opacity: 1,
-                        y: 0,
-                        transition: {
-                          delay: index * 0.05,
-                          duration: 0.4,
-                        },
-                      }}
-                    >
-                      <Box
-                        as={ReactRouterLink}
-                        to={details.linkPath}
-                        position="relative"
-                        borderRadius="10px"
-                        overflow="hidden"
-                        height={cardType === "cast" ? "250px" : "350px"}
-                        width={"300px"}
-                      >
-                        <Image
-                          src={`https://image.tmdb.org/t/p/w500${
-                            details.imagePath || ""
-                          }`}
-                          alt={details.name}
-                          width="100%"
-                          height="80%"
-                          objectFit="cover" // Changed from "cover" to "contain"
-                          borderRadius="10px"
-                          fallbackSrc="/placeholder-image.jpg"
-                        />
-
-                        {/* Only show rating for movies/TV shows, never for cast or recommendations */}
-                        {!details.isCast &&
-                          cardType !== "recommendations" &&
-                          details.rating !== null && (
-                            <HStack
-                              position="absolute"
-                              bottom="-15px"
-                              left="10px"
-                              display="flex"
-                              alignItems="center"
-                              justifyContent="center"
-                            >
-                              <VoteAverageRing
-                                radius={50}
-                                stroke={4}
-                                progress={Math.round(details.rating * 10)}
-                              />
-                            </HStack>
-                          )}
-                      </Box>
-
-                      <CardBody
-                        height={"20%"}
-                        display={"flex"}
-                        alignItems={"center"}
-                        padding={
-                          cardType === "recommendations" ? "0px" : "15px"
-                        }
-                      >
-                        <Box
-                          whiteSpace="normal"
-                          display={
-                            cardType === "recommendations" ? "flex" : "block"
-                          }
-                          justifyContent={
-                            cardType === "recommendations"
-                              ? "space-between"
-                              : undefined
-                          }
-                          width={
-                            cardType === "recommendations" ? "100%" : undefined
-                          }
-                          alignItems={
-                            cardType === "recommendations"
-                              ? "center"
-                              : undefined
-                          }
-                        >
-                          <Heading
-                            fontWeight={
-                              cardType === "recommendations" ? "400" : "500"
-                            }
-                            fontSize={
-                              cardType === "recommendations" ? "0.9em" : "1em"
-                            }
-                            color="black"
-                            as={ReactRouterLink}
-                            to={details.linkPath}
-                            _hover={{ color: "#022441" }}
-                            noOfLines={1}
-                          >
-                            {details.name}
-                          </Heading>
-
-                          {details.subtitle && (
-                            <Text
-                              fontSize="0.9em"
-                              color={
-                                cardType === "recommendations"
-                                  ? "#022441"
-                                  : "gray.500"
-                              }
-                              noOfLines={1}
-                              mt={cardType === "recommendations" ? 0 : "1"}
-                            >
-                              {cardType === "recommendations"
-                                ? Math.round(details.rating * 10) + "%"
-                                : details.subtitle}
-                            </Text>
-                          )}
-                        </Box>
-
-                        {/* Only show menu for movies/TV shows, not cast */}
-                        {cardType !== "cast" &&
-                          cardType !== "recommendations" && (
-                            <MenuOnCards
-                              movie={item}
-                              type="default"
-                              instanceId={`${title}-${timeWindow}-${index}-${details.id}`}
-                            />
-                          )}
-                      </CardBody>
-                    </MotionCard>
-                  );
-                })}
-              </MotionBox>
-            )}
-          </AnimatePresence>
-        </Box>
+                  </Box>
+                  <CardBody
+                    height={"20%"}
+                    display={"flex"}
+                    alignItems={"center"}
+                    padding={cardType === "recommendations" ? "0px" : "15px"}
+                  >
+                    <Box>
+                      <Heading fontSize="1em" color="black" noOfLines={1}>
+                        {details.name}
+                      </Heading>
+                      <Text fontSize="0.9em" color="gray.500" noOfLines={1}>
+                        {details.subtitle}
+                      </Text>
+                    </Box>
+                  </CardBody>
+                </MotionCard>
+              );
+            })}
+          </MotionBox>
+        )}
       </Box>
     </Box>
   );
