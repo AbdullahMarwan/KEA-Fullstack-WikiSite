@@ -48,6 +48,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    networks:
+      - frontend
+      - backend
     volumes:
       - ./tmdb-client:/app
       - tmdb_client_node_modules:/app/node_modules

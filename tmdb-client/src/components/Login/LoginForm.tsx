@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
+import { authApi } from "../../services/api";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -25,18 +25,15 @@ const LoginForm = () => {
     setIsLoading(true);
 
     try {
-      // Replace with your actual API endpoint
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/users/login`,
-        {
-          email,
-          password,
-        }
+      console.log(
+        "Making login request to:",
+        `${import.meta.env.VITE_API_URL}/api/users/login`
       );
+      const data = await authApi.login(email, password);
+      console.log("Login response:", data);
 
-      console.log("Login successful", response.data);
       // Store user data in localStorage
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("user", JSON.stringify(data.user));
 
       // Navigate to user page after login
       navigate("/user");

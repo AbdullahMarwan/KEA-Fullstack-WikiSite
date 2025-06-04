@@ -45,7 +45,7 @@ async function seed() {
     // Create tables in proper order
     await query(`
       CREATE TABLE IF NOT EXISTS content (
-        id INT PRIMARY KEY,
+        id BIGINT PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
         overview TEXT,
         release_date DATE,
