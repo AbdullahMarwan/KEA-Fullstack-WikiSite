@@ -153,7 +153,9 @@ function MediaContent() {
               <Box as="span" fontWeight={"400"} color="gray.300">
                 (
                 {new Date(
-                  isTvShow ? tvShow?.first_air_date ?? "" : movieData?.release_date ?? ""
+                  isTvShow
+                    ? tvShow?.first_air_date ?? ""
+                    : movieData?.release_date ?? ""
                 ).getFullYear()}
                 )
               </Box>
@@ -174,7 +176,9 @@ function MediaContent() {
                     tvShow?.number_of_seasons !== 1 ? "s" : ""
                   } (${tvShow?.number_of_episodes} Episodes)`
                 : movieData?.runtime
-                ? `${Math.floor((movieData.runtime ?? 0) / 60)}h ${(movieData.runtime ?? 0) % 60}m`
+                ? `${Math.floor((movieData.runtime ?? 0) / 60)}h ${
+                    (movieData.runtime ?? 0) % 60
+                  }m`
                 : ""}
             </Box>
             <Box display={"flex"} alignItems={"center"} gap={2}>
@@ -355,21 +359,37 @@ function MediaContent() {
                   </>
                 )}
                 {movie.keywords &&
-                  movie.keywords.keywords &&
-                  movie.keywords.keywords.length > 0 && (
+                  // Check both possible keyword structures (movies vs TV shows)
+                  ((isTvShow &&
+                    movie.keywords.results &&
+                    movie.keywords.results.length > 0) ||
+                    (!isTvShow &&
+                      movie.keywords.keywords &&
+                      movie.keywords.keywords.length > 0)) && (
                     <Box>
                       <Text fontWeight={700}>Keywords</Text>
                       <Wrap spacing={2} mt={2}>
-                        {movie.keywords.keywords.map((keyword) => (
-                          <Tag
-                            key={keyword.id}
-                            padding={2}
-                            color={"#000000"}
-                            backgroundColor={"##efefef"}
-                          >
-                            {keyword.name}
-                          </Tag>
-                        ))}
+                        {isTvShow
+                          ? movie.keywords.results.map((keyword) => (
+                              <Tag
+                                key={keyword.id}
+                                padding={2}
+                                color={"#000000"}
+                                backgroundColor={"##efefef"}
+                              >
+                                {keyword.name}
+                              </Tag>
+                            ))
+                          : movie.keywords.keywords.map((keyword) => (
+                              <Tag
+                                key={keyword.id}
+                                padding={2}
+                                color={"#000000"}
+                                backgroundColor={"##efefef"}
+                              >
+                                {keyword.name}
+                              </Tag>
+                            ))}
                       </Wrap>
                     </Box>
                   )}
