@@ -1,6 +1,7 @@
 const mysql = require("mysql2");
 const axios = require("axios");
 const dotenv = require("dotenv");
+const bcrypt = require("bcrypt");
 
 // Load environment variables
 dotenv.config();
@@ -149,6 +150,9 @@ async function seed() {
       );
     }
 
+    // Generate a hash for a known password
+    const knownPasswordHash = await bcrypt.hash("testpassword123", 12);
+
     // Add sample users data
     await query(`
       INSERT INTO users (first_name, last_name, email, password) VALUES
@@ -156,7 +160,8 @@ async function seed() {
       ('Jane', 'Smith', 'jane.smith@example.com', '$2a$12$jGfrBqREBcAxvIn8z7HRPu13rMJJIkB0YHIYBDLVpXHQrihY8WSri'),
       ('Michael', 'Johnson', 'michael.j@example.com', '$2a$12$8kJw.e9NZ2KFNqRLdVKUxuXJwMWOHXfYxeQAYNxwBxbLQJ0Ks1Y/G'),
       ('Emily', 'Williams', 'emily.w@example.com', '$2a$12$EUKvpH7Tmfo19PFPgPww9eyU15Ab/XwQ3pvQHL1h7OKRw4DzmBEUS'),
-      ('David', 'Brown', 'david.brown@example.com', '$2a$12$GQY3XxJcX9JGF7ZdpI0Ogu5Ua1FS2EJOX5sROI.a3TFiQLnrjQWAG')
+      ('David', 'Brown', 'david.brown@example.com', '$2a$12$GQY3XxJcX9JGF7ZdpI0Ogu5Ua1FS2EJOX5sROI.a3TFiQLnrjQWAG'),
+      ('Test', 'User', 'test.user@example.com', '${knownPasswordHash}')
     `);
 
     console.log("Seed data inserted successfully");
