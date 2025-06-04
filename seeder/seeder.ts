@@ -70,14 +70,20 @@ async function seed() {
 
     // Fetch popular movies from TMDB API
     console.log("Fetching popular movies from TMDB API...");
-    const popularMoviesResponse = await axios.get(
-      `${BASE_URL}/movie/popular?api_key=${API_KEY}`
-    );
-    const popularMovies = popularMoviesResponse.data.results;
+    const totalPages = 20; // Fetch 5 pages (approximately 100 movies)
+    let allMovies = [];
+
+    for (let page = 1; page <= totalPages; page++) {
+      console.log(`Fetching movies page ${page}...`);
+      const response = await axios.get(
+        `${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`
+      );
+      allMovies = [...allMovies, ...response.data.results];
+    }
 
     // Insert movies into database
-    console.log(`Inserting ${popularMovies.length} movies into database...`);
-    for (const movie of popularMovies) {
+    console.log(`Inserting ${allMovies.length} movies into database...`);
+    for (const movie of allMovies) {
       await query(
         `
         INSERT INTO movies (id, title, overview, release_date, poster_path, vote_average)
@@ -102,14 +108,25 @@ async function seed() {
 
     // Fetch popular TV shows from TMDB API
     console.log("Fetching popular TV shows from TMDB API...");
-    const popularTVShowsResponse = await axios.get(
-      `${BASE_URL}/tv/popular?api_key=${API_KEY}`
-    );
-    const popularTVShows = popularTVShowsResponse.data.results;
+    let allTvShows = [];
+
+    for (let page = 1; page <= totalPages; page++) {
+      console.log(`Fetching TV shows page ${page}...`);
+      const response = await axios.get(
+        `${BASE_URL}/tv/popular?api_key=${API_KEY}&page=${page}`
+      );
+      allTvShows = [...allTvShows, ...response.data.results];
+    }
 
     // Insert TV shows into database
-    console.log(`Inserting ${popularTVShows.length} TV shows into database...`);
-    for (const tvShow of popularTVShows) {
+    console.log(`Inserting ${allTvShows.length} TV shows into database...`);
+    for (const tvShow of allTvShows) {
+      // Handle null or empty first_air_date
+      const firstAirDate =
+        tvShow.first_air_date && tvShow.first_air_date.trim() !== ""
+          ? tvShow.first_air_date
+          : null;
+
       await query(
         `
         INSERT INTO tv_shows (id, name, overview, first_air_date, poster_path, vote_average)
@@ -125,7 +142,7 @@ async function seed() {
           tvShow.id,
           tvShow.name,
           tvShow.overview,
-          tvShow.first_air_date,
+          firstAirDate, // Use the processed date value
           tvShow.poster_path,
           tvShow.vote_average,
         ]
