@@ -9,7 +9,7 @@ import {
   Flex,
   useToast,
 } from "@chakra-ui/react";
-import { Link as ReactRouterLink } from "react-router-dom";
+import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 
@@ -18,6 +18,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -34,6 +35,12 @@ const LoginForm = () => {
       );
 
       console.log("Login successful", response.data);
+      // Store user data in localStorage
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      // Navigate to user page after login
+      navigate("/user");
+
       toast({
         title: "Login successful",
         status: "success",

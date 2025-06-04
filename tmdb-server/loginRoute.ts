@@ -23,13 +23,6 @@ router.post("/login", async (req, res) => {
       requestBody: req.body,
     });
 
-    // Test password verification
-    const testPassword = "password123";
-    const testHash =
-      "$2a$12$K7vsf.1AU7OrdY8CeTxNPOzr0i2rfxnQlMdI0UmTECLsZT7slC.IG";
-    const testResult = await bcrypt.compare(testPassword, testHash);
-    console.log("Test password verification:", testResult);
-
     // Query the database for the user
     const [rows] = await pool.execute("SELECT * FROM users WHERE email = ?", [
       email,

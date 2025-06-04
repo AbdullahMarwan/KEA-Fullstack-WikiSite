@@ -8,6 +8,7 @@ import { SearchProvider } from "./context/SearchContext";
 import PersonSingle from "./pages/Person";
 import MoviesSubPage from "./pages/MoviesSubPage";
 import Movie from "./pages/Movie";
+import User from "./pages/User";
 import Layout from "./components/Global/Layout";
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
             <Route index element={<Homepage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/user" element={<User />} />
             <Route path="/movies" element={<Movies />} />
             <Route path="/movie/:id" element={<Movie />} />
             <Route path="/tv/:id" element={<Movie />} />
