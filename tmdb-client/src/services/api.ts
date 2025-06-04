@@ -109,7 +109,6 @@ export const fetchMovieIdTemplate = async (
       url = `${baseUrl}/${mediaType}/${id}/recommendations?api_key=${apiKey}`;
       break;
     default:
-      url;
       break;
   }
   try {

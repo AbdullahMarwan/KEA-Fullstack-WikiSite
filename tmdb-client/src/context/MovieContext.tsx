@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { fetchMovieIdTemplate } from "../services/api";
 
 // Define your interfaces
@@ -121,7 +121,7 @@ interface MovieContextType {
   isLoadingTrailers: boolean;
   activeMediaTab: string;
   setActiveMediaTab: (tab: string) => void;
-  mediaType: 'movie' | 'tv';
+  mediaType: "movie" | "tv";
 }
 
 interface Images {
@@ -148,21 +148,7 @@ interface Keywords {
   }>;
 }
 
-const MovieContext = createContext<MovieContextType>({
-  activeMediaTab: "videos",
-  setActiveMediaTab: () => {},
-  movie: null,
-  loading: true,
-  error: null,
-  trailers: [],
-  videos: [],
-  images: null,
-  keywords: null,
-  selectedTrailer: null,
-  setSelectedTrailer: () => {},
-  isLoadingTrailers: false,
-  mediaType: "movie",
-});
+const MovieContext = createContext<MovieContextType | undefined>(undefined);
 
 export const useMovie = () => useContext(MovieContext);
 
@@ -170,18 +156,20 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { id } = useParams<{ id: string }>();
-  const [movie, setMovie] = useState<Movie | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [images, setImages] = useState<Images | null>(null);
+  const location = useLocation();
+  const [movie, setMovie] = useState<Movie | TvShow | null>(null);
+  const [mediaType, setMediaType] = useState<"movie" | "tv">("movie");
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [trailers, setTrailers] = useState<Trailer[]>([]);
-  const [keywords, setKeywords] = useState<Keywords | null>(null);
-  const [videos, setVideos] = useState<Trailer[]>([]);
-  const [selectedTrailer, setSelectedTrailer] = useState<Trailer | null>(null);
-  const [isLoadingTrailers, setIsLoadingTrailers] = useState(false);
-  const [activeMediaTab, setActiveMediaTab] = useState<string>("videos");
-  const [mediaType, setMediaType] = useState<'movie' | 'tv'>('movie');
 
+  // Add these missing state variables
+  const [trailers, setTrailers] = useState<Trailer[]>([]);
+  const [videos, setVideos] = useState<Trailer[]>([]);
+  const [images, setImages] = useState<Images | null>(null);
+  const [keywords, setKeywords] = useState<Keywords | null>(null);
+  const [selectedTrailer, setSelectedTrailer] = useState<Trailer | null>(null);
+  const [isLoadingTrailers, setIsLoadingTrailers] = useState<boolean>(false);
+  const [activeMediaTab, setActiveMediaTab] = useState<string>("videos");
 
   // Fetch movie details and credits
   useEffect(() => {
@@ -189,75 +177,70 @@ export const MovieProvider: React.FC<{ children: React.ReactNode }> = ({
       if (!id) return;
 
       setLoading(true);
+      setError(null);
+      setIsLoadingTrailers(true);
+
+      // Check if the URL path includes /tv/ to determine if it's a TV show
+      const isTV = location.pathname.includes("/tv/");
+      const currentMediaType = isTV ? "tv" : "movie";
+      setMediaType(currentMediaType);
+
       try {
-        if (mediaType === "tv") {
-          // Fetch TV show data
-          const [
-            tvData,
-            tvImages,
-            keywordsData,
-            creditData,
-            tvMediaData,
-          ] = await Promise.all([
-            fetchMovieIdTemplate(id, "by-id", "tv"),
-            fetchMovieIdTemplate(id, "images", "tv"),
-            fetchMovieIdTemplate(id, "keywords", "tv"),
-            fetchMovieIdTemplate(id, "credits", "tv"),
-            fetchMovieIdTemplate(id, "media", "tv"),
-          ]);
+        // Use the same function for both movie and TV data, passing the mediaType
+        const [
+          mediaData,
+          imageData,
+          keywordsData,
+          creditData,
+          mediaExternalData,
+          trailersData,
+        ] = await Promise.all([
+          fetchMovieIdTemplate(id, "by-id", currentMediaType),
+          fetchMovieIdTemplate(id, "images", currentMediaType),
+          fetchMovieIdTemplate(id, "keywords", currentMediaType),
+          fetchMovieIdTemplate(id, "credits", currentMediaType),
+          fetchMovieIdTemplate(id, "media", currentMediaType),
+          fetchMovieIdTemplate(id, "trailer", currentMediaType),
+        ]);
 
-          setImages(tvImages);
+        // Set all the state variables
+        setMovie({
+          ...mediaData,
+          credits: creditData,
+          keywords: keywordsData,
+          MovieMediaData: mediaExternalData,
+        });
 
-          const completeTv = {
-            ...tvData,
-            genres: tvData.genres ?? [],
-            credits: creditData,
-            TvMediaData: tvMediaData,
-            keywords: keywordsData,
-          };
+        setImages(imageData);
+        setKeywords(keywordsData);
 
-          setMovie(completeTv);
-          setError(null);
-        } else {
-          // Fetch Movie data (existing logic)
-          const [
-            movieData,
-            movieImages,
-            keywordsData,
-            creditData,
-            movieMediaData,
-          ] = await Promise.all([
-            fetchMovieIdTemplate(id, "by-id", "movie"),
-            fetchMovieIdTemplate(id, "images", "movie"),
-            fetchMovieIdTemplate(id, "keywords", "movie"),
-            fetchMovieIdTemplate(id, "credits", "movie"),
-            fetchMovieIdTemplate(id, "media", "movie"),
-          ]);
+        // Handle videos and trailers
+        if (trailersData.results) {
+          const allVideos = trailersData.results;
+          setVideos(allVideos);
 
-          setImages(movieImages);
+          // Filter for trailers specifically
+          const trailerVideos = allVideos.filter(
+            (video) => video.type.toLowerCase() === "trailer"
+          );
+          setTrailers(trailerVideos);
 
-          const completeMovie = {
-            ...movieData,
-            genres: movieData.genres ?? [],
-            credits: creditData,
-            MovieMediaData: movieMediaData,
-            keywords: keywordsData,
-          };
-
-          setMovie(completeMovie);
-          setError(null);
+          // Set the first trailer as selected if available
+          if (trailerVideos.length > 0) {
+            setSelectedTrailer(trailerVideos[0]);
+          }
         }
       } catch (err) {
         console.error("Error fetching details:", err);
         setError("Failed to fetch details");
-        setMovie(null);
       } finally {
         setLoading(false);
+        setIsLoadingTrailers(false);
       }
     };
 
     getMediaDetails();
-  }, [id, mediaType]);
+  }, [id, location.pathname]); // Add location.pathname as a dependency
 
   const contextValue = useMemo(
     () => ({
