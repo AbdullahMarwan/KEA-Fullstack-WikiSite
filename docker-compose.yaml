@@ -12,36 +12,34 @@ services:
     networks:
       - backend
 
-  # seeder:
-  #   container_name: seeder
-  #   build:
-  #     context: ./seeder
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     - mysql
-  #   environment:
-  #     MYSQL_URL: mysql://root:rootpassword@mysql:3306/tmdbDatabase
-  #   networks:
-  #     - backend
-  #   volumes:
-  #     - ./seeder:/app
+  seeder:
+    container_name: seeder
+    build:
+      context: ./seeder
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_URL: mysql://root:password@mysql:3306/tmdbDatabase
+    networks:
+      - backend
 
-  # tmdb-server:
-  #   container_name: tmdb-server
-  #   build:
-  #     context: ./tmdb-server
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     - mysql
-  #   environment:
-  #     DATABASE_URL: mysql://root:rootpassword@mysql:3306/tmdbDatabase
-  #   ports:
-  #     - "5000:5000"
-  #   networks:
-  #     - backend
-  #     - frontend
-  #   volumes:
-  #     - ./tmdb-server:/app
+  tmdb-server:
+    container_name: tmdb-server
+    build:
+      context: ./tmdb-server
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql
+    environment:
+      DATABASE_URL: mysql://root:password@mysql:3306/tmdbDatabase
+    ports:
+      - "5000:5000"
+    networks:
+      - backend
+      - frontend
+    volumes:
+      - ./tmdb-server:/app
 
   tmdb-client:
     container_name: tmdb-client

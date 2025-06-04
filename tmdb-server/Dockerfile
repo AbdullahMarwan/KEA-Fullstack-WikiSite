@@ -7,8 +7,8 @@ WORKDIR /app
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies AND nodemon globally
+RUN npm install && npm install -g nodemon ts-node
 
 # Copy the rest of the application code to the working directory
 COPY . .
