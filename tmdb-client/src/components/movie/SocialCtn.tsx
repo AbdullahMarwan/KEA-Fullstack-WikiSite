@@ -72,7 +72,7 @@ function SocialCtn() {
 
       try {
         // Fetch movie details
-        let movieReviews = await fetchMovieIdTemplate(Number(id), "movie-review");
+        let movieReviews = await fetchMovieIdTemplate(Number(id), "review");
 
         movieReviews = movieReviews.results;
 
