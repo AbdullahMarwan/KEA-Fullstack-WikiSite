@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Box, Heading, HStack, Link, Image, Text } from "@chakra-ui/react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom"; // Add useLocation
 import { fetchMovieIdTemplate } from "../../services/api"; // Adjust the import path as necessary
 import { IoIosStar } from "react-icons/io";
 import DOMPurify from "dompurify";
@@ -26,6 +26,7 @@ interface MovieReview {
 
 function SocialCtn() {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation(); // Add this to detect URL path
   const [reviews, setReviews] = React.useState<MovieReview[]>([]);
   const [showFullText, setShowFullText] = React.useState(false); // Move this to component top level
   const [currentReviewIndex, setCurrentReviewIndex] = React.useState(0);
@@ -64,27 +65,42 @@ function SocialCtn() {
   };
 
   useEffect(() => {
-    const getMovieDetails = async () => {
+    const getMediaDetails = async () => {
       if (!id) {
-        console.error("No movie ID provided");
+        console.error("No ID provided");
         return;
       }
 
+      // Determine if this is a TV show or movie based on URL
+      const isTV = location.pathname.includes("/tv/");
+      const mediaType = isTV ? "tv" : "movie";
+
       try {
-        // Fetch movie details
-        let movieReviews = await fetchMovieIdTemplate(Number(id), "review");
+        // Pass the mediaType parameter to fetchMovieIdTemplate
+        const response = await fetchMovieIdTemplate(
+          Number(id),
+          "review",
+          mediaType
+        );
 
-        movieReviews = movieReviews.results;
-
-        // Update state with fetched reviews
-        setReviews(movieReviews);
+        // Make sure we have results before setting state
+        if (response && response.results) {
+          setReviews(response.results);
+        } else {
+          console.error(
+            "No reviews found or invalid response format",
+            response
+          );
+          setReviews([]);
+        }
       } catch (err) {
-        console.error("Error fetching movie details:", err);
+        console.error(`Error fetching ${mediaType} details:`, err);
+        setReviews([]);
       }
     };
 
-    getMovieDetails(); // Call the function
-  }, [id]);
+    getMediaDetails(); // Call the function
+  }, [id, location.pathname]); // Add location.pathname as dependency
 
   return (
     <>
