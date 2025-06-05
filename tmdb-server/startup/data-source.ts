@@ -1,11 +1,11 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Content } from "../entities/Content";
-import { User } from "../entities/User";
+import { User } from "./entities/User";
+import { Content } from "./entities/Content";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
   url: "mysql://root:password@mysql:3306/tmdbDatabase",
-  synchronize: false,
+  synchronize: true,
   entities: [User, Content],
 });
