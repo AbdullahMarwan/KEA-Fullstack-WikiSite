@@ -8,7 +8,7 @@ import bcrypt from "bcrypt";
 
 dotenv.config();
 
-const totalPages = 3;
+const totalPages = 6;
 const mediaTypes = ["movie", "tv"];
 const API_KEY = process.env.TMDB_API_KEY || "dfd45a50a0761538bfed7f664cacb4d7";
 const BASE_URL = "https://api.themoviedb.org/3";
@@ -29,6 +29,8 @@ async function seed() {
     await AppDataSource.manager.query("SET FOREIGN_KEY_CHECKS = 1");
 
     // Insert content from TMDB
+    const processedIds = new Set(); // Track IDs we've already processed
+
     for (const type of mediaTypes) {
       let allContent = [];
       for (let page = 1; page <= totalPages; page++) {
@@ -38,11 +40,19 @@ async function seed() {
       }
 
       for (const item of allContent) {
+        // Skip if we've already processed this content ID
+        if (processedIds.has(item.id)) {
+          continue;
+        }
+
+        processedIds.add(item.id); // Mark as processed
+
         const content = contentRepo.create({
           id: item.id,
           title: type === "movie" ? item.title : item.name,
           overview: item.overview,
-          release_date: type === "movie" ? item.release_date : item.first_air_date,
+          release_date:
+            type === "movie" ? item.release_date : item.first_air_date,
           poster_path: item.poster_path,
           vote_average: item.vote_average,
           content_type: type,
@@ -53,11 +63,36 @@ async function seed() {
 
     // Insert users
     const usersData = [
-      { first_name: "John", last_name: "Doe", email: "john.doe@example.com", password: "password1" },
-      { first_name: "Jane", last_name: "Smith", email: "jane.smith@example.com", password: "password2" },
-      { first_name: "Michael", last_name: "Johnson", email: "michael.j@example.com", password: "password3" },
-      { first_name: "Emily", last_name: "Williams", email: "emily.w@example.com", password: "password4" },
-      { first_name: "David", last_name: "Brown", email: "david.brown@example.com", password: "password5" },
+      {
+        first_name: "John",
+        last_name: "Doe",
+        email: "john.doe@example.com",
+        password: "password1",
+      },
+      {
+        first_name: "Jane",
+        last_name: "Smith",
+        email: "jane.smith@example.com",
+        password: "password2",
+      },
+      {
+        first_name: "Michael",
+        last_name: "Johnson",
+        email: "michael.j@example.com",
+        password: "password3",
+      },
+      {
+        first_name: "Emily",
+        last_name: "Williams",
+        email: "emily.w@example.com",
+        password: "password4",
+      },
+      {
+        first_name: "David",
+        last_name: "Brown",
+        email: "david.brown@example.com",
+        password: "password5",
+      },
     ];
 
     const users: User[] = [];
@@ -72,7 +107,8 @@ async function seed() {
     for (const user of users) {
       user.favorites = [];
       for (let i = 0; i < 3; i++) {
-        const randomContent = allContent[Math.floor(Math.random() * allContent.length)];
+        const randomContent =
+          allContent[Math.floor(Math.random() * allContent.length)];
         if (!user.favorites.find((c) => c.id === randomContent.id)) {
           user.favorites.push(randomContent);
         }

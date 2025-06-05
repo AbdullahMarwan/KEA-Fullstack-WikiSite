@@ -14,7 +14,8 @@ import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const SignupForm = () => {
-  const [username, setUsername] = useState("");
+  const [firstName, setFirstname] = useState("");
+  const [lastName, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -42,7 +43,8 @@ const SignupForm = () => {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/users/register`,
         {
-          username,
+          first_name: firstName,
+          last_name: lastName,
           email,
           password,
         }
@@ -82,17 +84,30 @@ const SignupForm = () => {
       </Text>
 
       <FormControl isRequired mt={"15px"} as="form" onSubmit={handleSignup}>
-        <FormLabel htmlFor="username" fontWeight={"400"}>
-          Brugernavn
+        <FormLabel htmlFor="firstname" fontWeight={"400"}>
+          firstname
         </FormLabel>
         <Input
-          id="username"
-          placeholder="Indtast brugernavn"
+          id="firstName"
+          placeholder="Enter first name"
           border="1px solid grey"
           _selected={{ border: "2px solid rgba(1,180,228)" }}
           _hover={{ border: "1px solid grey" }}
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={firstName}
+          onChange={(e) => setFirstname(e.target.value)}
+        />
+
+        <FormLabel htmlFor="lastname" fontWeight={"400"}>
+          lastname
+        </FormLabel>
+        <Input
+          id="lastName"
+          placeholder="Enter last name"
+          border="1px solid grey"
+          _selected={{ border: "2px solid rgba(1,180,228)" }}
+          _hover={{ border: "1px solid grey" }}
+          value={lastName}
+          onChange={(e) => setLastname(e.target.value)}
         />
 
         <FormLabel htmlFor="email" mt={4} fontWeight={"400"}>

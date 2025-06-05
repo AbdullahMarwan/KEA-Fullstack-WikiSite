@@ -3,7 +3,7 @@ import "./startup/server";
 const express = require("express");
 const cors = require("cors");
 const loginRoutes = require("./loginRoute");
-const registerRoutes = require("./registerRoute");
+import registerRoutes from "./routes/auth/register";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
