@@ -12,9 +12,7 @@ RUN npm install && \
     npm install -g typescript ts-node
 
 # Copy your TypeScript file, env file, and tsconfig
-COPY seeder.ts ./
-COPY .env* ./
-COPY tsconfig.json ./
+COPY . .
 
 # Run the seeder with transpile-only to ignore type errors
 CMD ["npx", "ts-node", "--transpile-only", "seeder.ts"]

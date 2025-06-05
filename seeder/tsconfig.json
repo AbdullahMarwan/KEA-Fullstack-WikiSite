@@ -12,7 +12,8 @@
     "strictPropertyInitialization": false,
     "noImplicitThis": false,
     "alwaysStrict": false,
-    "types": ["node"]
+    "types": ["node"],
+    "experimentalDecorators": true
   },
   "include": ["*.ts"]
 }
