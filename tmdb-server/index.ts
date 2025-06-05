@@ -1,3 +1,5 @@
+import "./startup/server";
+
 const express = require("express");
 const cors = require("cors");
 const loginRoutes = require("./loginRoute");
