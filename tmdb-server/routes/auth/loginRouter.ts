@@ -3,9 +3,9 @@ import bcrypt from "bcrypt";
 import { AppDataSource } from "../../startup/db";
 import { User } from "../../entities/User";
 
-const router = Router();
+const loginRouter = Router();
 
-router.post("/login", async (req, res) => {
+loginRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
     const userRepo = AppDataSource.getRepository(User);
@@ -22,4 +22,4 @@ router.post("/login", async (req, res) => {
   }
 });
 
-export default router;
+export default loginRouter;

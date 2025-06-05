@@ -2,10 +2,10 @@ import { Router} from "express";
 import { AppDataSource } from "../startup/db";
 import { User } from "../entities/User";
 
-const router = Router();
+const userRouter = Router();
 
 // Get a single user by ID (excluding password)
-router.get("/:id", async (req, res,) => {
+userRouter.get("/:id", async (req, res,) => {
   const userId = Number(req.params.id);
   try {
     const userRepo = AppDataSource.getRepository(User);
@@ -21,4 +21,4 @@ router.get("/:id", async (req, res,) => {
   }
 });
 
-export default router;
+export default userRouter;

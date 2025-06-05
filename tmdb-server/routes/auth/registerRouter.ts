@@ -3,9 +3,9 @@ import bcrypt from "bcrypt";
 import { AppDataSource } from "../../startup/db";
 import { User } from "../../entities/User";
 
-const router = Router();
+const registerRouter = Router();
 
-router.post("/register", async (req, res) => {
+registerRouter.post("/register", async (req, res) => {
   const { first_name, last_name, email, password } = req.body;
   try {
     console.log("Registration attempt:", {
@@ -36,4 +36,4 @@ router.post("/register", async (req, res) => {
   }
 });
 
-export default router;
+export default registerRouter;

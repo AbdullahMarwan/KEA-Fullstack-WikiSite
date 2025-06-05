@@ -3,10 +3,10 @@ import { AppDataSource } from "../startup/db";
 import { User } from "../entities/User";
 import { Content } from "../entities/Content";
 
-const router = Router();
+const favoritesRouter = Router();
 
 // Get favorites for a user
-router.get("/:userId", async (req, res) => {
+favoritesRouter.get("/:userId", async (req, res) => {
   const userId = Number(req.params.userId);
   try {
     const userRepo = AppDataSource.getRepository(User);
@@ -22,7 +22,7 @@ router.get("/:userId", async (req, res) => {
 });
 
 // Add a favorite
-router.post("/", async (req, res) => {
+favoritesRouter.post("/", async (req, res) => {
   const { user_id, content_id } = req.body;
   try {
     const userRepo = AppDataSource.getRepository(User);
@@ -43,7 +43,7 @@ router.post("/", async (req, res) => {
 });
 
 // Remove a favorite
-router.delete("/:userId/:contentId", async (req, res) => {
+favoritesRouter.delete("/:userId/:contentId", async (req, res) => {
   const userId = Number(req.params.userId);
   const contentId = Number(req.params.contentId);
   try {
@@ -62,4 +62,4 @@ router.delete("/:userId/:contentId", async (req, res) => {
   }
 });
 
-export default router;
+export default favoritesRouter;

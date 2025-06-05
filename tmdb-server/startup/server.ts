@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
 import { AppDataSource } from "./db";
-import loginRoutes from "../routes/auth/login";
-import registerRoutes from "../routes/auth/register";
-import favoritesRoutes from "../routes/favorites";
-import contentRoutes from "../routes/content";
+import loginRoutes from "../routes/auth/loginRouter";
+import registerRoutes from "../routes/auth/registerRouter";
+import favoritesRoutes from "../routes/favoritesRouter";
+import contentRoutes from "../routes/contentRouter";
 
 const app = express();
 const PORT = process.env.PORT || 5000;

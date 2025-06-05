@@ -2,10 +2,10 @@ import { Router } from "express";
 import { AppDataSource } from "../startup/db";
 import { Content } from "../entities/Content";
 
-const router = Router();
+const contentRouter = Router();
 
 // Get all content
-router.get("/", async (_req, res) => {
+contentRouter.get("/", async (_req, res) => {
   try {
     const contentRepo = AppDataSource.getRepository(Content);
     const allContent = await contentRepo.find();
@@ -16,7 +16,7 @@ router.get("/", async (_req, res) => {
 });
 
 // Get content by ID
-router.get("/:id", async (req, res) => {
+contentRouter.get("/:id", async (req, res) => {
   const id = Number(req.params.id);
   try {
     const contentRepo = AppDataSource.getRepository(Content);
@@ -28,4 +28,4 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-export default router;
+export default contentRouter;

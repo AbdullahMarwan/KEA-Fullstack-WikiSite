@@ -7,7 +7,9 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "strict": false,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
   },
   "include": ["*.ts"],
   "exclude": ["node_modules"]
