@@ -1,40 +1,33 @@
-import "./startup/server";
 import express from "express";
-import init from "./startup/init";
+import cors from "cors";
+import { AppDataSource } from "./startup/data-source";
+import setupRouters from "./startup/setupRouters";
 
 const app = express();
+const PORT = Number(process.env.PORT || 5000); // Convert to number
 
-init(app);
+// Middleware setup
+app.use(cors());
+app.use(express.json());
+
+// Root route
 app.get("/", (req, res) => {
-res.send("Hello World!");
-});
-app.listen(5000, () => {
-console.log("Server is running on http://localhost:5000");
+  console.log("Root route accessed");
+  res.send("Hello World!");
 });
 
+// Setup all routes
+setupRouters(app);
 
-// const express = require("express");
-// const cors = require("cors");
-// const loginRoutes = require("./loginRoute");
-// import registerRoutes from "./routes/auth/register";
-// import exp from "constants";
+// Initialize database connection and start server
+AppDataSource.initialize()
+  .then(() => {
+    console.log("Database connection established");
 
-// const app = express();
-// const PORT = process.env.PORT || 5000;
-
-// // Middleware
-// app.use(cors());
-// app.use(express.json());
-
-// // Mount the routes
-// app.use("/api/users", loginRoutes);
-// app.use("/api/users", registerRoutes);
-
-// app.get("/", (req, res) => {
-//   res.send("TMDB API Server is running");
-// });
-
-// // Start server
-// app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Error connecting to database:", error);
+  });
