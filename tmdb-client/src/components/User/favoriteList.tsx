@@ -96,16 +96,34 @@ const FavoriteList = () => {
   }, []);
 
   // Remove favorite
-  const handleRemove = async (contentId) => {
+  const handleRemove = async (contentId: number) => {
     const userId = getUserId();
     if (!userId) return;
 
     try {
-      await axios.delete(
-        `${import.meta.env.VITE_API_URL}/api/favorites/${userId}/${contentId}`
+      console.log("About to send DELETE request");
+      // Ensure both IDs are numbers
+      const numUserId = Number(userId);
+      const numContentId = Number(contentId);
+
+      const deleteUrl = `${
+        import.meta.env.VITE_API_URL
+      }/api/favorites/${numUserId}/${numContentId}`;
+
+      console.log(
+        "DELETE URL:",
+        deleteUrl,
+        "Content ID type:",
+        typeof numContentId,
+        "Value:",
+        numContentId
       );
+
+      const response = await axios.delete(deleteUrl);
+      console.log("DELETE response:", response);
+
       // Update state to remove item locally
-      setFavorites(favorites.filter((item) => item.id !== contentId));
+      setFavorites(favorites.filter((item) => item.id !== numContentId));
       toast({
         title: "Success",
         description: "Removed from favorites",

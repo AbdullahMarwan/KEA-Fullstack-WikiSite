@@ -5,10 +5,11 @@ import favoritesRouter from "../routes/favoritesRouter";
 // Import other routers as needed
 
 const setupRouters = (app: express.Application) => {
-  // Mount at the path the client expects
+  // Authentication routes
   app.use("/api/users/register", registerRouter);
-
   app.use("/api/users/login", loginRouter);
+
+  // Favorites route - make sure this is included
   app.use("/api/favorites", favoritesRouter);
   // app.use("/api/content", contentRouter);
 };

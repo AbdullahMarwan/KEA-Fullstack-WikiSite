@@ -64,14 +64,15 @@ favoritesRouter.post("/", async (req: Request, res: Response) => {
   }
 });
 
-// Remove a favorite
+// Complete DELETE handler implementation
 favoritesRouter.delete(
   "/:userId/:contentId",
   async (req: Request, res: Response) => {
+    // Explicitly convert URL parameters to numbers
     const userId = Number(req.params.userId);
     const contentId = Number(req.params.contentId);
     console.log(
-      `Removing content ${contentId} from favorites for user ${userId}`
+      `Removing content ${contentId} (type: ${typeof contentId}) from favorites for user ${userId} (type: ${typeof userId})`
     );
 
     try {
@@ -80,48 +81,53 @@ favoritesRouter.delete(
         where: { user_id: userId },
         relations: ["favorites"],
       });
-      if (!user) return res.status(404).json({ message: "User not found" });
 
-      user.favorites = (user.favorites || []).filter(
-        (fav) => fav.id !== contentId
+      if (!user) {
+        console.log(`User ${userId} not found`);
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Debug logging
+      console.log(
+        "Before filtering - Favorites:",
+        user.favorites?.map((f) => ({ id: f.id, type: typeof f.id }))
       );
+
+      // Store original length for comparison
+      const originalLength = user.favorites?.length || 0;
+
+      // Make sure favorites is initialized
+      if (!user.favorites) {
+        user.favorites = [];
+      }
+
+      // Try strict equality filtering with explicit type conversion
+      user.favorites = user.favorites.filter((fav) => {
+        // Convert both sides to numbers for proper comparison
+        return Number(fav.id) !== Number(contentId);
+      });
+
+      console.log(
+        "After filtering - Favorites:",
+        user.favorites?.map((f) => ({ id: f.id })),
+        `Removed ${originalLength - user.favorites.length} items`
+      );
+
+      // Save changes to database
       await userRepo.save(user);
-      res.json({ message: "Favorite removed" });
+
+      return res.status(200).json({
+        message: "Favorite removed successfully",
+        removedId: contentId,
+      });
     } catch (error) {
       console.error("Error removing favorite:", error);
-      res.status(500).json({
+      return res.status(500).json({
         message: "Server error while removing favorite",
         error: error.message,
       });
     }
   }
 );
-
-const fetchFavorites = async () => {
-  const userId = getUserId();
-  console.log("User ID for favorites fetch:", userId);
-
-  if (!userId) {
-    // Rest of your code
-  }
-
-  try {
-    const apiUrl = `${import.meta.env.VITE_API_URL}/api/favorites/${userId}`;
-    console.log("Fetching favorites from:", apiUrl);
-
-    const response = await axios.get(apiUrl);
-    console.log("Favorites API response:", response.data);
-
-    setFavorites(response.data);
-  } catch (error) {
-    console.error("Failed to fetch favorites:", error);
-    // Detailed error logging
-    if (error.response) {
-      console.error("Error response data:", error.response.data);
-      console.error("Error response status:", error.response.status);
-    }
-    // Rest of your code
-  }
-};
 
 export default favoritesRouter;
