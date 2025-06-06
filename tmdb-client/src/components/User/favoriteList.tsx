@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
 import axios from "axios";
-import VoteAverageRing from "../Homepage/voteAverageRing"; // Adjust path if needed
+import VoteAverageRing from "../Homepage/voteAverageRing";
 
 const FavoriteList = () => {
   const [favorites, setFavorites] = useState([]);
@@ -37,8 +37,6 @@ const FavoriteList = () => {
 
     try {
       const userData = JSON.parse(userStr);
-      console.log("Parsed user data:", userData);
-
       // Check all possible locations for the ID
       if (userData.id) {
         return userData.id;
@@ -47,7 +45,7 @@ const FavoriteList = () => {
       } else if (userData.user && userData.user.user_id) {
         return userData.user.user_id;
       }
-
+      
       console.error("Could not find user ID in stored data:", userData);
       return null;
     } catch (error) {
@@ -59,7 +57,8 @@ const FavoriteList = () => {
   // Fetch favorites
   const fetchFavorites = async () => {
     const userId = getUserId();
-    console.log(userId);
+    console.log("User ID for favorites:", userId);
+    
     if (!userId) {
       setLoading(false);
       toast({
@@ -73,10 +72,20 @@ const FavoriteList = () => {
     }
 
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/favorites/${userId}`
-      );
-      setFavorites(response.data);
+      const apiUrl = `${import.meta.env.VITE_API_URL}/api/favorites/${userId}`;
+      console.log("Fetching favorites from:", apiUrl);
+      
+      const response = await axios.get(apiUrl);
+      console.log("Favorites data:", response.data);
+      
+      // Process data to ensure content_type exists on all items
+      const processedData = response.data.map(item => ({
+        ...item,
+        content_type: item.content_type || item.type || 
+                     (item.first_air_date ? "tv" : "movie")
+      }));
+      
+      setFavorites(processedData);
     } catch (error) {
       console.error("Failed to fetch favorites:", error);
       toast({
@@ -106,24 +115,15 @@ const FavoriteList = () => {
       const numUserId = Number(userId);
       const numContentId = Number(contentId);
 
-      const deleteUrl = `${
-        import.meta.env.VITE_API_URL
-      }/api/favorites/${numUserId}/${numContentId}`;
-
-      console.log(
-        "DELETE URL:",
-        deleteUrl,
-        "Content ID type:",
-        typeof numContentId,
-        "Value:",
-        numContentId
-      );
+      const deleteUrl = `${import.meta.env.VITE_API_URL}/api/favorites/${numUserId}/${numContentId}`;
+      console.log("DELETE URL:", deleteUrl);
 
       const response = await axios.delete(deleteUrl);
-      console.log("DELETE response:", response);
+      console.log("DELETE response:", response.data);
 
       // Update state to remove item locally
-      setFavorites(favorites.filter((item) => item.id !== numContentId));
+      setFavorites(favorites.filter((item) => Number(item.id) !== numContentId));
+      
       toast({
         title: "Success",
         description: "Removed from favorites",
@@ -132,6 +132,7 @@ const FavoriteList = () => {
         isClosable: true,
       });
     } catch (error) {
+      console.error("Error removing favorite:", error);
       toast({
         title: "Error",
         description: "Failed to remove from favorites",
@@ -142,7 +143,7 @@ const FavoriteList = () => {
     }
   };
 
-  // Filter by content type
+  // Filter by content type - use content_type consistently
   const filteredFavorites = favorites.filter((item) =>
     activeTab === "movies"
       ? item.content_type === "movie"
@@ -160,9 +161,9 @@ const FavoriteList = () => {
     return 0;
   });
 
-  // Count by type
-  const movieCount = favorites.filter((item) => item.type === "movie").length;
-  const tvCount = favorites.filter((item) => item.type === "tv").length;
+  // Count by type - use content_type consistently
+  const movieCount = favorites.filter((item) => item.content_type === "movie").length;
+  const tvCount = favorites.filter((item) => item.content_type === "tv").length;
 
   if (loading) {
     return (
