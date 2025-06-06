@@ -45,7 +45,7 @@ const FavoriteList = () => {
       } else if (userData.user && userData.user.user_id) {
         return userData.user.user_id;
       }
-      
+
       console.error("Could not find user ID in stored data:", userData);
       return null;
     } catch (error) {
@@ -58,7 +58,7 @@ const FavoriteList = () => {
   const fetchFavorites = async () => {
     const userId = getUserId();
     console.log("User ID for favorites:", userId);
-    
+
     if (!userId) {
       setLoading(false);
       toast({
@@ -74,17 +74,19 @@ const FavoriteList = () => {
     try {
       const apiUrl = `${import.meta.env.VITE_API_URL}/api/favorites/${userId}`;
       console.log("Fetching favorites from:", apiUrl);
-      
+
       const response = await axios.get(apiUrl);
       console.log("Favorites data:", response.data);
-      
+
       // Process data to ensure content_type exists on all items
-      const processedData = response.data.map(item => ({
+      const processedData = response.data.map((item) => ({
         ...item,
-        content_type: item.content_type || item.type || 
-                     (item.first_air_date ? "tv" : "movie")
+        content_type:
+          item.content_type ||
+          item.type ||
+          (item.first_air_date ? "tv" : "movie"),
       }));
-      
+
       setFavorites(processedData);
     } catch (error) {
       console.error("Failed to fetch favorites:", error);
@@ -115,15 +117,19 @@ const FavoriteList = () => {
       const numUserId = Number(userId);
       const numContentId = Number(contentId);
 
-      const deleteUrl = `${import.meta.env.VITE_API_URL}/api/favorites/${numUserId}/${numContentId}`;
+      const deleteUrl = `${
+        import.meta.env.VITE_API_URL
+      }/api/favorites/${numUserId}/${numContentId}`;
       console.log("DELETE URL:", deleteUrl);
 
       const response = await axios.delete(deleteUrl);
       console.log("DELETE response:", response.data);
 
       // Update state to remove item locally
-      setFavorites(favorites.filter((item) => Number(item.id) !== numContentId));
-      
+      setFavorites(
+        favorites.filter((item) => Number(item.id) !== numContentId)
+      );
+
       toast({
         title: "Success",
         description: "Removed from favorites",
@@ -162,7 +168,9 @@ const FavoriteList = () => {
   });
 
   // Count by type - use content_type consistently
-  const movieCount = favorites.filter((item) => item.content_type === "movie").length;
+  const movieCount = favorites.filter(
+    (item) => item.content_type === "movie"
+  ).length;
   const tvCount = favorites.filter((item) => item.content_type === "tv").length;
 
   if (loading) {
@@ -178,7 +186,7 @@ const FavoriteList = () => {
     <VStack width="100%" alignItems="center" p={5} spacing={6}>
       <Flex
         width="100%"
-        maxWidth="1200px"
+        maxWidth="1300px"
         justifyContent="space-between"
         alignItems="center"
       >
@@ -233,7 +241,7 @@ const FavoriteList = () => {
       </Flex>
 
       {sortedFavorites.length > 0 ? (
-        <VStack width="100%" maxWidth="1200px" spacing={4} align="stretch">
+        <VStack width="100%" maxWidth="1300px" spacing={4} align="stretch">
           {sortedFavorites.map((item) => (
             <Box
               key={item.id}
@@ -242,7 +250,7 @@ const FavoriteList = () => {
               overflow="hidden"
               boxShadow="md"
             >
-              <Flex>
+              <Flex alignItems={"center"}>
                 <Image
                   src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}
                   alt={item.title || item.name}
@@ -252,7 +260,12 @@ const FavoriteList = () => {
                   fallbackSrc="https://via.placeholder.com/130x195?text=No+Image"
                 />
                 <Box p={4} flex="1">
-                  <Flex justify="space-between" align="start">
+                  <Flex justify="flex-start" align="start" gap={"1rem"}>
+                    <VoteAverageRing
+                      radius={50}
+                      stroke={4}
+                      progress={(item.vote_average || 0) * 10}
+                    />
                     <Box>
                       <Heading size="md" mb={1}>
                         {item.title || item.name}
@@ -265,13 +278,11 @@ const FavoriteList = () => {
                           : "Unknown year"}
                       </Text>
                     </Box>
-                    <VoteAverageRing voteAverage={item.vote_average || 0} />
                   </Flex>
 
                   <Text noOfLines={2} mb={4} fontSize="sm">
                     {item.overview || "No overview available"}
                   </Text>
-
                   <Button
                     leftIcon={<CloseIcon />}
                     colorScheme="red"
@@ -279,7 +290,7 @@ const FavoriteList = () => {
                     size="sm"
                     onClick={() => handleRemove(item.id)}
                   >
-                    Remove from favorites
+                    Remove
                   </Button>
                 </Box>
               </Flex>

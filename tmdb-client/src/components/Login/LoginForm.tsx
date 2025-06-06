@@ -50,6 +50,9 @@ const LoginForm = () => {
         })
       );
 
+      // Notify other parts of the app about the login state change
+      window.dispatchEvent(new Event('loginStateChange'));
+
       // Navigate to user page with first name in URL
       navigate(`/user/${response.data.user.first_name.toLowerCase()}`);
 

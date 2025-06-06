@@ -2,7 +2,6 @@ import {
   HStack,
   Image,
   Box,
-  Button,
   Link,
   useBreakpointValue,
   UnorderedList,
@@ -23,13 +22,43 @@ import { Link as ReactRouterLink } from "react-router-dom";
 import { useSearch } from "../../context/SearchContext";
 import { IoSearchSharp } from "react-icons/io5";
 import logomobile from "../../assets/moviedb - logo vertical.svg";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@chakra-ui/react";
 
 const NavBar = () => {
   const { focusSearchInput } = useSearch();
   const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
   const displayIcons = useBreakpointValue({ base: "flex", md: "none" });
+  const navigate = useNavigate();
   // Separate state for the burger menu
   const burgerMenuDisclosure = useDisclosure();
+
+  const userLoggedIn = localStorage.getItem("user") !== null;
+
+  // Import useToast from Chakra UI
+
+  // Add a logout handler function
+  const toast = useToast();
+
+  const handleLogout = () => {
+    // Remove user from localStorage
+    localStorage.removeItem("user");
+
+    // Dispatch event to notify components
+    window.dispatchEvent(new Event("loginStateChange"));
+
+    // Show a toast notification
+    toast({
+      title: "You logged out",
+      description: "You have been logged out successfully.",
+      status: "info",
+      duration: 3000,
+      isClosable: true,
+    });
+
+    // Navigate to login page
+    navigate("/login");
+  };
 
   // Separate state for the dropdown menu
   const moviesMenuDisclosure = useDisclosure();
@@ -230,15 +259,27 @@ const NavBar = () => {
             }}
           >
             <ListItem>
-              <Link
-                as={ReactRouterLink}
-                to="/Login"
-                width={"150px"}
-                fontWeight={"600"}
-                _hover={{ textDecoration: "none" }}
-              >
-                Log In
-              </Link>
+              {userLoggedIn ? (
+                <Link
+                  onClick={handleLogout}
+                  width={"150px"}
+                  fontWeight={"600"}
+                  cursor="pointer"
+                  _hover={{ textDecoration: "none" }}
+                >
+                  Log out
+                </Link>
+              ) : (
+                <Link
+                  as={ReactRouterLink}
+                  to="/Login"
+                  width={"150px"}
+                  fontWeight={"600"}
+                  _hover={{ textDecoration: "none" }}
+                >
+                  Log In
+                </Link>
+              )}
             </ListItem>
             <ListItem>
               <Link
