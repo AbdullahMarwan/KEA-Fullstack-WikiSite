@@ -23,6 +23,9 @@ import { FaListUl } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
 import { IoBookmark } from "react-icons/io5";
 import { IoStar } from "react-icons/io5";
+import { IoIosArrowForward } from "react-icons/io";
+import { useToast } from "@chakra-ui/react";
+import axios from "axios";
 
 // Create motion components
 const MotionCard = motion(Card);
@@ -92,35 +95,39 @@ const Cards: React.FC<CardsProps> = ({
 }) => {
   const [items, setItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeLink, setActiveLink] = useState(links.length > 0 ? links[0].name : "");
+  const [activeLink, setActiveLink] = useState(
+    links.length > 0 ? links[0].name : ""
+  );
   const [timeWindow, setTimeWindow] = useState(defaultTimeWindow);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
-  
+
   // Move this inside the component and use state to make it reactive
-  const [userLoggedIn, setUserLoggedIn] = useState(localStorage.getItem("user") !== null);
-  
+  const [userLoggedIn, setUserLoggedIn] = useState(
+    localStorage.getItem("user") !== null
+  );
+
   // Add effect to listen for login/logout changes
   useEffect(() => {
     // Check login status on mount
     setUserLoggedIn(localStorage.getItem("user") !== null);
-    
+
     // Listen for storage changes (logout events from other components)
     const handleStorageChange = () => {
       setUserLoggedIn(localStorage.getItem("user") !== null);
     };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
+
+    window.addEventListener("storage", handleStorageChange);
+
     // Custom event for immediate updates within the same page
     const handleLoginChange = () => {
       setUserLoggedIn(localStorage.getItem("user") !== null);
     };
-    
-    window.addEventListener('loginStateChange', handleLoginChange);
-    
+
+    window.addEventListener("loginStateChange", handleLoginChange);
+
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('loginStateChange', handleLoginChange);
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("loginStateChange", handleLoginChange);
     };
   }, []);
 
@@ -311,6 +318,73 @@ const Cards: React.FC<CardsProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [openMenuId]); // Re-add listener when openMenuId changes
+
+  const toast = useToast(); // Add this
+
+  // Add this new function
+  const handleAddToFavorites = async (contentId: number) => {
+    try {
+      // Get user ID from localStorage (reusing the pattern from favoriteList.tsx)
+      const userStr = localStorage.getItem("user");
+      if (!userStr) {
+        console.error("No user found in localStorage");
+        return;
+      }
+
+      const userData = JSON.parse(userStr);
+
+      // Find the user ID based on the data structure
+      let userId;
+      if (userData.id) {
+        userId = userData.id;
+      } else if (userData.user_id) {
+        userId = userData.user_id;
+      } else if (userData.user && userData.user.user_id) {
+        userId = userData.user.user_id;
+      }
+
+      if (!userId) {
+        console.error("Could not find user ID in stored data:", userData);
+        return;
+      }
+
+      console.log(
+        `Adding content ${contentId} to favorites for user ${userId}`
+      );
+
+      // Make API call to add to favorites
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/favorites`,
+        {
+          user_id: userId,
+          content_id: contentId,
+        }
+      );
+
+      // Close the menu
+      setOpenMenuId(null);
+
+      // Show success toast
+      toast({
+        title: "Added to favorites",
+        description: "This item has been added to your favorites",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Error adding to favorites:", error);
+
+      // Show error toast
+      toast({
+        title: "Error",
+        description: "Failed to add to favorites. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   return (
     <Box position="relative" width="100%">
@@ -570,6 +644,7 @@ const Cards: React.FC<CardsProps> = ({
                                 borderRadius="10px"
                               >
                                 <Text>Login to add to lists</Text>
+                                <IoIosArrowForward />
                               </HStack>
                             )}
                           </VStack>
