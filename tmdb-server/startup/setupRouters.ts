@@ -1,5 +1,6 @@
 import express from "express";
 import registerRouter from "../routes/auth/registerRouter";
+import loginRouter from "../routes/auth/loginRouter";
 // Import other routers as needed
 
 const setupRouters = (app: express.Application) => {
@@ -7,7 +8,7 @@ const setupRouters = (app: express.Application) => {
   app.use("/api/users/register", registerRouter);
 
   // Add other routes later
-  // app.use("/api/users/login", loginRouter);
+  app.use("/api/users/login", loginRouter);
   // app.use("/api/content", contentRouter);
   // app.use("/api/favorites", favoritesRouter);
 };

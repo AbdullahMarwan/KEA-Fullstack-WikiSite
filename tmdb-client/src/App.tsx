@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { Homepage } from "./pages/Homepage";
 import { Movies } from "./pages/Movies";
 import { Persons } from "./pages/Persons";
-// import Login from "./pages/Login";
+import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { SearchProvider } from "./context/SearchContext";
 import PersonSingle from "./pages/Person";
@@ -18,7 +18,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Homepage />} />
-            {/* <Route path="/login" element={<Login />} /> */}
+            <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/user" element={<User />} />
             <Route path="/movies" element={<Movies />} />
