@@ -20,7 +20,7 @@ function App() {
             <Route index element={<Homepage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/user" element={<User />} />
+            <Route path="/user/:firstName" element={<User />} />
             <Route path="/movies" element={<Movies />} />
             <Route path="/movie/:id" element={<Movie />} />
             <Route path="/tv/:id" element={<Movie />} />

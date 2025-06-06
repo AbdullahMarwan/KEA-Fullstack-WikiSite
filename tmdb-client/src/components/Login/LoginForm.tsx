@@ -41,11 +41,17 @@ const LoginForm = () => {
 
       console.log("Login response:", response.data);
 
-      // Store user data in localStorage
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      // Store the formatted object as a JSON string
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: response.data.user.user_id, // Store user_id as id
+          ...response.data.user, // Include all other user data
+        })
+      );
 
-      // Navigate to user page after login
-      navigate("/user");
+      // Navigate to user page with first name in URL
+      navigate(`/user/${response.data.user.first_name.toLowerCase()}`);
 
       toast({
         title: "Login successful",
@@ -113,7 +119,7 @@ const LoginForm = () => {
           type="password"
           placeholder="Indtast password"
           border="1px solid grey"
-          _selected={{ border: "1px solid rgba(1,180,228)" }}
+          _selected={{ border: "2px solid rgba(1,180,228)" }}
           _hover={{ border: "1px solid grey" }}
           value={password}
           onChange={(e) => setPassword(e.target.value)}

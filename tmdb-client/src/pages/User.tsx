@@ -3,11 +3,12 @@ import { Box, HStack } from "@chakra-ui/react";
 import { MAX_WIDTH } from "../../src/utils/constants";
 import background from "../../public/user-background.svg";
 import FavoriteList from "../components/User/favoriteList";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function User() {
   const [user, setUser] = useState({ first_name: "", last_name: "" });
   const navigate = useNavigate();
+  const { firstName } = useParams(); // Get firstName from URL
 
   useEffect(() => {
     // Get user data from localStorage
@@ -17,14 +18,24 @@ function User() {
       try {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
+
+        // Check if URL firstName matches the logged-in user
+        if (
+          firstName &&
+          firstName.toLowerCase() !== parsedUser.first_name.toLowerCase()
+        ) {
+          // Redirect to the correct user URL if there's a mismatch
+          navigate(`/user/${parsedUser.first_name.toLowerCase()}`);
+        }
       } catch (error) {
         console.error("Error parsing user data", error);
+        navigate("/login");
       }
     } else {
       // No user data found, redirect to login
       navigate("/login");
     }
-  }, [navigate]);
+  }, [firstName, navigate]);
 
   // Get display name
   const displayName = user.first_name
