@@ -1,6 +1,5 @@
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL;
 const baseUrl = "https://api.themoviedb.org/3"; // Add this
 const apiKey = import.meta.env.VITE_API_KEY; // Add this
 
@@ -317,55 +316,4 @@ export const fetchPersonDetails = async (personId: string) => {
     console.error(`Error fetching person details for ID ${personId}:`, error);
     throw error; // Throw the error to handle it in the calling function
   }
-};
-
-// Auth services
-export const authApi = {
-  login: async (email: string, password: string) => {
-    try {
-      console.log(
-        "API service making request to:",
-        `${API_URL}/api/users/login`
-      );
-      const response = await axios.post(`${API_URL}/api/users/login`, {
-        email,
-        password,
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Login API error:", error);
-      throw error;
-    }
-  },
-
-  register: async (username: string, email: string, password: string) => {
-    try {
-      const response = await axios.post(`${API_URL}/api/users/register`, {
-        username,
-        email,
-        password,
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Register API error:", error);
-      throw error;
-    }
-  },
-};
-
-export const userApi = {
-  getFavorites: async (userId: number) => {
-    try {
-      const response = await axios.get(`${API_URL}/api/favorites/${userId}`);
-      return response.data;
-    } catch (error) {
-      console.error("Get favorites API error:", error);
-      throw error;
-    }
-  },
-};
-
-export default {
-  auth: authApi,
-  user: userApi,
 };

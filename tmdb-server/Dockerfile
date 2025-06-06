@@ -7,6 +7,9 @@ WORKDIR /app
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
+RUN npm uninstall @types/express
+RUN npm install --save-dev @types/express@4.21.2
+
 # Install dependencies AND nodemon globally
 RUN npm install && npm install -g nodemon ts-node
 

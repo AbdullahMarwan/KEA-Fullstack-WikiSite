@@ -10,20 +10,21 @@ const PORT = Number(process.env.PORT || 5000); // Convert to number
 app.use(cors());
 app.use(express.json());
 
-// Root route
-app.get("/", (req, res) => {
-  console.log("Root route accessed");
-  res.send("Hello World!");
-});
-
-// Setup all routes
-setupRouters(app);
-
 // Initialize database connection and start server
 AppDataSource.initialize()
   .then(() => {
     console.log("Database connection established");
 
+    // Root route
+    app.get("/", (req, res) => {
+      console.log("Root route accessed");
+      res.send("Hello World!");
+    });
+
+    // Setup all routes AFTER database is connected
+    setupRouters(app);
+
+    // Start the server AFTER routes are set up
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });

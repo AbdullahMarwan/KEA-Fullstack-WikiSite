@@ -1,15 +1,15 @@
 import express from "express";
-// import loginRouter from "../routes/auth/loginRouter";  // COMMENT OUT THIS LINE
-// import registerRouter from "../routes/auth/registerRouter";
-// import contentRouter from "../routes/contentRouter";
-// import favoritesRouter from "../routes/favoritesRouter";
+import registerRouter from "../routes/auth/registerRouter";
+// Import other routers as needed
 
-//assign endpoints to the routers
 const setupRouters = (app: express.Application) => {
-  // app.use("/content", contentRouter);
-  // app.use("/favorites", favoritesRouter);
-  // app.use("/auth/login", loginRouter);
-  // app.use("/register", registerRouter);
+  // Mount at the path the client expects
+  app.use("/api/users/register", registerRouter);
+
+  // Add other routes later
+  // app.use("/api/users/login", loginRouter);
+  // app.use("/api/content", contentRouter);
+  // app.use("/api/favorites", favoritesRouter);
 };
 
 export default setupRouters;

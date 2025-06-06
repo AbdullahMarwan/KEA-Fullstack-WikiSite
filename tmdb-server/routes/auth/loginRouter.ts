@@ -1,6 +1,6 @@
 // import express from "express";
 // import bcrypt from "bcrypt";
-// import { AppDataSource } from "../../startup/db";
+// import { AppDataSource } from "../../startup/data-source";
 // import { User } from "../../entities/User";
 
 // // Remove duplicate Router import and just use express.Router()

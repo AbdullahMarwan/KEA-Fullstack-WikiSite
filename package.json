@@ -7,7 +7,7 @@
     "framer-motion": "^12.16.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.17",
+    "@types/express": "^4.17.21",
     "@types/node": "^22.15.29",
     "@types/react": "^19.1.6"
   }

@@ -40,6 +40,13 @@ const SignupForm = () => {
     setIsLoading(true);
 
     try {
+      console.log("Sending registration data:", {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        passwordLength: password?.length,
+      });
+
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/users/register`,
         {
@@ -49,6 +56,8 @@ const SignupForm = () => {
           password,
         }
       );
+
+      console.log("Registration response:", response.data);
 
       toast({
         title: "Account created successfully",
