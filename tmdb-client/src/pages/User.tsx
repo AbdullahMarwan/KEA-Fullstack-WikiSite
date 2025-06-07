@@ -53,8 +53,8 @@ function User() {
         alignItems="center"
         flexDirection="column"
         backgroundSize="cover"
-        backgroundImage="radial-gradient(at 30% top, #341a38 0%, rgba(3, 37, 65, 1) 70%)"
         backgroundPosition="center"
+        backgroundImage="radial-gradient(at 30% top, #341a38 0%, rgba(3, 37, 65, 1) 70%)"
       >
         <HStack
           backgroundImage={`url(${background})`}
@@ -65,6 +65,21 @@ function User() {
           gap={"5rem"}
           zIndex={2}
         >
+          <Box
+            height={"10rem"}
+            width={"10rem"}
+            minWidth={"10rem"}
+            backgroundColor={"#EB158C"}
+            borderRadius={"50%"}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            color="white"
+            fontSize="5rem"
+            fontWeight="regular"
+          >
+            {displayName.charAt(0).toUpperCase()}
+          </Box>
           <HStack
             display="flex"
             flexDirection="column"
