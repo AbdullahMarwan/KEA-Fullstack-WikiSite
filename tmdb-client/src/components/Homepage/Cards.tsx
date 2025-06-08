@@ -602,6 +602,9 @@ const Cards: React.FC<CardsProps> = ({
                                   }}
                                   width="100%"
                                   p="0.75rem 1rem"
+                                  onClick={() =>
+                                    handleAddToFavorites(details.id)
+                                  }
                                 >
                                   <Icon as={FaHeart} color="black.500" />
                                   <Text>Favorite</Text>

@@ -10,11 +10,13 @@ import MoviesSubPage from "./pages/MoviesSubPage";
 import Movie from "./pages/Movie";
 import User from "./pages/User";
 import Layout from "./components/Global/Layout";
+import ScrollToTop from "./components/Global/ScrollToTop";
 
 function App() {
   return (
     <>
       <SearchProvider>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Homepage />} />
