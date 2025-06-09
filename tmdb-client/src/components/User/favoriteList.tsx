@@ -20,11 +20,28 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
-import axios from "axios";
+import ApiClient, { axiosInstance } from "../../services/api-client";
+
 import VoteAverageRing from "../Homepage/voteAverageRing";
 
+interface Favorite {
+  id: number;
+  title?: string;
+  name?: string;
+  poster_path: string;
+  vote_average: number;
+  content_type?: string;
+  type?: string;
+  first_air_date?: string;
+  release_date?: string;
+  overview?: string;
+  // Add any other properties you use
+}
+
+const favoritesApi = new ApiClient<Favorite[]>("/api/favorites");
+
 const FavoriteList = () => {
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("movies");
   const [sortBy, setSortBy] = useState("Date Added");
@@ -72,14 +89,12 @@ const FavoriteList = () => {
     }
 
     try {
-      const apiUrl = `${import.meta.env.VITE_API_URL}/api/favorites/${userId}`;
-      console.log("Fetching favorites from:", apiUrl);
-
-      const response = await axios.get(apiUrl);
-      console.log("Favorites data:", response.data);
+      // Use the ApiClient to fetch favorites
+      const data = await favoritesApi.get(userId);
+      console.log("Favorites data:", data);
 
       // Process data to ensure content_type exists on all items
-      const processedData = response.data.map((item) => ({
+      const processedData = data.map((item) => ({
         ...item,
         content_type:
           item.content_type ||
@@ -117,13 +132,8 @@ const FavoriteList = () => {
       const numUserId = Number(userId);
       const numContentId = Number(contentId);
 
-      const deleteUrl = `${
-        import.meta.env.VITE_API_URL
-      }/api/favorites/${numUserId}/${numContentId}`;
-      console.log("DELETE URL:", deleteUrl);
-
-      const response = await axios.delete(deleteUrl);
-      console.log("DELETE response:", response.data);
+      // Use axiosInstance instead of axios
+      await axiosInstance.delete(`/api/favorites/${numUserId}/${numContentId}`);
 
       // Update state to remove item locally
       setFavorites(
@@ -273,7 +283,7 @@ const FavoriteList = () => {
                       <Text color="gray.500" fontSize="sm" mb={2}>
                         {item.release_date || item.first_air_date
                           ? new Date(
-                              item.release_date || item.first_air_date
+                              item.release_date || item.first_air_date || ""
                             ).getFullYear()
                           : "Unknown year"}
                       </Text>
