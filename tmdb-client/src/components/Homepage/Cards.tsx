@@ -638,6 +638,8 @@ const Cards: React.FC<CardsProps> = ({
                               </>
                             ) : (
                               <HStack
+                                as={ReactRouterLink}
+                                to={"/login"}
                                 _hover={{
                                   backgroundColor: "gray.100",
                                   cursor: "pointer",

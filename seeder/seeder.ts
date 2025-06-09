@@ -124,4 +124,21 @@ async function seed() {
   }
 }
 
-seed();
+async function seedIfEmpty() {
+  // Check if data already exists in the database
+  const existingRecords = await AppDataSource.manager.query(
+    "SELECT COUNT(*) as count FROM content"
+  ); // Adjust table name
+
+  if (existingRecords[0].count === 0 || process.env.FORCE_SEED === "true") {
+    console.log(
+      "Database is empty or force seed enabled. Starting seed process..."
+    );
+    await seed();
+  } else {
+    console.log("Database already has data. Skipping seed process.");
+  }
+}
+
+// Start the seeding process
+seedIfEmpty();
