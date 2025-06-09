@@ -1,17 +1,18 @@
-# Use an official Node.js runtime as a parent image
+# Use Node 16 with Alpine (lightweight)
 FROM node:16-alpine
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install && \
+    npm install -g typescript ts-node
 
-# Copy the rest of the application code to the working directory
+# Copy your TypeScript file, env file, and tsconfig
 COPY . .
 
-# Command to run the seeder script
-CMD ["npm", "start"]
+# Run the seeder with transpile-only to ignore type errors
+CMD ["npx", "ts-node", "--transpile-only", "seeder.ts"]

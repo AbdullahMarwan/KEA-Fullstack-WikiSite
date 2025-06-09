@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const apiKey = import.meta.env.VITE_API_KEY;
-const baseUrl = "https://api.themoviedb.org/3";
+const baseUrl = "https://api.themoviedb.org/3"; // Add this
+const apiKey = import.meta.env.VITE_API_KEY; // Add this
 
 ////////////////////////////////////////////////////////////////////////
 /////////////////////// Fetching movies //////////////////////////////
@@ -78,44 +78,44 @@ export const fetchTemplate = async (
 };
 
 export const fetchMovieIdTemplate = async (
-  movieId: string | number,
-  type: string
+  id: string | number,
+  type: string,
+  mediaType: "movie" | "tv" = "movie" // new parameter, defaults to "movie"
 ) => {
   let url = "https://api.themoviedb.org/3";
   switch (type) {
-    case "movie-trailer":
-      url = `${baseUrl}/movie/${movieId}/videos?api_key=${apiKey}`;
+    case "trailer":
+      url = `${baseUrl}/${mediaType}/${id}/videos?api_key=${apiKey}`;
       break;
-    case "movie-images":
-      url = `${baseUrl}/movie/${movieId}/images?api_key=${apiKey}`;
+    case "images":
+      url = `${baseUrl}/${mediaType}/${id}/images?api_key=${apiKey}`;
       break;
-    case "movie-keywords":
-      url = `${baseUrl}/movie/${movieId}/keywords?api_key=${apiKey}`;
+    case "keywords":
+      url = `${baseUrl}/${mediaType}/${id}/keywords?api_key=${apiKey}`;
       break;
-    case "movie-media":
-      url = `${baseUrl}/movie/${movieId}/external_ids?api_key=${apiKey}`;
+    case "media":
+      url = `${baseUrl}/${mediaType}/${id}/external_ids?api_key=${apiKey}`;
       break;
-    case "movie-by-id":
-      url = `${baseUrl}/movie/${movieId}?api_key=${apiKey}`;
+    case "by-id":
+      url = `${baseUrl}/${mediaType}/${id}?api_key=${apiKey}`;
       break;
-    case "movie-credits":
-      url = `${baseUrl}/movie/${movieId}/credits?api_key=${apiKey}`;
+    case "credits":
+      url = `${baseUrl}/${mediaType}/${id}/credits?api_key=${apiKey}`;
       break;
-    case "movie-review":
-      url = `${baseUrl}/movie/${movieId}/reviews?api_key=${apiKey}`;
+    case "review":
+      url = `${baseUrl}/${mediaType}/${id}/reviews?api_key=${apiKey}`;
       break;
-    case "movie-recommendations":
-      url = `${baseUrl}/movie/${movieId}/recommendations?api_key=${apiKey}`;
+    case "recommendations":
+      url = `${baseUrl}/${mediaType}/${id}/recommendations?api_key=${apiKey}`;
       break;
     default:
-      url;
       break;
   }
   try {
     const response = await fetch(url);
     return await response.json();
   } catch (error) {
-    console.error(`Error fetching movieID ${movieId} movies:`, error);
+    console.error(`Error fetching ${mediaType}ID ${id}:`, error);
     return { results: [] };
   }
 };

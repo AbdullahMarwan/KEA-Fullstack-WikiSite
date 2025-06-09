@@ -28,9 +28,10 @@ import {
   FaImdb,
 } from "react-icons/fa6";
 import { SiWikidata } from "react-icons/si";
+import type { Movie, TvShow } from "../context/MovieContext";
 
-function MovieContent() {
-  const { movie, loading, error } = useMovie();
+function MediaContent() {
+  const { movie, loading, error, mediaType } = useMovie();
 
   if (loading) {
     return (
@@ -71,6 +72,10 @@ function MovieContent() {
     );
   }
 
+  const isTvShow = mediaType === "tv";
+  const tvShow = isTvShow ? (movie as TvShow) : null;
+  const movieData = !isTvShow ? (movie as Movie) : null;
+
   // Organize crew by name to consolidate roles
   const crewByName: {
     [key: string]: { id: number; name: string; jobs: string[] };
@@ -84,17 +89,14 @@ function MovieContent() {
     "characters",
   ];
 
-  // Group crew members by name and combine their jobs
   movie.credits?.crew.forEach((person) => {
     const jobLower = person.job.toLowerCase();
     if (importantJobs.includes(jobLower)) {
       if (crewByName[person.name]) {
-        // Person already exists, add this job if not already included
         if (!crewByName[person.name].jobs.includes(person.job)) {
           crewByName[person.name].jobs.push(person.job);
         }
       } else {
-        // Create new entry for this person
         crewByName[person.name] = {
           id: person.id,
           name: person.name,
@@ -108,7 +110,6 @@ function MovieContent() {
 
   return (
     <>
-      {/* Banner content */}
       <Box
         maxWidth={"100vw"}
         overflow={"scroll"}
@@ -120,7 +121,6 @@ function MovieContent() {
         alignItems={"center"}
         padding={"20px"}
       >
-        {/* MovieDetails content */}
         <HStack
           width={"90%"}
           display={"flex"}
@@ -129,11 +129,10 @@ function MovieContent() {
           maxW="1300px"
           flexDirection={{ base: "column", md: "row" }}
           alignItems={{ base: "stretch", md: "center" }}
-          
         >
           <Image
             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-            alt={movie.title}
+            alt={isTvShow ? tvShow?.name : movieData?.title}
             height={{ base: "auto", md: "500px" }}
             maxW={{ base: "100%", md: "unset" }}
             borderRadius="10px"
@@ -150,13 +149,19 @@ function MovieContent() {
             gap={5}
           >
             <Heading>
-              {movie.title}{" "}
+              {isTvShow ? tvShow?.name : movieData?.title}{" "}
               <Box as="span" fontWeight={"400"} color="gray.300">
-                ({new Date(movie.release_date).getFullYear()})
+                (
+                {new Date(
+                  isTvShow
+                    ? tvShow?.first_air_date ?? ""
+                    : movieData?.release_date ?? ""
+                ).getFullYear()}
+                )
               </Box>
             </Heading>
             <Box as="span" fontWeight={"400"} color="gray.400">
-              {movie.release_date}
+              {isTvShow ? tvShow?.first_air_date : movieData?.release_date}
               <Box as="span" mx={2}>
                 •
               </Box>
@@ -166,15 +171,21 @@ function MovieContent() {
               <Box as="span" mx={2}>
                 •
               </Box>
-              {movie.runtime
-                ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m`
+              {isTvShow
+                ? `${tvShow?.number_of_seasons} Season${
+                    tvShow?.number_of_seasons !== 1 ? "s" : ""
+                  } (${tvShow?.number_of_episodes} Episodes)`
+                : movieData?.runtime
+                ? `${Math.floor((movieData.runtime ?? 0) / 60)}h ${
+                    (movieData.runtime ?? 0) % 60
+                  }m`
                 : ""}
             </Box>
             <Box display={"flex"} alignItems={"center"} gap={2}>
               <VoteAverageRing
                 radius={50}
                 stroke={4}
-                progress={Math.round(movie.vote_average * 10)}
+                progress={Math.round((movie.vote_average ?? 0) * 10)}
               />
               <Text fontWeight={"700"} ml={2}>
                 User Score
@@ -231,9 +242,7 @@ function MovieContent() {
         pt="30px"
         pb="30px"
       >
-        <Box maxW="1300px" width="90%"
-        marginLeft={{ sm: "25%", md: "unset" }}
-        >
+        <Box maxW="1300px" width="90%" marginLeft={{ sm: "25%", md: "unset" }}>
           <HStack width="100%" align="flex-start" spacing={10}>
             <Box flex="7" width="70%">
               <TopCast />
@@ -254,7 +263,7 @@ function MovieContent() {
               <Box
                 boxSize={"100%"}
                 fontSize={"1.5em"}
-                      display={{ sm: "none", md: "flex" }}
+                display={{ sm: "none", md: "flex" }}
                 alignItems={"flex-start"}
                 gap={3}
               >
@@ -337,31 +346,50 @@ function MovieContent() {
                   <Text fontWeight={700}>Original Language</Text>
                   <Text>{movie.original_language}</Text>
                 </Box>
-                <Box>
-                  <Text fontWeight={700}>Budget</Text>
-                  <Text>${movie.budget.toLocaleString("en-US")}</Text>
-                </Box>
-                <Box>
-                  <Text fontWeight={700}>Revenue</Text>
-                  <Text>${movie.revenue.toLocaleString("en-US")}</Text>
-                </Box>
-
+                {!isTvShow && (
+                  <>
+                    <Box>
+                      <Text fontWeight={700}>Budget</Text>
+                      <Text>${movie.budget.toLocaleString("en-US")}</Text>
+                    </Box>
+                    <Box>
+                      <Text fontWeight={700}>Revenue</Text>
+                      <Text>${movie.revenue.toLocaleString("en-US")}</Text>
+                    </Box>
+                  </>
+                )}
                 {movie.keywords &&
-                  movie.keywords.keywords &&
-                  movie.keywords.keywords.length > 0 && (
+                  // Check both possible keyword structures (movies vs TV shows)
+                  ((isTvShow &&
+                    movie.keywords.results &&
+                    movie.keywords.results.length > 0) ||
+                    (!isTvShow &&
+                      movie.keywords.keywords &&
+                      movie.keywords.keywords.length > 0)) && (
                     <Box>
                       <Text fontWeight={700}>Keywords</Text>
                       <Wrap spacing={2} mt={2}>
-                        {movie.keywords.keywords.map((keyword) => (
-                          <Tag
-                            key={keyword.id}
-                            padding={2}
-                            color={"#000000"}
-                            backgroundColor={"##efefef"}
-                          >
-                            {keyword.name}
-                          </Tag>
-                        ))}
+                        {isTvShow
+                          ? movie.keywords.results.map((keyword) => (
+                              <Tag
+                                key={keyword.id}
+                                padding={2}
+                                color={"#000000"}
+                                backgroundColor={"##efefef"}
+                              >
+                                {keyword.name}
+                              </Tag>
+                            ))
+                          : movie.keywords.keywords.map((keyword) => (
+                              <Tag
+                                key={keyword.id}
+                                padding={2}
+                                color={"#000000"}
+                                backgroundColor={"##efefef"}
+                              >
+                                {keyword.name}
+                              </Tag>
+                            ))}
                       </Wrap>
                     </Box>
                   )}
@@ -374,15 +402,15 @@ function MovieContent() {
   );
 }
 
-function Movie() {
+function MediaDetail() {
   return (
     <MovieProvider>
       <Box p="0" m="0">
         <SecondaryNav />
-        <MovieContent />
+        <MediaContent />
       </Box>
     </MovieProvider>
   );
 }
 
-export default Movie;
+export default MediaDetail;
