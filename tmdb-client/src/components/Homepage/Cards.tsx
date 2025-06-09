@@ -26,6 +26,7 @@ import { IoStar } from "react-icons/io5";
 import { IoIosArrowForward } from "react-icons/io";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
+import ApiClient from "../../services/api-client";
 
 // Create motion components
 const MotionCard = motion(Card);
@@ -58,6 +59,22 @@ interface TvShow {
   poster_path: string;
   vote_average: number;
 }
+
+interface Favorite {
+  id: number;
+  title?: string;
+  name?: string;
+  poster_path: string;
+  vote_average: number;
+  content_type?: string;
+  type?: string;
+  first_air_date?: string;
+  release_date?: string;
+  overview?: string;
+  // Add any other properties you use
+}
+
+const favoritesApi = new ApiClient<Favorite[]>("/api/favorites");
 
 // Enhanced props to include links and custom data
 interface CardsProps {
@@ -352,14 +369,7 @@ const Cards: React.FC<CardsProps> = ({
         `Adding content ${contentId} to favorites for user ${userId}`
       );
 
-      // Make API call to add to favorites
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/favorites`,
-        {
-          user_id: userId,
-          content_id: contentId,
-        }
-      );
+      await favoritesApi.addFavorite(userId, contentId);
 
       // Close the menu
       setOpenMenuId(null);

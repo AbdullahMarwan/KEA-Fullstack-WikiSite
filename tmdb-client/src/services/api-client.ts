@@ -36,8 +36,14 @@ class ApiClient<T> {
       .delete(`${this.endpoint}/${userId}/${contentId}`)
       .then((res) => res.data);
 
-  post = (data: any) =>
-    axiosInstance.post<T>(this.endpoint, data).then((res) => res.data);
+  // Add a specialized method for adding favorites
+  addFavorite = (userId: number | string, contentId: number | string) =>
+    axiosInstance
+      .post<T>(this.endpoint, {
+        user_id: userId,
+        content_id: contentId,
+      })
+      .then((res) => res.data);
 
   patch = (id: number | string, data: any) =>
     axiosInstance

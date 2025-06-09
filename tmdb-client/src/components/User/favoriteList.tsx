@@ -20,7 +20,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
-import ApiClient, { axiosInstance } from "../../services/api-client";
+import ApiClient from "../../services/api-client";
 
 import VoteAverageRing from "../Homepage/voteAverageRing";
 
@@ -133,7 +133,7 @@ const FavoriteList = () => {
       const numContentId = Number(contentId);
 
       // Use axiosInstance instead of axios
-      await axiosInstance.delete(`/api/favorites/${numUserId}/${numContentId}`);
+      await favoritesApi.deleteFavorite(numUserId, numContentId);
 
       // Update state to remove item locally
       setFavorites(
