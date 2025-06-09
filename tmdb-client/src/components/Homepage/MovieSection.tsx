@@ -10,23 +10,72 @@ import {
   updateActiveLink,
 } from "../../utils/movieSectionHelper";
 import LinkSelector from "./LinkSelector";
+import ApiClient from "../../services/api-client";
 
 interface MovieSectionProps {
   sectionType: "popular" | "tv-series" | "trending";
 }
 
+interface Movies {
+  id: number;
+  title?: string;
+  name?: string;
+  poster_path: string;
+  vote_average: number;
+  content_type?: string;
+  type?: string;
+  first_air_date?: string;
+  release_date?: string;
+  overview?: string;
+}
+
+const moviesApi = new ApiClient<Movies[]>("/api/content"); // State to store the movie array
+// const favoritesApi = new ApiClient<Favorite[]>("/api/favorites");
+
 const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
   const [activeLink, setActiveLink] = useState<string>("day"); // TODO Make this dynamic
-  const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
+  const [movies, setMovies] = useState<Movies[]>([]); // State to store the movie array
   const [links, setLinks] = useState<any[]>([]); // Initialize with popularMoviesLinks
   const [title, setTitle] = useState<string>("Trending"); // Initialize with an Trending string
 
   // Preload background image to prevent layout shifts
   useEffect(() => {
-    // Set links and title based on sectionType
-    const initialLinks = returnLinks(sectionType);
-    setLinks(initialLinks);
-    setTitle(returnTitle(sectionType));
+    const fetchData = async () => {
+      try {
+        console.log("Starting fetch...");
+        const data = await moviesApi.getAll();
+        console.log("API response type:", typeof data);
+        console.log("API response:", data);
+        console.log("Is array:", Array.isArray(data));
+        console.log("Data length:", data?.length);
+
+        if (Array.isArray(data)) {
+          console.log("Setting movies with array data");
+          setMovies(data);
+        } else if (data && data.results && Array.isArray(data.results)) {
+          console.log("Setting movies with data.results");
+          setMovies(data.results);
+        } else {
+          console.error("Unexpected data structure:", data);
+          setMovies([]);
+        }
+
+        // Log what's in the movies state after setting it
+        setTimeout(
+          () => console.log("Movies state after update:", movies),
+          100
+        );
+      } catch (error) {
+        console.error("Error details:", error);
+        setMovies([]);
+      } finally {
+        // Set links and title based on sectionType
+        const initialLinks = returnLinks(sectionType);
+        setLinks(initialLinks);
+        setTitle(returnTitle(sectionType));
+      }
+    };
+    fetchData();
   }, [sectionType]);
 
   useEffect(() => {
@@ -34,7 +83,6 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
     if (links.length > 0) {
       const firstLinkValue = links[0].value;
       updateActiveLink(firstLinkValue, setActiveLink); // Update activeLink with the first value
-      fetchMovies(sectionType, setMovies, firstLinkValue); // Fetch movies with the first link value
     }
   }, [links]);
 
@@ -66,7 +114,7 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
               </Heading>
             )}
 
-            {links.length > 0 && (
+            {/* {links.length > 0 && (
               <LinkSelector
                 links={links}
                 activeLink={activeLink}
@@ -80,7 +128,7 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
                 borderColor="rgb(3, 37, 65)"
                 activeBgColor="rgb(3, 37, 65)"
               />
-            )}
+            )} */}
           </HStack>
           <Cards
             customData={movies} // Pass the fetched movies as customData

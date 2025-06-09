@@ -21,7 +21,7 @@ class ApiClient<T> {
 
   getAll = (config?: AxiosRequestConfig) =>
     axiosInstance
-      .get<Response<T>>(this.endpoint, config)
+      .get<T>(this.endpoint, config) // Changed from Response<T> to T
       .then((res) => res.data);
 
   get = (id: number | string) =>
