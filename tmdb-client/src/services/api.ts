@@ -69,7 +69,6 @@ export const fetchTemplate = async (
     const results = Array.isArray(response.data?.results)
       ? response.data.results
       : [];
-    console.log(results);
     return { data: response.data, results };
   } catch (error) {
     console.error(`Error fetching ${type} ${category}:`, error);
@@ -115,7 +114,6 @@ export const fetchMovieIdTemplate = async (
     const response = await fetch(url);
     return await response.json();
   } catch (error) {
-    console.error(`Error fetching ${mediaType}ID ${id}:`, error);
     return { results: [] };
   }
 };

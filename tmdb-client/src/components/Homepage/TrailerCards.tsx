@@ -10,9 +10,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  fetchTrailerTemplate
-} from "../../services/api";
+import { fetchTrailerTemplate } from "../../services/api";
 import MenuOnCards from "./MenuOnCards";
 import LinkSelector from "./LinkSelector";
 
@@ -88,10 +86,8 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      console.log(`Fetching data for timeWindow: ${timeWindow}`);
       const fetchFunction = getFetchFunction();
       let trailerData = await fetchFunction;
-      console.log(`Received ${trailerData.length} trailers for ${timeWindow}`);
 
       // Filter out movies without backdrop images
       const validMovies = trailerData.filter(
@@ -127,10 +123,6 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
         );
       } else {
         trailerData = validMovies;
-      }
-
-      if (trailerData.length > 0) {
-        console.log(`First movie: ${trailerData[0].title}`);
       }
 
       setTrailers(

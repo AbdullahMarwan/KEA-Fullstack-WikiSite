@@ -12,7 +12,6 @@ interface Movie {
 const SearchMovieSection = () => {
   const [randomMovie, setRandomMovie] = useState<Movie | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  console.log(randomMovie);
 
   useEffect(() => {
     const getRandomBackdrop = async () => {

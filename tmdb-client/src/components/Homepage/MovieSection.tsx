@@ -6,35 +6,72 @@ import { useEffect } from "react";
 import {
   returnLinks,
   returnTitle,
-  fetchMovies,
   updateActiveLink,
 } from "../../utils/movieSectionHelper";
 import LinkSelector from "./LinkSelector";
+import ApiClient from "../../services/api-client";
 
 interface MovieSectionProps {
   sectionType: "popular" | "tv-series" | "trending";
 }
 
-const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
-  const [activeLink, setActiveLink] = useState<string>("day"); // TODO Make this dynamic
-  const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
-  const [links, setLinks] = useState<any[]>([]); // Initialize with popularMoviesLinks
-  const [title, setTitle] = useState<string>("Trending"); // Initialize with an Trending string
+interface Movie {
+  id: number;
+  title?: string;
+  name?: string;
+  poster_path: string;
+  vote_average: number;
+  content_type?: string;
+  type?: string;
+  first_air_date?: string;
+  release_date?: string;
+  overview?: string;
+}
 
-  // Preload background image to prevent layout shifts
+// Create API client for content
+const contentApi = new ApiClient<Movie[]>("/api/content");
+
+const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
+  const [activeLink, setActiveLink] = useState<string>("day");
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [links, setLinks] = useState<any[]>([]);
+  const [title, setTitle] = useState<string>("Trending");
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch content from database using API client
+  const fetchContentFromDatabase = async () => {
+    setIsLoading(true);
+    try {
+      console.log("Fetching content from database...");
+      const data = await contentApi.getAll();
+      console.log("Data received:", data);
+      console.log(`Retrieved ${data.length} movies`);
+
+      // Set the movies data
+      setMovies(data);
+    } catch (error) {
+      console.error("Error fetching content:", error);
+      setMovies([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Set links and title
   useEffect(() => {
-    // Set links and title based on sectionType
     const initialLinks = returnLinks(sectionType);
     setLinks(initialLinks);
     setTitle(returnTitle(sectionType));
   }, [sectionType]);
 
+  // Fetch content when links change
   useEffect(() => {
-    // Ensure links are available before accessing the first value
     if (links.length > 0) {
       const firstLinkValue = links[0].value;
-      updateActiveLink(firstLinkValue, setActiveLink); // Update activeLink with the first value
-      fetchMovies(sectionType, setMovies, firstLinkValue); // Fetch movies with the first link value
+      updateActiveLink(firstLinkValue, setActiveLink);
+
+      // Use our new function that fetches from the database
+      fetchContentFromDatabase();
     }
   }, [links]);
 
@@ -71,8 +108,9 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
                 links={links}
                 activeLink={activeLink}
                 onLinkClick={(linkName: string) => {
-                  updateActiveLink(linkName, setActiveLink); // Update the activeLink state
-                  fetchMovies(sectionType, setMovies, linkName); // Refetch movies with the new activeLink
+                  updateActiveLink(linkName, setActiveLink);
+                  // Keep using the database fetch instead of the original fetchMovies
+                  fetchContentFromDatabase();
                 }}
                 maxVisible={links.length}
                 activeTextColor="linear-gradient(to right, #1ed5aa 0%, #c0fed0 100%)"
@@ -82,11 +120,8 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
               />
             )}
           </HStack>
-          <Cards
-            customData={movies} // Pass the fetched movies as customData
-            maxItems={10}
-            showLinkSelector={false}
-          />
+
+          <Cards customData={movies} maxItems={10} showLinkSelector={false} />
         </HStack>
       </HStack>
     </HStack>
