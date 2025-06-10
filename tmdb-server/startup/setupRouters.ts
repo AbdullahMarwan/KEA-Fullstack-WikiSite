@@ -2,7 +2,8 @@ import express from "express";
 import registerRouter from "../routes/auth/registerRouter";
 import loginRouter from "../routes/auth/loginRouter";
 import favoritesRouter from "../routes/favoritesRouter";
-import contentRouter from "../routes/contentRouter"; // Import contentRouter
+import contentRouter from "../routes/contentRouter";
+import trailerRouter from "../routes/trailerRouter"; // Import the trailerRouter
 
 const setupRouters = (app: express.Application) => {
   console.log("Setting up routers...");
@@ -21,6 +22,10 @@ const setupRouters = (app: express.Application) => {
   // Add content router
   app.use("/api/content", contentRouter);
   console.log("Registered: /api/content");
+
+  // Add trailer router
+  app.use("/api/trailers", trailerRouter);
+  console.log("Registered: /api/trailers");
 };
 
 export default setupRouters;

@@ -30,13 +30,16 @@ async function seed() {
 
     // Insert content from TMDB
     const processedIds = new Set(); // Track IDs we've already processed
+    console.log("Starting content import from TMDB API...");
 
     for (const type of mediaTypes) {
+      console.log(`Fetching ${type} content...`);
       let allContent = [];
       for (let page = 1; page <= totalPages; page++) {
         const url = `${BASE_URL}/${type}/popular?api_key=${API_KEY}&page=${page}`;
         const response = await axios.get(url);
         allContent = [...allContent, ...response.data.results];
+        console.log(`Fetched page ${page}/${totalPages} of ${type} content`);
       }
 
       for (const item of allContent) {
@@ -47,21 +50,37 @@ async function seed() {
 
         processedIds.add(item.id); // Mark as processed
 
-        const content = contentRepo.create({
-          id: item.id,
-          title: type === "movie" ? item.title : item.name,
-          overview: item.overview,
-          release_date:
-            type === "movie" ? item.release_date : item.first_air_date,
-          poster_path: item.poster_path,
-          vote_average: item.vote_average,
-          content_type: type,
-        });
-        await contentRepo.save(content);
+        try {
+          // Fetch trailer data for this content item
+          console.log(`Fetching trailer for ${type} ID: ${item.id}`);
+          const trailerUrl = await fetchTrailerUrl(item.id, type);
+
+          const content = contentRepo.create({
+            id: item.id,
+            title: type === "movie" ? item.title : item.name,
+            overview: item.overview,
+            release_date:
+              type === "movie" ? item.release_date : item.first_air_date,
+            poster_path: item.poster_path,
+            vote_average: item.vote_average,
+            content_type: type,
+            trailer_url: trailerUrl, // Add the trailer URL
+          });
+
+          await contentRepo.save(content);
+          console.log(
+            `Saved ${type}: ${content.title} with trailer: ${
+              trailerUrl || "None found"
+            }`
+          );
+        } catch (error) {
+          console.error(`Error processing ${type} ID ${item.id}:`, error.message);
+        }
       }
     }
 
     // Insert users
+    console.log("Adding users...");
     const usersData = [
       {
         first_name: "John",
@@ -103,6 +122,7 @@ async function seed() {
     }
 
     // Add favorites (randomly assign content to users)
+    console.log("Adding favorite relationships...");
     const allContent = await contentRepo.find();
     for (const user of users) {
       user.favorites = [];
@@ -124,19 +144,63 @@ async function seed() {
   }
 }
 
-async function seedIfEmpty() {
-  // Check if data already exists in the database
-  const existingRecords = await AppDataSource.manager.query(
-    "SELECT COUNT(*) as count FROM content"
-  ); // Adjust table name
-
-  if (existingRecords[0].count === 0 || process.env.FORCE_SEED === "true") {
-    console.log(
-      "Database is empty or force seed enabled. Starting seed process..."
+// Helper function to fetch trailer URLs
+async function fetchTrailerUrl(id: number, type: string): Promise<string> {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/${type}/${id}/videos?api_key=${API_KEY}`
     );
-    await seed();
-  } else {
-    console.log("Database already has data. Skipping seed process.");
+
+    const results = response.data.results;
+    if (!results || results.length === 0) {
+      return "";
+    }
+
+    // First try to find an official trailer
+    const trailer = results.find(
+      (v: any) => v.site === "YouTube" && v.type === "Trailer"
+    );
+
+    // If no official trailer, use any YouTube video
+    const youtubeVideo = results.find((v: any) => v.site === "YouTube");
+
+    if (trailer || youtubeVideo) {
+      const video = trailer || youtubeVideo;
+      return `https://www.youtube.com/watch?v=${video.key}`;
+    }
+
+    return "";
+  } catch (error) {
+    console.error(`Error fetching trailer for ${type} ${id}:`, error.message);
+    return "";
+  }
+}
+
+async function seedIfEmpty() {
+  try {
+    await AppDataSource.initialize();
+
+    // Check if data already exists in the database
+    const existingRecords = await AppDataSource.manager.query(
+      "SELECT COUNT(*) as count FROM content"
+    );
+
+    if (existingRecords[0].count === 0 || process.env.FORCE_SEED === "true") {
+      console.log(
+        "Database is empty or force seed enabled. Starting seed process..."
+      );
+
+      // Close the connection before starting the seed process
+      await AppDataSource.destroy();
+
+      await seed();
+    } else {
+      console.log("Database already has data. Skipping seed process.");
+      await AppDataSource.destroy();
+    }
+  } catch (error) {
+    console.error("Error checking database:", error);
+    process.exit(1);
   }
 }
 

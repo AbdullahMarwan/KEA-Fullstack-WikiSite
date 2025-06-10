@@ -18,8 +18,6 @@ router.get("/", async (req: Request, res: Response) => {
     // Get query parameters
     const content_type = req.query.content_type as string;
 
-    console.log("Content type filter:", content_type);
-
     let query = contentRepo.createQueryBuilder("content");
 
     // Filter by content_type
@@ -27,12 +25,10 @@ router.get("/", async (req: Request, res: Response) => {
       query = query.andWhere("content.content_type = :type", {
         type: content_type,
       });
-      console.log(`Fetching ${content_type} content...`);
     }
 
     switch (content_type) {
       case "movie":
-        console.log(content_type, "content type selected");
       case "tv":
         query = query.orderBy("content.vote_average", "DESC");
         // For movies and TV shows, we can add more specific filters if needed
