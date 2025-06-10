@@ -25,7 +25,6 @@ export const Homepage = () => {
         <SearchMovieSection />
         <MovieSection sectionType="trending" />
         <LatestTrailers />
-        <MovieSection sectionType="popular" />
         <SignupSection />
         <MovieSection sectionType="tv-series" />
       </GridItem>

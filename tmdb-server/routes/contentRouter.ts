@@ -13,12 +13,36 @@ router.get("/", async (req: Request, res: Response) => {
       return res.status(500).json({ message: "Database connection error" });
     }
 
-    console.log("Getting content repository...");
     const contentRepo = AppDataSource.getRepository(Content);
 
-    console.log("Executing query...");
-    const allContent = await contentRepo.find();
+    // Get query parameters
+    const content_type = req.query.content_type as string;
 
+    console.log("Content type filter:", content_type);
+
+    let query = contentRepo.createQueryBuilder("content");
+
+    // Filter by content_type
+    if (content_type) {
+      query = query.andWhere("content.content_type = :type", {
+        type: content_type,
+      });
+      console.log(`Fetching ${content_type} content...`);
+    }
+
+    switch (content_type) {
+      case "movie":
+        console.log(content_type, "content type selected");
+      case "tv":
+        query = query.orderBy("content.vote_average", "DESC");
+        // For movies and TV shows, we can add more specific filters if needed
+        break;
+    }
+
+    // Limit results
+    query = query.take(10);
+
+    const allContent = await query.getMany();
     console.log(`Found ${allContent.length} content items`);
     res.json(allContent);
   } catch (error) {

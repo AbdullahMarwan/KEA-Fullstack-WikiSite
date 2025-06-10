@@ -42,10 +42,22 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
   const fetchContentFromDatabase = async () => {
     setIsLoading(true);
     try {
-      console.log("Fetching content from database...");
-      const data = await contentApi.getAll();
+      console.log("Fetching content from database...", sectionType);
+
+      // Convert sectionType to query parameters
+      const params: Record<string, string> = {};
+
+      if (sectionType === "trending") {
+        params.trending = "true";
+      } else if (sectionType === "popular") {
+        params.popular = "true";
+      } else if (sectionType === "tv-series") {
+        params.content_type = "tv";
+      }
+
+      // Pass as AxiosRequestConfig object with params
+      const data = await contentApi.getAll({ params });
       console.log("Data received:", data);
-      console.log(`Retrieved ${data.length} movies`);
 
       // Set the movies data
       setMovies(data);

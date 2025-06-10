@@ -27,6 +27,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 import ApiClient from "../../services/api-client";
+import VoteAverageRing from "./VoteAverageRing";
 
 // Create motion components
 const MotionCard = motion(Card);
@@ -551,6 +552,30 @@ const Cards: React.FC<CardsProps> = ({
                       borderRadius="10px"
                       fallbackSrc="/placeholder-image.jpg"
                     />
+
+                    {!details.isCast &&
+                      details.rating !== null &&
+                      cardType !== "recommendations" && (
+                        <Box
+                          position="absolute"
+                          left="10px"
+                          bottom="-20px"
+                          background="rgba(3, 37, 65, 0.8)"
+                          borderRadius="50%"
+                          width="50px"
+                          height="50px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <VoteAverageRing
+                            radius={50}
+                            stroke={6}
+                            progress={(details.rating || 0) * 10}
+                          />
+                        </Box>
+                      )}
+
                     {/* Only render the card-btn if showCardMenu is true */}
                     {showCardMenu && (
                       <Box
