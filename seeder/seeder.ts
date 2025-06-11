@@ -15,8 +15,8 @@ const BASE_URL = "https://api.themoviedb.org/3";
 
 async function seed() {
   try {
-    await AppDataSource.initialize();
-    console.log("Connected to database with TypeORM");
+    // Remove the AppDataSource.initialize() line here since we already initialized in seedIfEmpty
+    console.log("Starting database seeding with TypeORM");
 
     const contentRepo = AppDataSource.getRepository(Content);
     const userRepo = AppDataSource.getRepository(User);
@@ -35,8 +35,15 @@ async function seed() {
       let allContent = [];
       for (let page = 1; page <= totalPages; page++) {
         const url = `${BASE_URL}/${type}/popular?api_key=${API_KEY}&page=${page}`;
-        const response = await axios.get(url);
-        allContent = [...allContent, ...response.data.results];
+        try {
+          const response = await axios.get(url);
+          allContent = [...allContent, ...response.data.results];
+        } catch (error) {
+          console.error(
+            `Error fetching ${type} data from page ${page}:`,
+            error.response ? error.response.status : error.message
+          );
+        }
       }
 
       for (const item of allContent) {
@@ -125,18 +132,42 @@ async function seed() {
 }
 
 async function seedIfEmpty() {
-  // Check if data already exists in the database
-  const existingRecords = await AppDataSource.manager.query(
-    "SELECT COUNT(*) as count FROM content"
-  ); // Adjust table name
+  try {
+    // Initialize connection first
+    await AppDataSource.initialize();
+    console.log("Connected to database to check if seeding is needed");
 
-  if (existingRecords[0].count === 0 || process.env.FORCE_SEED === "true") {
-    console.log(
-      "Database is empty or force seed enabled. Starting seed process..."
-    );
-    await seed();
-  } else {
-    console.log("Database already has data. Skipping seed process.");
+    // Check if tables exist
+    try {
+      // Then check if data exists
+      const existingRecords = await AppDataSource.manager.query(
+        "SELECT COUNT(*) as count FROM content"
+      );
+
+      console.log("Content count:", existingRecords[0].count);
+
+      if (
+        parseInt(existingRecords[0].count) === 0 ||
+        process.env.FORCE_SEED === "true"
+      ) {
+        console.log(
+          "Database is empty or force seed enabled. Starting seed process..."
+        );
+        await seed();
+      } else {
+        console.log("Database already has data. Skipping seed process.");
+        await AppDataSource.destroy();
+      }
+    } catch (error) {
+      // If table doesn't exist or other error, we need to seed
+      console.log(
+        "Database tables not found or other error. Starting seed process..."
+      );
+      await seed();
+    }
+  } catch (error) {
+    console.error("Error checking database:", error);
+    process.exit(1);
   }
 }
 

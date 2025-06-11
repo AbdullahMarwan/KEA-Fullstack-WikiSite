@@ -7,7 +7,7 @@ const router = Router();
 // Verify your contentRouter has a GET handler for the root path
 router.get("/", async (_req: Request, res: Response) => {
   try {
-    const contentRepo = AppDataSource.getRepository(content);
+    const contentRepo = AppDataSource.getRepository(Content);
     const allContent = await contentRepo.find();
 
     // Add debugging to verify data
