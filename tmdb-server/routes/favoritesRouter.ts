@@ -68,6 +68,52 @@ favoritesRouter.post(
   }
 );
 
+// Add a favorite for a user (body version)
+favoritesRouter.post("/", async (req: Request, res: Response) => {
+  const { user_id, content_id } = req.body;
+  const userId = parseInt(user_id);
+  const contentId = parseInt(content_id);
+
+  if (!userId || !contentId) {
+    return res.status(400).json({
+      message: "Missing required fields",
+      received: { user_id, content_id },
+    });
+  }
+
+  try {
+    // Find the user
+    const user = await AppDataSource.getRepository(User).findOne({
+      where: { id: userId },
+      relations: ["favorites"],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find the content
+    const content = await AppDataSource.getRepository(Content).findOne({
+      where: { id: contentId },
+    });
+
+    if (!content) {
+      return res.status(404).json({ message: "Content not found" });
+    }
+
+    // Add content to user's favorites if not already present
+    if (!user.favorites.some((fav) => fav.id === contentId)) {
+      user.favorites.push(content);
+      await AppDataSource.getRepository(User).save(user);
+    }
+
+    return res.status(201).json({ message: "Favorite added successfully" });
+  } catch (error) {
+    console.error("Error adding favorite:", error);
+    return res.status(500).json({ message: "Error adding favorite" });
+  }
+});
+
 // Remove a favorite from a user
 favoritesRouter.delete(
   "/:userId/:contentId",

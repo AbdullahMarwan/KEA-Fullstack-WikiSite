@@ -342,7 +342,7 @@ const Cards: React.FC<CardsProps> = ({
   // Add this new function
   const handleAddToFavorites = async (contentId: number) => {
     try {
-      // Get user ID from localStorage (reusing the pattern from favoriteList.tsx)
+      // Get user ID from localStorage
       const userStr = localStorage.getItem("user");
       if (!userStr) {
         console.error("No user found in localStorage");
@@ -350,9 +350,8 @@ const Cards: React.FC<CardsProps> = ({
       }
 
       const userData = JSON.parse(userStr);
-
-      // Find the user ID based on the data structure
       let userId;
+      // Extract user ID from various possible structures
       if (userData.id) {
         userId = userData.id;
       } else if (userData.user_id) {
@@ -361,19 +360,8 @@ const Cards: React.FC<CardsProps> = ({
         userId = userData.user.user_id;
       }
 
-      if (!userId) {
-        console.error("Could not find user ID in stored data:", userData);
-        return;
-      }
-
-      console.log(
-        `Adding content ${contentId} to favorites for user ${userId}`
-      );
-
+      // Make API call to add to favorites
       await favoritesApi.addFavorite(userId, contentId);
-
-      // Close the menu
-      setOpenMenuId(null);
 
       // Show success toast
       toast({
@@ -385,15 +373,7 @@ const Cards: React.FC<CardsProps> = ({
       });
     } catch (error) {
       console.error("Error adding to favorites:", error);
-
       // Show error toast
-      toast({
-        title: "Error",
-        description: "Failed to add to favorites. Please try again.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
     }
   };
 
