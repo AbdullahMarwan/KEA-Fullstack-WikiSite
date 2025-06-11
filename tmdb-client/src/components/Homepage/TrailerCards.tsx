@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import MenuOnCards from "./MenuOnCards";
 import LinkSelector from "./LinkSelector";
 import ApiClient from "../../services/api-client";
+import axios from "axios";
 
 // Create motion components
 const MotionCard = motion(Card);
@@ -74,37 +75,24 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Use the timeWindow to determine which endpoint to call
-      const endpoint =
-        timeWindow === "popular" ? "popular-trailer" : "upcoming-trailer";
-
-      // Use your ApiClient to fetch trailers
-      const trailerData = await trailerApi.get(endpoint);
-      console.log("Trailer data from API:", trailerData);
-
-      // Set the trailers
-      setTrailers(
-        trailerData.map((movie: any) => ({
-          id: movie.movieId,
-          title: movie.title || "Unknown Title",
-          overview: movie.overview || "No overview available",
-          video: true,
-          youtubeLinks: movie.youtubeLinks || [],
-          backdrop_path: movie.backdrop_path || "",
-          poster_path: movie.poster_path || "",
-        }))
+      // Use the simple endpoint instead of the type-based one
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/trailers`
       );
+      console.log("[DEBUG] Trailer response:", response.data);
+
+      setTrailers(response.data);
 
       // Also set trending movies from the same data
       setTrendingMovies(
-        trailerData.map((movie: any) => ({
+        response.data.map((movie: any) => ({
           id: movie.movieId,
           title: movie.title || "Unknown Title",
           poster_path: movie.poster_path || "",
         }))
       );
     } catch (error) {
-      console.error("Error fetching trailers:", error);
+      console.error("[DEBUG] Error fetching trailers:", error);
     } finally {
       setIsLoading(false);
     }

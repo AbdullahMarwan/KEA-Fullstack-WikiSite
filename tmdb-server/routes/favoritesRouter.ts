@@ -7,125 +7,93 @@ const favoritesRouter = Router();
 
 // Get favorites for a user
 favoritesRouter.get("/:userId", async (req: Request, res: Response) => {
-  // Get userId from route parameters
-  const userId = Number(req.params.userId);
-  console.log("Fetching favorites for user ID:", userId);
+  const userId = parseInt(req.params.userId);
 
   try {
-    const userRepo = AppDataSource.getRepository(User);
-    const user = await userRepo.findOne({
-      where: { user_id: userId },
+    // Find the user and load their favorites
+    const user = await AppDataSource.getRepository(User).findOne({
+      where: { id: userId }, // Changed from user_id to id
       relations: ["favorites"],
     });
 
     if (!user) {
-      console.log(`User ${userId} not found`);
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log(
-      `Found ${user.favorites?.length || 0} favorites for user ${userId}`
-    );
-    res.json(user.favorites || []);
+    return res.json(user.favorites);
   } catch (error) {
-    console.error("Error fetching favorites:", error);
-    res.status(500).json({
-      message: "Server error while fetching favorites",
-      error: error.message,
-    });
+    console.error("Error fetching user favorites:", error);
+    return res.status(500).json({ message: "Error fetching user favorites" });
   }
 });
 
-// Add a favorite
-favoritesRouter.post("/", async (req: Request, res: Response) => {
-  const { user_id, content_id } = req.body;
-  console.log(`Adding content ${content_id} to favorites for user ${user_id}`);
-
-  try {
-    const userRepo = AppDataSource.getRepository(User);
-    const contentRepo = AppDataSource.getRepository(Content);
-    const user = await userRepo.findOne({
-      where: { user_id },
-      relations: ["favorites"],
-    });
-    const content = await contentRepo.findOneBy({ id: content_id });
-    if (!user || !content)
-      return res.status(404).json({ message: "User or content not found" });
-
-    user.favorites = [...(user.favorites || []), content];
-    await userRepo.save(user);
-    res.json({ message: "Favorite added" });
-  } catch (error) {
-    console.error("Error adding favorite:", error);
-    res.status(500).json({
-      message: "Server error while adding favorite",
-      error: error.message,
-    });
-  }
-});
-
-// Complete DELETE handler implementation
-favoritesRouter.delete(
+// Add a favorite for a user
+favoritesRouter.post(
   "/:userId/:contentId",
   async (req: Request, res: Response) => {
-    // Explicitly convert URL parameters to numbers
-    const userId = Number(req.params.userId);
-    const contentId = Number(req.params.contentId);
-    console.log(
-      `Removing content ${contentId} (type: ${typeof contentId}) from favorites for user ${userId} (type: ${typeof userId})`
-    );
+    const userId = parseInt(req.params.userId);
+    const contentId = parseInt(req.params.contentId);
 
     try {
-      const userRepo = AppDataSource.getRepository(User);
-      const user = await userRepo.findOne({
-        where: { user_id: userId },
+      // Find the user
+      const user = await AppDataSource.getRepository(User).findOne({
+        where: { id: userId }, // Changed from user_id to id
         relations: ["favorites"],
       });
 
       if (!user) {
-        console.log(`User ${userId} not found`);
         return res.status(404).json({ message: "User not found" });
       }
 
-      // Debug logging
-      console.log(
-        "Before filtering - Favorites:",
-        user.favorites?.map((f) => ({ id: f.id, type: typeof f.id }))
-      );
+      // Find the content
+      const content = await AppDataSource.getRepository(Content).findOne({
+        where: { id: contentId },
+      });
 
-      // Store original length for comparison
-      const originalLength = user.favorites?.length || 0;
-
-      // Make sure favorites is initialized
-      if (!user.favorites) {
-        user.favorites = [];
+      if (!content) {
+        return res.status(404).json({ message: "Content not found" });
       }
 
-      // Try strict equality filtering with explicit type conversion
-      user.favorites = user.favorites.filter((fav) => {
-        // Convert both sides to numbers for proper comparison
-        return Number(fav.id) !== Number(contentId);
+      // Add content to user's favorites if not already present
+      if (!user.favorites.some((fav) => fav.id === contentId)) {
+        user.favorites.push(content);
+        await AppDataSource.getRepository(User).save(user);
+      }
+
+      return res.status(201).json({ message: "Favorite added successfully" });
+    } catch (error) {
+      console.error("Error adding favorite:", error);
+      return res.status(500).json({ message: "Error adding favorite" });
+    }
+  }
+);
+
+// Remove a favorite from a user
+favoritesRouter.delete(
+  "/:userId/:contentId",
+  async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.userId);
+    const contentId = parseInt(req.params.contentId);
+
+    try {
+      // Find the user
+      const user = await AppDataSource.getRepository(User).findOne({
+        where: { id: userId }, // Changed from user_id to id
+        relations: ["favorites"],
       });
 
-      console.log(
-        "After filtering - Favorites:",
-        user.favorites?.map((f) => ({ id: f.id })),
-        `Removed ${originalLength - user.favorites.length} items`
-      );
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
 
-      // Save changes to database
-      await userRepo.save(user);
+      // Remove the content from user's favorites
+      user.favorites = user.favorites.filter((fav) => fav.id !== contentId);
+      await AppDataSource.getRepository(User).save(user);
 
-      return res.status(200).json({
-        message: "Favorite removed successfully",
-        removedId: contentId,
-      });
+      return res.json({ message: "Favorite removed successfully" });
     } catch (error) {
       console.error("Error removing favorite:", error);
-      return res.status(500).json({
-        message: "Server error while removing favorite",
-        error: error.message,
-      });
+      return res.status(500).json({ message: "Error removing favorite" });
     }
   }
 );

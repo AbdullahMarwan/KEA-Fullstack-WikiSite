@@ -33,9 +33,6 @@ export const fetchTemplate = async (
         case "top-rated":
           url = `${baseUrl}/movie/top_rated?api_key=${apiKey}`;
           break;
-        case "now-playing":
-          url = `${baseUrl}/movie/now_playing?api_key=${apiKey}`;
-          break;
         default:
           throw new Error(`Invalid movie category: ${category}`);
       }

@@ -1,28 +1,40 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+} from "typeorm";
 import { Content } from "./Content";
 
-@Entity("users")
+@Entity()
 export class User {
-  @PrimaryGeneratedColumn({ name: "user_id", type: "bigint" })
-  user_id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column({ type: "varchar", length: 20 })
+  @Column()
   first_name: string;
 
-  @Column({ type: "varchar", length: 20 })
+  @Column()
   last_name: string;
 
-  @Column({ type: "varchar", length: 100, unique: true })
+  @Column({ unique: true })
   email: string;
 
-  @Column({ type: "varchar", length: 255 })
+  @Column()
   password: string;
 
   @ManyToMany(() => Content, (content) => content.users)
   @JoinTable({
     name: "favorites",
-    joinColumn: { name: "user_id", referencedColumnName: "user_id" },
-    inverseJoinColumn: { name: "content_id", referencedColumnName: "id" },
+    joinColumn: {
+      name: "userId",
+      referencedColumnName: "id",
+    },
+    inverseJoinColumn: {
+      name: "contentId",
+      referencedColumnName: "id",
+    },
   })
   favorites: Content[];
 }

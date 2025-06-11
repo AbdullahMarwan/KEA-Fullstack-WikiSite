@@ -1,27 +1,27 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
+import { Entity, PrimaryColumn, Column, ManyToMany } from "typeorm";
 import { User } from "./User";
 
-@Entity("content")
+@Entity()
 export class Content {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: number;
 
-  @Column({ type: "varchar", length: 255 })
+  @Column()
   title: string;
 
-  @Column({ type: "text", nullable: true })
+  @Column("text")
   overview: string;
 
-  @Column({ type: "date", nullable: true })
+  @Column({ nullable: true })
   release_date: string;
 
-  @Column({ type: "varchar", length: 255, nullable: true })
+  @Column()
   poster_path: string;
 
-  @Column({ type: "decimal", precision: 3, scale: 1, nullable: true })
+  @Column("float")
   vote_average: number;
 
-  @Column({ type: "varchar", length: 10, nullable: true })
+  @Column()
   content_type: string;
 
   @Column({ nullable: true })

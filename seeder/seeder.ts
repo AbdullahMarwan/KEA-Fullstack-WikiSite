@@ -3,8 +3,8 @@ import { AppDataSource } from "./data-source";
 import { User } from "./entities/User";
 import { Content } from "./entities/Content";
 import axios from "axios";
-import dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -13,10 +13,30 @@ const mediaTypes = ["movie", "tv"];
 const API_KEY = process.env.TMDB_API_KEY || "dfd45a50a0761538bfed7f664cacb4d7";
 const BASE_URL = "https://api.themoviedb.org/3";
 
+// Define types for API responses
+interface TMDBMovie {
+  id: number;
+  title: string;
+  overview: string;
+  release_date: string;
+  poster_path: string;
+  vote_average: number;
+}
+
+interface TMDBTVShow {
+  id: number;
+  name: string;
+  overview: string;
+  first_air_date: string;
+  poster_path: string;
+  vote_average: number;
+}
+
+type TMDBContent = TMDBMovie | TMDBTVShow;
+
 async function seed() {
   try {
-    await AppDataSource.initialize();
-    console.log("Connected to database with TypeORM");
+    console.log("Starting database seeding with TypeORM");
 
     const contentRepo = AppDataSource.getRepository(Content);
     const userRepo = AppDataSource.getRepository(User);
@@ -29,12 +49,13 @@ async function seed() {
     await AppDataSource.manager.query("SET FOREIGN_KEY_CHECKS = 1");
 
     // Insert content from TMDB
-    const processedIds = new Set(); // Track IDs we've already processed
+    const processedIds = new Set<number>();
     console.log("Starting content import from TMDB API...");
 
     for (const type of mediaTypes) {
       console.log(`Fetching ${type} content...`);
-      let allContent = [];
+      let allContent: TMDBContent[] = [];
+
       for (let page = 1; page <= totalPages; page++) {
         const url = `${BASE_URL}/${type}/popular?api_key=${API_KEY}&page=${page}`;
         const response = await axios.get(url);
@@ -57,24 +78,27 @@ async function seed() {
 
           const content = contentRepo.create({
             id: item.id,
-            title: type === "movie" ? item.title : item.name,
+            title:
+              type === "movie"
+                ? (item as TMDBMovie).title
+                : (item as TMDBTVShow).name,
             overview: item.overview,
             release_date:
-              type === "movie" ? item.release_date : item.first_air_date,
+              type === "movie"
+                ? (item as TMDBMovie).release_date
+                : (item as TMDBTVShow).first_air_date,
             poster_path: item.poster_path,
             vote_average: item.vote_average,
             content_type: type,
-            trailer_url: trailerUrl, // Add the trailer URL
+            trailer_url: trailerUrl,
           });
 
           await contentRepo.save(content);
-          console.log(
-            `Saved ${type}: ${content.title} with trailer: ${
-              trailerUrl || "None found"
-            }`
+        } catch (error: any) {
+          console.error(
+            `Error processing ${type} ID ${item.id}:`,
+            error.message || "Unknown error"
           );
-        } catch (error) {
-          console.error(`Error processing ${type} ID ${item.id}:`, error.message);
         }
       }
     }
@@ -138,8 +162,8 @@ async function seed() {
 
     console.log("Database seeding completed with TypeORM");
     await AppDataSource.destroy();
-  } catch (error) {
-    console.error("Error seeding database:", error);
+  } catch (error: any) {
+    console.error("Error seeding database:", error.message || error);
     process.exit(1);
   }
 }
@@ -170,7 +194,7 @@ async function fetchTrailerUrl(id: number, type: string): Promise<string> {
     }
 
     return "";
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Error fetching trailer for ${type} ${id}:`, error.message);
     return "";
   }
@@ -178,25 +202,49 @@ async function fetchTrailerUrl(id: number, type: string): Promise<string> {
 
 async function seedIfEmpty() {
   try {
+    // Initialize connection first
     await AppDataSource.initialize();
+    console.log("Connected to database to check if seeding is needed");
 
-    // Check if data already exists in the database
-    const existingRecords = await AppDataSource.manager.query(
-      "SELECT COUNT(*) as count FROM content"
-    );
+    // Drop and recreate tables if force seed is enabled
+    if (process.env.FORCE_SEED === "true") {
+      console.log("Force seed enabled. Dropping and recreating tables...");
+      try {
+        // Drop tables in the correct order to avoid foreign key constraints
+        await AppDataSource.manager.query("SET FOREIGN_KEY_CHECKS = 0");
+        await AppDataSource.manager.query("DROP TABLE IF EXISTS favorites");
+        await AppDataSource.manager.query("DROP TABLE IF EXISTS content");
+        await AppDataSource.manager.query("DROP TABLE IF EXISTS user");
+        await AppDataSource.manager.query("SET FOREIGN_KEY_CHECKS = 1");
 
-    if (existingRecords[0].count === 0 || process.env.FORCE_SEED === "true") {
-      console.log(
-        "Database is empty or force seed enabled. Starting seed process..."
-      );
+        // Let TypeORM recreate tables
+        await AppDataSource.synchronize();
 
-      // Close the connection before starting the seed process
-      await AppDataSource.destroy();
-
-      await seed();
+        console.log("Tables dropped and recreated. Starting seed process...");
+        await seed();
+      } catch (error) {
+        console.error("Error dropping tables:", error);
+        process.exit(1);
+      }
     } else {
-      console.log("Database already has data. Skipping seed process.");
-      await AppDataSource.destroy();
+      // Check if tables exist and have data
+      try {
+        const existingRecords = await AppDataSource.manager.query(
+          "SELECT COUNT(*) as count FROM content"
+        );
+
+        if (parseInt(existingRecords[0].count) === 0) {
+          console.log("Database is empty. Starting seed process...");
+          await seed();
+        } else {
+          console.log("Database already has data. Skipping seed process.");
+          await AppDataSource.destroy();
+        }
+      } catch (error) {
+        // If the query fails, tables don't exist yet
+        console.log("Tables don't exist yet. Creating and seeding...");
+        await seed();
+      }
     }
   } catch (error) {
     console.error("Error checking database:", error);
