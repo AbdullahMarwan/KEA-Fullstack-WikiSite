@@ -1,11 +1,13 @@
 import "reflect-metadata";
 import { AppDataSource } from "../data-source";
-import dotenv from "dotenv";
 import { seedCategories } from "./CategorySeeder";
-import { seedUsers } from "./UserSeeder";
 import { seedContent } from "./ContentSeeder";
+import { seedUsers } from "./UserSeeder";
 import { seedFavorites } from "./FavoritesSeeder";
-import { seedCategoryLookups } from "./CategoryLookupSeeder"; // Add this import
+import { seedCategoryLookups } from "./CategoryLookupSeeder";
+import { seedPeople } from "./PeopleSeeder";
+import * as dotenv from "dotenv";
+import { User } from "../entities/User"; // Import the User entity type
 
 dotenv.config();
 
@@ -13,21 +15,88 @@ async function seed() {
   try {
     console.log("Starting database seeding with TypeORM");
 
-    // Clear existing data
-    await AppDataSource.manager.query("SET FOREIGN_KEY_CHECKS = 0");
-    await AppDataSource.manager.query("DELETE FROM favorites");
-    await AppDataSource.manager.query("DELETE FROM category_look_up");
-    await AppDataSource.manager.query("DELETE FROM content");
-    await AppDataSource.manager.query("DELETE FROM user");
-    await AppDataSource.manager.query("DELETE FROM category");
-    await AppDataSource.manager.query("SET FOREIGN_KEY_CHECKS = 1");
+    // Synchronize the schema to ensure all tables are created
+    await AppDataSource.synchronize();
 
-    // Seed data in sequence
-    await seedCategories(AppDataSource);
-    const contentCategoryMap = await seedContent(AppDataSource);
-    const users = await seedUsers(AppDataSource);
-    await seedFavorites(AppDataSource, users);
-    await seedCategoryLookups(AppDataSource, contentCategoryMap); // Pass the map
+    // Clear existing data if FORCE_SEED is true
+    const forceSeed = process.env.FORCE_SEED === "true";
+    if (forceSeed) {
+      console.log("Force seeding enabled - clearing existing data");
+      await AppDataSource.manager.query("SET FOREIGN_KEY_CHECKS = 0");
+      await AppDataSource.manager.query("DELETE FROM favorites");
+      await AppDataSource.manager.query("DELETE FROM category_look_up");
+      await AppDataSource.manager.query("DELETE FROM people");
+      await AppDataSource.manager.query("DELETE FROM content");
+      await AppDataSource.manager.query("DELETE FROM user");
+      await AppDataSource.manager.query("DELETE FROM category");
+      await AppDataSource.manager.query("SET FOREIGN_KEY_CHECKS = 1");
+    }
+
+    // Seed categories if needed
+    const categoryCount = await AppDataSource.manager.count("category");
+    if (categoryCount === 0 || forceSeed) {
+      await seedCategories(AppDataSource);
+    } else {
+      console.log(
+        `Category table already has ${categoryCount} records. Skipping seeding.`
+      );
+    }
+
+    // Seed content if needed
+    const contentCount = await AppDataSource.manager.count("content");
+    let contentCategoryMap = new Map<number, string>();
+    if (contentCount === 0 || forceSeed) {
+      contentCategoryMap = await seedContent(AppDataSource);
+    } else {
+      console.log(
+        `Content table already has ${contentCount} records. Skipping content seeding.`
+      );
+    }
+
+    // Seed users if needed
+    const userCount = await AppDataSource.manager.count("user");
+    // Fix: Properly type the users variable
+    let users: User[] = [];
+    if (userCount === 0 || forceSeed) {
+      users = await seedUsers(AppDataSource);
+    } else {
+      console.log(
+        `User table already has ${userCount} records. Skipping user seeding.`
+      );
+    }
+
+    // Seed favorites if needed
+    const favoritesCount = await AppDataSource.manager.count("favorites");
+    if (favoritesCount === 0 || forceSeed) {
+      await seedFavorites(AppDataSource, users);
+    } else {
+      console.log(
+        `Favorites table already has ${favoritesCount} records. Skipping favorites seeding.`
+      );
+    }
+
+    // Seed category lookups if needed
+    const lookupCount = await AppDataSource.manager.count("category_look_up");
+    if (lookupCount === 0 || forceSeed) {
+      await seedCategoryLookups(AppDataSource, contentCategoryMap);
+    } else {
+      console.log(
+        `Category lookup table already has ${lookupCount} records. Skipping lookup seeding.`
+      );
+    }
+
+    // Seed people - this check is independent of other tables
+    console.log("Now checking people table...");
+    const peopleCount = await AppDataSource.manager.count("people");
+    if (peopleCount === 0 || forceSeed) {
+      console.log("Now seeding people data...");
+      await seedPeople(AppDataSource);
+      console.log("People seeding completed");
+    } else {
+      console.log(
+        `People table already has ${peopleCount} records. Skipping people seeding.`
+      );
+    }
 
     console.log("Database seeding completed with TypeORM");
     await AppDataSource.destroy();
@@ -41,54 +110,35 @@ async function seedIfEmpty() {
   try {
     // Initialize connection first
     await AppDataSource.initialize();
-    console.log("Connected to database to check if seeding is needed");
 
-    // Drop and recreate tables if force seed is enabled
-    if (process.env.FORCE_SEED === "true") {
-      console.log("Force seed enabled. Dropping and recreating tables...");
-      try {
-        // Drop tables in the correct order to avoid foreign key constraints
-        await AppDataSource.manager.query("SET FOREIGN_KEY_CHECKS = 0");
-        await AppDataSource.manager.query("DROP TABLE IF EXISTS favorites");
-        await AppDataSource.manager.query(
-          "DROP TABLE IF EXISTS category_look_up"
-        ); // This line
-        await AppDataSource.manager.query("DROP TABLE IF EXISTS content");
-        await AppDataSource.manager.query("DROP TABLE IF EXISTS category"); // Add this line
-        await AppDataSource.manager.query("DROP TABLE IF EXISTS user");
-        await AppDataSource.manager.query("SET FOREIGN_KEY_CHECKS = 1");
+    // Check if content table exists and has data
+    try {
+      const contentCount = await AppDataSource.manager.count("content");
+      const peopleCount = await AppDataSource.manager.count("people");
 
-        // Let TypeORM recreate tables
-        await AppDataSource.synchronize();
-
-        console.log("Tables dropped and recreated. Starting seed process...");
-        await seed();
-      } catch (error) {
-        console.error("Error dropping tables:", error);
-        process.exit(1);
-      }
-    } else {
-      // Check if tables exist and have data
-      try {
-        const existingRecords = await AppDataSource.manager.query(
-          "SELECT COUNT(*) as count FROM content"
+      if (
+        contentCount === 0 ||
+        peopleCount === 0 ||
+        process.env.FORCE_SEED === "true"
+      ) {
+        console.log(
+          "Empty tables detected or force seed enabled. Starting seeding process..."
         );
-
-        if (parseInt(existingRecords[0].count) === 0) {
-          console.log("Database is empty. Starting seed process...");
-          await seed();
-        } else {
-          console.log("Database already has data. Skipping seed process.");
-          await AppDataSource.destroy();
-        }
-      } catch (error) {
-        // If the query fails, tables don't exist yet
-        console.log("Tables don't exist yet. Creating and seeding...");
         await seed();
+      } else {
+        console.log(
+          "Database already has content and people. Skipping seeding."
+        );
+        await AppDataSource.destroy();
       }
+    } catch (error) {
+      console.log(
+        "Error checking tables, tables may not exist yet. Starting seeding..."
+      );
+      await seed();
     }
   } catch (error) {
-    console.error("Error checking database:", error);
+    console.error("Failed to initialize data source:", error);
     process.exit(1);
   }
 }

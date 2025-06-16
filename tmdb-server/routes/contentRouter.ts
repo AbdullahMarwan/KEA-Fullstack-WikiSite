@@ -13,7 +13,7 @@ router.get("/all", async (req: Request, res: Response) => {
   try {
     const contentRepo = AppDataSource.getRepository(Content);
     const content = await contentRepo.find({
-      take: 20,
+      take: 100,
       order: {
         vote_average: "DESC",
       },
