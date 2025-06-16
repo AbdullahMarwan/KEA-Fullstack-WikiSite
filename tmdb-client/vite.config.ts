@@ -7,5 +7,12 @@ export default defineConfig({
   server: {
     port: 3000,
     host: "0.0.0.0",
+    cors: {
+      origin: [
+        'http://localhost:3000',
+        'https://tmdb-client-qoa6.onrender.com',
+      ],
+      credentials: true,
+    },
   },
 });
