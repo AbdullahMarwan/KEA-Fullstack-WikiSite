@@ -11,13 +11,23 @@ import {
   Box,
   Image,
   Grid,
+  Icon,
+  VStack,
 } from "@chakra-ui/react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { fetchTemplate } from "../../services/api";
-import VoteAverageRing from "./voteAverageRing";
-import MenuOnCards from "./MenuOnCards";
 import LinkSelector from "./LinkSelector";
 import { Link as ReactRouterLink } from "react-router-dom";
+import { HiDotsHorizontal } from "react-icons/hi";
+import { FaListUl } from "react-icons/fa6";
+import { FaHeart } from "react-icons/fa";
+import { IoBookmark } from "react-icons/io5";
+import { IoStar } from "react-icons/io5";
+import { IoIosArrowForward } from "react-icons/io";
+import { useToast } from "@chakra-ui/react";
+import axios from "axios";
+import ApiClient from "../../services/api-client";
+import VoteAverageRing from "./VoteAverageRing";
 
 // Create motion components
 const MotionCard = motion(Card);
@@ -51,6 +61,22 @@ interface TvShow {
   vote_average: number;
 }
 
+interface Favorite {
+  id: number;
+  title?: string;
+  name?: string;
+  poster_path: string;
+  vote_average: number;
+  content_type?: string;
+  type?: string;
+  first_air_date?: string;
+  release_date?: string;
+  overview?: string;
+  // Add any other properties you use
+}
+
+const favoritesApi = new ApiClient<Favorite[]>("/api/favorites");
+
 // Enhanced props to include links and custom data
 interface CardsProps {
   movieId?: number; // Optional movieId prop for fetching specific movie data
@@ -65,6 +91,7 @@ interface CardsProps {
   cardSize?: "small" | "medium" | "large";
   onLinkClick?: (linkName: string) => void; // Add the onLinkClick prop
   isGrid?: boolean;
+  showCardMenu?: boolean; // Add this new prop
 }
 
 const Cards: React.FC<CardsProps> = ({
@@ -82,6 +109,7 @@ const Cards: React.FC<CardsProps> = ({
   cardSize = "medium",
   onLinkClick,
   isGrid = false,
+  showCardMenu = true,
 }) => {
   const [items, setItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -89,6 +117,37 @@ const Cards: React.FC<CardsProps> = ({
     links.length > 0 ? links[0].name : ""
   );
   const [timeWindow, setTimeWindow] = useState(defaultTimeWindow);
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+
+  // Move this inside the component and use state to make it reactive
+  const [userLoggedIn, setUserLoggedIn] = useState(
+    localStorage.getItem("user") !== null
+  );
+
+  // Add effect to listen for login/logout changes
+  useEffect(() => {
+    // Check login status on mount
+    setUserLoggedIn(localStorage.getItem("user") !== null);
+
+    // Listen for storage changes (logout events from other components)
+    const handleStorageChange = () => {
+      setUserLoggedIn(localStorage.getItem("user") !== null);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    // Custom event for immediate updates within the same page
+    const handleLoginChange = () => {
+      setUserLoggedIn(localStorage.getItem("user") !== null);
+    };
+
+    window.addEventListener("loginStateChange", handleLoginChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("loginStateChange", handleLoginChange);
+    };
+  }, []);
 
   // Calculate card dimensions based on size
   const getCardDimensions = () => {
@@ -251,6 +310,73 @@ const Cards: React.FC<CardsProps> = ({
     };
   };
 
+  // Add this useEffect after your other useEffects
+  useEffect(() => {
+    // Function to close the menu when clicking outside
+    const handleClickOutside = (event: MouseEvent) => {
+      // Skip if no menu is open
+      if (openMenuId === null) return;
+
+      // Check if click target is inside a menu or button
+      const target = event.target as HTMLElement;
+      const isMenuClick = target.closest(".card-menu");
+      const isButtonClick = target.closest(".card-btn");
+
+      // If clicking outside both menu and button, close the menu
+      if (!isMenuClick && !isButtonClick) {
+        setOpenMenuId(null);
+      }
+    };
+
+    // Add document-level event listener
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Clean up the event listener when component unmounts
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openMenuId]); // Re-add listener when openMenuId changes
+
+  const toast = useToast(); // Add this
+
+  // Add this new function
+  const handleAddToFavorites = async (contentId: number) => {
+    try {
+      // Get user ID from localStorage
+      const userStr = localStorage.getItem("user");
+      if (!userStr) {
+        console.error("No user found in localStorage");
+        return;
+      }
+
+      const userData = JSON.parse(userStr);
+      let userId;
+      // Extract user ID from various possible structures
+      if (userData.id) {
+        userId = userData.id;
+      } else if (userData.user_id) {
+        userId = userData.user_id;
+      } else if (userData.user && userData.user.user_id) {
+        userId = userData.user.user_id;
+      }
+
+      // Make API call to add to favorites
+      await favoritesApi.addFavorite(userId, contentId);
+
+      // Show success toast
+      toast({
+        title: "Added to favorites",
+        description: "This item has been added to your favorites",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Error adding to favorites:", error);
+      // Show error toast
+    }
+  };
+
   return (
     <Box position="relative" width="100%">
       {(title || showLinkSelector) && (
@@ -272,10 +398,7 @@ const Cards: React.FC<CardsProps> = ({
         </HStack>
       )}
 
-      <Box position="relative" width="100%" 
-                maxWidth="80vw"
-          overflowX="scroll"
-      >
+      <Box position="relative" width="100%" maxWidth="80vw" overflowX="scroll">
         {isLoading ? (
           isGrid ? (
             // Grid layout for skeletons
@@ -362,6 +485,13 @@ const Cards: React.FC<CardsProps> = ({
             {items.slice(0, maxItems).map((item, index) => {
               const details = getItemDetails(item);
 
+              // Handler to toggle the menu
+              const handleToggleMenu = (e: React.MouseEvent, id: number) => {
+                e.stopPropagation();
+                e.preventDefault();
+                setOpenMenuId(openMenuId === id ? null : id);
+              };
+
               return (
                 <MotionCard
                   key={`${details.id}-${index}`}
@@ -373,7 +503,6 @@ const Cards: React.FC<CardsProps> = ({
                   backgroundColor="transparent"
                   boxShadow="none"
                   borderRadius="10px"
-                  overflow="hidden"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{
                     opacity: 1,
@@ -389,7 +518,6 @@ const Cards: React.FC<CardsProps> = ({
                     to={details.linkPath}
                     position="relative"
                     borderRadius="10px"
-                    overflow="hidden"
                     height={cardType === "cast" ? "250px" : "350px"}
                     width={"300px"}
                   >
@@ -404,6 +532,145 @@ const Cards: React.FC<CardsProps> = ({
                       borderRadius="10px"
                       fallbackSrc="/placeholder-image.jpg"
                     />
+
+                    {!details.isCast &&
+                      details.rating !== null &&
+                      cardType !== "recommendations" && (
+                        <Box
+                          position="absolute"
+                          left="10px"
+                          bottom="-20px"
+                          background="rgba(3, 37, 65, 0.8)"
+                          borderRadius="50%"
+                          width="50px"
+                          height="50px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <VoteAverageRing
+                            radius={50}
+                            stroke={6}
+                            progress={(details.rating || 0) * 10}
+                          />
+                        </Box>
+                      )}
+
+                    {/* Only render the card-btn if showCardMenu is true */}
+                    {showCardMenu && (
+                      <Box
+                        className="card-btn"
+                        backgroundColor="rgba(100, 100, 100, 0.8)"
+                        width="2rem"
+                        height="2rem"
+                        position="absolute"
+                        top="10px"
+                        right="10px"
+                        borderRadius="50%"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        cursor="pointer"
+                        onClick={(e) => handleToggleMenu(e, details.id)}
+                        _hover={{
+                          backgroundColor: "rgba(120, 120, 120, 0.9)",
+                        }}
+                      >
+                        <HiDotsHorizontal size="1.5rem" color="white" />
+
+                        {/* Conditionally render the menu */}
+                        {openMenuId === details.id && (
+                          <VStack
+                            className="card-menu"
+                            zIndex="1000"
+                            position="absolute"
+                            top="120%"
+                            right="0"
+                            gap="0"
+                            minW="180px"
+                            backgroundColor="white"
+                            borderRadius="10px"
+                            alignItems="flex-start"
+                            boxShadow="0px 4px 10px rgba(0,0,0,0.2)"
+                            overflow="hidden"
+                          >
+                            {userLoggedIn ? (
+                              <>
+                                <HStack
+                                  _hover={{
+                                    backgroundColor: "gray.100",
+                                    cursor: "pointer",
+                                  }}
+                                  width="100%"
+                                  p="0.75rem 1rem"
+                                  borderTopLeftRadius="10px"
+                                  borderTopRightRadius="10px"
+                                >
+                                  <Icon as={FaListUl} color="black.500" />
+                                  <Text>Add to list</Text>
+                                </HStack>
+
+                                <HStack
+                                  _hover={{
+                                    backgroundColor: "gray.100",
+                                    cursor: "pointer",
+                                  }}
+                                  width="100%"
+                                  p="0.75rem 1rem"
+                                  onClick={() =>
+                                    handleAddToFavorites(details.id)
+                                  }
+                                >
+                                  <Icon as={FaHeart} color="black.500" />
+                                  <Text>Favorite</Text>
+                                </HStack>
+
+                                <HStack
+                                  _hover={{
+                                    backgroundColor: "gray.100",
+                                    cursor: "pointer",
+                                  }}
+                                  width="100%"
+                                  p="0.75rem 1rem"
+                                >
+                                  <Icon as={IoBookmark} color="black.500" />
+                                  <Text>Watchlist</Text>
+                                </HStack>
+
+                                <HStack
+                                  _hover={{
+                                    backgroundColor: "gray.100",
+                                    cursor: "pointer",
+                                  }}
+                                  width="100%"
+                                  p="0.75rem 1rem"
+                                  borderBottomLeftRadius="10px"
+                                  borderBottomRightRadius="10px"
+                                >
+                                  <Icon as={IoStar} color="black.500" />
+                                  <Text>Your rating</Text>
+                                </HStack>
+                              </>
+                            ) : (
+                              <HStack
+                                as={ReactRouterLink}
+                                to={"/login"}
+                                _hover={{
+                                  backgroundColor: "gray.100",
+                                  cursor: "pointer",
+                                }}
+                                width="100%"
+                                p="0.75rem 1rem"
+                                borderRadius="10px"
+                              >
+                                <Text>Login to add to lists</Text>
+                                <IoIosArrowForward />
+                              </HStack>
+                            )}
+                          </VStack>
+                        )}
+                      </Box>
+                    )}
                   </Box>
                   <CardBody
                     height={"20%"}

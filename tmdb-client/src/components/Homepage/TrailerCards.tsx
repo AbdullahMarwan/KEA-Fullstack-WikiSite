@@ -10,15 +10,15 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  fetchTrailerTemplate
-} from "../../services/api";
 import MenuOnCards from "./MenuOnCards";
 import LinkSelector from "./LinkSelector";
+import ApiClient from "../../services/api-client";
+import axios from "axios";
 
 // Create motion components
 const MotionCard = motion(Card);
 const MotionBox = motion(Box);
+const trailerApi = new ApiClient<Trailer[]>("/api/trailers");
 
 interface Trailer {
   id: number;
@@ -33,7 +33,7 @@ interface Trailer {
 interface Movie {
   id: number;
   title: string;
-  backdrop_path: string;
+  poster_path: string;
 }
 
 interface TrailerCardsProps {
@@ -71,94 +71,32 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
     setActiveLink(linkName);
   };
 
-  // Get the appropriate fetch function based on timeWindow
-  const getFetchFunction = useCallback(() => {
-    switch (timeWindow) {
-      case "popular":
-        return fetchTrailerTemplate("popular-trailer");
-      case "upcoming":
-        return fetchTrailerTemplate("upcoming-trailer");
-      // Add more cases for other categories
-      default:
-        return fetchTrailerTemplate("popular-trailer");
-    }
-  }, [timeWindow]);
-
-  // Update the fetchData function to ensure we have enough valid movies
+  // Update the fetchData function to use your API
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      console.log(`Fetching data for timeWindow: ${timeWindow}`);
-      const fetchFunction = getFetchFunction();
-      let trailerData = await fetchFunction;
-      console.log(`Received ${trailerData.length} trailers for ${timeWindow}`);
-
-      // Filter out movies without backdrop images
-      const validMovies = trailerData.filter(
-        (movie: any) => movie.backdrop_path && movie.title
+      // Use the simple endpoint instead of the type-based one
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/trailers`
       );
+      console.log("[DEBUG] Trailer response:", response.data);
 
-      // If we don't have enough valid movies, fetch more
-      if (validMovies.length < 4) {
-        console.log("Not enough valid movies, fetching more...");
+      setTrailers(response.data);
 
-        // Get the other fetch function to supplement
-        const backupFetchFunction =
-          timeWindow === "popular"
-            ? fetchUpcomingTrailers
-            : fetchPopularTrailers;
-
-        const additionalData = await backupFetchFunction();
-
-        // Filter these for valid backdrop paths too
-        const additionalValidMovies = additionalData.filter(
-          (movie: any) =>
-            movie.backdrop_path &&
-            movie.title &&
-            // Make sure we don't have duplicates
-            !validMovies.some((m: any) => m.movieId === movie.movieId)
-        );
-
-        // Combine the movies, ensuring we have unique ones
-        trailerData = [...validMovies, ...additionalValidMovies].slice(0, 4); // Ensure we only take what we need
-
-        console.log(
-          `After supplementing: ${trailerData.length} valid trailers`
-        );
-      } else {
-        trailerData = validMovies;
-      }
-
-      if (trailerData.length > 0) {
-        console.log(`First movie: ${trailerData[0].title}`);
-      }
-
-      setTrailers(
-        trailerData.map((movie: any) => ({
+      // Also set trending movies from the same data
+      setTrendingMovies(
+        response.data.map((movie: any) => ({
           id: movie.movieId,
           title: movie.title || "Unknown Title",
-          overview: movie.overview || "No overview available",
-          video: true,
-          youtubeLinks: movie.youtubeLinks || [],
-          backdrop_path: movie.backdrop_path || "",
           poster_path: movie.poster_path || "",
         }))
       );
-
-      // Also set trending movies from the same data to avoid double fetching
-      setTrendingMovies(
-        trailerData.map((movie: any) => ({
-          id: movie.movieId,
-          title: movie.title || "Unknown Title",
-          backdrop_path: movie.backdrop_path || "",
-        }))
-      );
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("[DEBUG] Error fetching trailers:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [getFetchFunction, timeWindow]);
+  }, [timeWindow]);
 
   // Fetch data when timeWindow changes
   useEffect(() => {
@@ -279,8 +217,8 @@ const TrailerCards: React.FC<TrailerCardsProps> = ({
                 >
                   <Box
                     backgroundImage={
-                      movie.backdrop_path
-                        ? `url(https://image.tmdb.org/t/p/w500${movie.backdrop_path})`
+                      movie.poster_path
+                        ? `url(https://image.tmdb.org/t/p/w500${movie.poster_path})`
                         : "url('https://via.placeholder.com/500x281?text=No+Image+Available')"
                     }
                     backgroundSize="cover"

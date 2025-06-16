@@ -41,6 +41,7 @@ const TopCast = () => {
         cardType="cast"
         showLinkSelector={false}
         cardSize="small"
+        showCardMenu={false}
       />
     </Box>
   );

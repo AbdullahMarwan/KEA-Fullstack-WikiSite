@@ -1,7 +1,7 @@
 import { Flex, Box } from "@chakra-ui/react";
 import LoginForm from "../components/Login/LoginForm";
 
-const Login = () => {
+const login = () => {
   return (
     <Box padding="20px">
       <Flex
@@ -18,4 +18,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default login;

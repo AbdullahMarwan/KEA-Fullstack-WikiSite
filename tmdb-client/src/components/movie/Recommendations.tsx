@@ -5,17 +5,34 @@ import Cards from "../Homepage/Cards";
 import { Heading, Box } from "@chakra-ui/react";
 
 function Recommendations() {
-  const { movie } = useMovie();
+  const { movie, mediaType } = useMovie(); // Get mediaType from context
   const [isLoading, setIsLoading] = useState(true);
-  const [movies, setMovies] = useState<any[]>([]); // State to store the movie array
+  const [movies, setMovies] = useState<any[]>([]); // State to store the recommendations array
 
   const getRecommendations = async () => {
     if (!movie?.id) return;
+
+    setIsLoading(true);
     try {
-      const response = await fetchMovieIdTemplate(movie.id, "movie-recommendations");
-      setMovies(response.results);
+      // Use the correct parameter name and pass the mediaType
+      const response = await fetchMovieIdTemplate(
+        movie.id,
+        "recommendations", // Changed from "movie-recommendations"
+        mediaType // Pass the media type (movie or tv)
+      );
+
+      if (response && response.results) {
+        setMovies(response.results);
+      } else {
+        console.error(
+          "No recommendations found or invalid response format",
+          response
+        );
+        setMovies([]);
+      }
     } catch (error) {
-      console.error("Error fetching recommendations:", error);
+      console.error(`Error fetching ${mediaType} recommendations:`, error);
+      setMovies([]);
     } finally {
       setIsLoading(false);
     }
@@ -23,7 +40,7 @@ function Recommendations() {
 
   useEffect(() => {
     getRecommendations();
-  }, [movie?.id]);
+  }, [movie?.id, mediaType]); // Add mediaType as dependency
 
   return (
     <>
@@ -33,14 +50,16 @@ function Recommendations() {
         </Heading>
         {isLoading ? (
           <p>Loading recommendations...</p>
-        ) : movie ? (
+        ) : movies.length > 0 ? (
           <Cards
             customData={movies}
-            movieId={movie.id}
+            movieId={movie?.id}
             maxItems={4}
             cardType="recommendations"
           />
-        ) : null}
+        ) : (
+          <p>No recommendations available</p>
+        )}
       </Box>
     </>
   );

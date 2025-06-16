@@ -3,7 +3,7 @@ services:
     image: mysql:latest
     container_name: tmdb-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: tmdbDatabase
     ports:
       - "3307:3306"
@@ -12,36 +12,38 @@ services:
     networks:
       - backend
 
-  # seeder:
-  #   container_name: seeder
-  #   build:
-  #     context: ./seeder
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     - mysql
-  #   environment:
-  #     MYSQL_URL: mysql://root:rootpassword@mysql:3306/tmdbDatabase
-  #   networks:
-  #     - backend
-  #   volumes:
-  #     - ./seeder:/app
+  seeder:
+    container_name: seeder
+    build:
+      context: ./seeder
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_URL: mysql://root:password@mysql:3306/tmdbDatabase
+      SEED_ONLY_EMPTY: "true"
+      FORCE_SEED: "true" # Make sure this is set to true
+    networks:
+      - backend
 
-  # tmdb-server:
-  #   container_name: tmdb-server
-  #   build:
-  #     context: ./tmdb-server
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     - mysql
-  #   environment:
-  #     DATABASE_URL: mysql://root:rootpassword@mysql:3306/tmdbDatabase
-  #   ports:
-  #     - "5000:5000"
-  #   networks:
-  #     - backend
-  #     - frontend
-  #   volumes:
-  #     - ./tmdb-server:/app
+  tmdb-server:
+    container_name: tmdb-server
+    build:
+      context: ./tmdb-server
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql
+    command: sh -c "sleep 10 && npm start" # Simple delay approach
+    environment:
+      DATABASE_URL: mysql://root:password@mysql:3306/tmdbDatabase
+      NODE_ENV: development # Add this for more verbose logging
+    ports:
+      - "5000:5000"
+    networks:
+      - backend
+      - frontend
+    volumes:
+      - ./tmdb-server:/app
 
   tmdb-client:
     container_name: tmdb-client
@@ -51,16 +53,15 @@ services:
     environment:
       VITE_API_URL: http://localhost:5000
       CHOKIDAR_USEPOLLING: true
-    # depends_on:
-    #   - tmdb-server
+    depends_on:
+      - tmdb-server
     ports:
       - "3000:3000"
     networks:
       - frontend
     volumes:
       - ./tmdb-client:/app
-      - /app/node_modules
-
+      - tmdb_client_node_modules:/app/node_modules
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -68,7 +69,7 @@ services:
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: password
     ports:
       - "8080:80"
     depends_on:
@@ -78,6 +79,7 @@ services:
 
 volumes:
   mysql_data:
+  tmdb_client_node_modules:
 
 networks:
   backend:

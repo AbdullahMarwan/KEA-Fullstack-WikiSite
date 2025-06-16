@@ -1,17 +1,19 @@
-# Use an official Node.js runtime as a parent image
-FROM node:16-alpine
+# Use Node 16
+FROM node:16
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install && \
+    npm install -g ts-node typescript && \
+    npm install --save-dev @types/bcrypt @types/node
 
-# Copy the rest of the application code to the working directory
+# Copy your TypeScript file, env file, and tsconfig
 COPY . .
 
-# Command to run the seeder script
-CMD ["npm", "start"]
+# Run the seeder with a delay
+CMD ["sh", "-c", "sleep 15 && ts-node seeders/seeder.ts"]

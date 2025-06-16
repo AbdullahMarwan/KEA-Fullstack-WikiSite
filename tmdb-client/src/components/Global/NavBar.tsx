@@ -2,7 +2,6 @@ import {
   HStack,
   Image,
   Box,
-  Button,
   Link,
   useBreakpointValue,
   UnorderedList,
@@ -15,6 +14,7 @@ import {
   Menu,
   MenuButton,
   MenuList,
+  VStack,
   MenuItem,
 } from "@chakra-ui/react";
 import logo from "../../assets/logo.svg";
@@ -23,17 +23,75 @@ import { Link as ReactRouterLink } from "react-router-dom";
 import { useSearch } from "../../context/SearchContext";
 import { IoSearchSharp } from "react-icons/io5";
 import logomobile from "../../assets/moviedb - logo vertical.svg";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
 const NavBar = () => {
   const { focusSearchInput } = useSearch();
   const displayLinks = useBreakpointValue({ base: "none", md: "flex" });
   const displayIcons = useBreakpointValue({ base: "flex", md: "none" });
+  const navigate = useNavigate();
   // Separate state for the burger menu
   const burgerMenuDisclosure = useDisclosure();
+
+  const userLoggedIn = localStorage.getItem("user") !== null;
+
+  // Import useToast from Chakra UI
+
+  // Add a logout handler function
+  const toast = useToast();
+
+  const handleLogout = () => {
+    // Remove user from localStorage
+    localStorage.removeItem("user");
+
+    // Dispatch event to notify components
+    window.dispatchEvent(new Event("loginStateChange"));
+
+    // Show a toast notification
+    toast({
+      title: "You logged out",
+      description: "You have been logged out successfully.",
+      status: "info",
+      duration: 3000,
+      isClosable: true,
+    });
+
+    // Navigate to login page
+    navigate("/login");
+  };
 
   // Separate state for the dropdown menu
   const moviesMenuDisclosure = useDisclosure();
   const tvMenuDisclosure = useDisclosure();
+
+  const [firstName, setFirstName] = useState<string | null>(null);
+
+  // Add this useEffect to extract the firstName when the component mounts
+  useEffect(() => {
+    if (userLoggedIn) {
+      try {
+        const userData = JSON.parse(localStorage.getItem("user") || "{}");
+
+        // Check different possible locations of firstName based on your data structure
+        let userFirstName = null;
+        if (userData.first_name) {
+          userFirstName = userData.first_name;
+        } else if (userData.user && userData.user.firstName) {
+          userFirstName = userData.user.firstName;
+        } else if (userData.name) {
+          // If there's only a full name, take the first part
+          userFirstName = userData.name.split(" ")[0];
+        }
+
+        setFirstName(userFirstName || "U"); // Default to "U" for User if no name found
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+        setFirstName("U"); // Default value on error
+      }
+    }
+  }, [userLoggedIn]);
 
   return (
     <HStack
@@ -214,10 +272,12 @@ const NavBar = () => {
           </UnorderedList>
         </HStack>
 
-        <HStack height={"2em"} display={"flex"}>
+        <HStack display={"flex"}>
           <UnorderedList
             display={displayLinks}
             styleType="none"
+            alignItems={"center"}
+            gap="1rem"
             m={0}
             p={0}
             sx={{
@@ -230,26 +290,62 @@ const NavBar = () => {
             }}
           >
             <ListItem>
-              <Link
-                as={ReactRouterLink}
-                to="/Login"
-                width={"150px"}
-                fontWeight={"600"}
-                _hover={{ textDecoration: "none" }}
-              >
-                Log In
-              </Link>
+              {userLoggedIn ? (
+                <Link
+                  onClick={handleLogout}
+                  width={"150px"}
+                  fontWeight={"600"}
+                  cursor="pointer"
+                  _hover={{ textDecoration: "none" }}
+                >
+                  Log out
+                </Link>
+              ) : (
+                <Link
+                  as={ReactRouterLink}
+                  to="/Login"
+                  fontWeight={"600"}
+                  _hover={{ textDecoration: "none" }}
+                >
+                  Log In
+                </Link>
+              )}
             </ListItem>
             <ListItem>
               <Link
                 as={ReactRouterLink}
                 to="/Signup"
-                width={"150px"}
                 _hover={{ textDecoration: "none" }}
               >
                 Join TMDB
               </Link>
             </ListItem>
+
+            {userLoggedIn && (
+              <ListItem>
+                <Link
+                  as={ReactRouterLink}
+                  to="/user/:firstName"
+                  _hover={{ textDecoration: "none" }}
+                >
+                  <Box
+                    width={"2rem"}
+                    height={"2rem"}
+                    backgroundColor="#EB158C"
+                    borderRadius={"50%"}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    fontSize="1rem"
+                    fontWeight="regular"
+                    color="white"
+                  >
+                    {firstName?.charAt(0).toUpperCase() || "U"}
+                  </Box>
+                </Link>
+                <VStack backgroundColor={"pink"}></VStack>
+              </ListItem>
+            )}
           </UnorderedList>
 
           <Box boxSize="1.5em" display={displayIcons} mr={"10px"}>
