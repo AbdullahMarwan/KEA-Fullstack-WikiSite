@@ -39,20 +39,29 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Fetch content from database using API client
-  const fetchContentFromDatabase = async () => {
+  const fetchContentFromDatabase = async (selectedLink?: string) => {
     setIsLoading(true);
     try {
-      console.log("Fetching content from database...", sectionType);
+      console.log(
+        "Fetching content from database...",
+        sectionType,
+        selectedLink || activeLink
+      );
 
-      // Convert sectionType to query parameters
+      // Convert sectionType and activeLink to query parameters
       const params: Record<string, string> = {};
 
       if (sectionType === "trending") {
         params.trending = "true";
+        // Include time window parameter from activeLink
+        params.time_window = selectedLink || activeLink; // "day" or "week"
       } else if (sectionType === "popular") {
-        params.popular = "true";
+        // For popular section, use activeLink to determine category
+        params.category = selectedLink || activeLink; // "now-playing", "popular", "top-rated", or "upcoming"
       } else if (sectionType === "tv-series") {
         params.content_type = "tv";
+        // For TV series, use activeLink to determine category
+        params.category = selectedLink || activeLink; // "popular", "airing-today", "top-rated"
       }
 
       // Pass as AxiosRequestConfig object with params
@@ -82,8 +91,8 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
       const firstLinkValue = links[0].value;
       updateActiveLink(firstLinkValue, setActiveLink);
 
-      // Use our new function that fetches from the database
-      fetchContentFromDatabase();
+      // Pass the initial link value
+      fetchContentFromDatabase(firstLinkValue);
     }
   }, [links]);
 
@@ -121,8 +130,8 @@ const movieSection: React.FC<MovieSectionProps> = ({ sectionType }) => {
                 activeLink={activeLink}
                 onLinkClick={(linkName: string) => {
                   updateActiveLink(linkName, setActiveLink);
-                  // Keep using the database fetch instead of the original fetchMovies
-                  fetchContentFromDatabase();
+                  // Pass the selected link value to fetch the specific content
+                  fetchContentFromDatabase(linkName);
                 }}
                 maxVisible={links.length}
                 activeTextColor="linear-gradient(to right, #1ed5aa 0%, #c0fed0 100%)"

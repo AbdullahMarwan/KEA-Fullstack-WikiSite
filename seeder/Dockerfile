@@ -16,4 +16,4 @@ RUN npm install && \
 COPY . .
 
 # Run the seeder with a delay
-CMD ["sh", "-c", "sleep 15 && ts-node seeder.ts"]
+CMD ["sh", "-c", "sleep 15 && ts-node seeders/seeder.ts"]
