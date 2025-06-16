@@ -28,12 +28,29 @@ import { sortByDate, sortByPopularity } from "../utils/sortingHelper";
 
 import Cards from "../components/Homepage/Cards";
 import { fetchTemplate } from "../services/api";
+import ApiClient from "../services/api-client";
+
+interface Movie {
+  id: number;
+  title?: string;
+  name?: string;
+  poster_path: string;
+  vote_average: number;
+  content_type?: string;
+  type?: string;
+  first_air_date?: string;
+  release_date?: string;
+  overview?: string;
+}
+
+const contentApi = new ApiClient<Movie[]>("/api/content/all");
 
 const MoviesSubPage = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const category = queryParams.get("category") || "popular"; // Default to "popular"
   const type = queryParams.get("type") || "movie"; // Default to "movie" (can be "movie" or "tv")
+  const [movies, setMovies] = useState<Movie[]>([]);
 
   const [items, setItems] = useState<any[]>([]); // State to store the fetched data
 
@@ -128,8 +145,8 @@ const MoviesSubPage = () => {
     const fetchItems = async () => {
       try {
         console.log("Fetching data for:", { type, category });
-        const data = await getFetchFunction(); // Call the fetch function
-        setItems(data.results || []); // Update the items state
+        const data = await contentApi.getAll(); // Call the fetch function
+        setMovies(data); // Update the items state
       } catch (error) {
         console.error("Error fetching items:", error);
       }
@@ -317,7 +334,7 @@ const MoviesSubPage = () => {
         <GridItem area={"main"}>
           <Box>
             <Cards
-              customData={items} // Pass the fetched movies as customData
+              customData={movies} // Pass the fetched movies as customData
               maxItems={20} // Show more items in grid layout
               showLinkSelector={false}
               defaultTimeWindow={category}

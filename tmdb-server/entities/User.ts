@@ -18,13 +18,13 @@ export class User {
   @Column()
   last_name: string;
 
-  @Column({ unique: true })
+  @Column()
   email: string;
 
   @Column()
   password: string;
 
-  @ManyToMany(() => Content, (content) => content.users)
+  @ManyToMany(() => Content)
   @JoinTable({
     name: "favorites",
     joinColumn: {
@@ -37,4 +37,19 @@ export class User {
     },
   })
   favorites: Content[];
+
+  static createUser(
+    first_name: string,
+    last_name: string,
+    email: string,
+    password: string
+  ): User {
+    const user = new User();
+    user.first_name = first_name;
+    user.last_name = last_name;
+    user.email = email;
+    user.password = password;
+
+    return user;
+  }
 }

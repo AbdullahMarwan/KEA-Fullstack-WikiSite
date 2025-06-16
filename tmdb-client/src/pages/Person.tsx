@@ -1,9 +1,24 @@
-import { Box, Button, Grid, GridItem, Heading, Select, Image } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Grid,
+  GridItem,
+  Heading,
+  Select,
+  Image,
+  Text,
+} from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import missingImgPlaceholder from "../assets/missing-img-placeholder-16-9.jpg";
-import { fetchPersonDetails, fetchCredits, fetchCombinedCredits, fetchCrewJobs } from "../services/api";
+import {
+  fetchPersonDetails,
+  fetchCredits,
+  fetchCombinedCredits,
+  fetchCrewJobs,
+} from "../services/api";
 import { doSorting } from "../utils/sortingJobs";
+import ApiClient from "../services/api-client.ts"; // Import ApiClient
 
 const genderMap: Record<number, string> = {
   0: "Not specified",
@@ -22,9 +37,12 @@ interface Person {
   place_of_birth: string;
 }
 
+const personApi = new ApiClient<Person[]>("/api/people");
+
 export const PersonSingle = () => {
   const { id } = useParams<{ id: string }>();
-  const [person, setPerson] = useState<Person | null>(null);
+  const [person, setPerson] = useState<Person[]>([]);
+
   const [credits, setCredits] = useState<
     { original_title: string; backdrop_path: string }[]
   >([]);
@@ -53,9 +71,12 @@ export const PersonSingle = () => {
         setCombinedIds(combinedCredits);
         setCrewJobs(crewJobsData);
 
+        // fetch from db
+        const data = await personApi.get(`/${id}`); // This will call /api/people/{id}
+
         // Combine cast and crew jobs
         const allJobs = [...combinedCredits, ...crewJobsData];
-        setPersonJobs(allJobs);
+        setPerson(data);
       } catch (error) {
         console.error("Error fetching person data:", error);
       }
@@ -71,11 +92,6 @@ export const PersonSingle = () => {
   const toggleBiography = () => {
     setShowFullBiography((prev) => !prev);
   };
-
-  const truncatedBiography = person.biography
-    .split("\n")
-    .slice(0, 2)
-    .join("\n");
 
   return (
     <Grid justifyContent={"center"}>
@@ -136,17 +152,15 @@ export const PersonSingle = () => {
             <Heading as="h3" size="md" mt={"2em"} maxWidth="66vw">
               Biography
             </Heading>
-            <p>{showFullBiography ? person.biography : truncatedBiography}</p>
-            {person.biography.split("\n").length > 2 && (
-              <Button
-                onClick={toggleBiography}
-                mt={2}
-                size="sm"
-                colorScheme="blue"
-              >
-                {showFullBiography ? "Read Less" : "Read More"}
-              </Button>
-            )}
+            <Text>
+              {person.biography
+                ? person.biography.split("\n").map((paragraph, index) => (
+                    <Text key={index} mb={4}>
+                      {paragraph}
+                    </Text>
+                  ))
+                : "No biography available"}
+            </Text>
 
             <Heading as="h3" size="md" mb={2} mt={10}>
               Known For

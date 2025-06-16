@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const totalPages = 6; // Reduced to just 1 page per category to limit data volume
-const API_KEY = process.env.TMDB_API_KEY || "dfd45a50a0761538bfed7f664cacb4d7";
+const API_KEY = process.env.TMDB_API_KEY || process.env.VITE_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
 
 // Define types for API responses
