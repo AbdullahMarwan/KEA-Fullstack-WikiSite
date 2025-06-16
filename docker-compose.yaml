@@ -50,19 +50,18 @@ services:
     build:
       context: ./tmdb-client
       dockerfile: Dockerfile
+    environment:
+      VITE_API_URL: http://localhost:5000
+      CHOKIDAR_USEPOLLING: true
+    depends_on:
+      - tmdb-server
     ports:
       - "3000:3000"
     networks:
       - frontend
-      - backend
     volumes:
       - ./tmdb-client:/app
       - tmdb_client_node_modules:/app/node_modules
-    environment:
-      VITE_API_URL: http://localhost:5000
-      CHOKIDAR_USEPOLLING: true
-    # depends_on:
-    #   - tmdb-server
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
