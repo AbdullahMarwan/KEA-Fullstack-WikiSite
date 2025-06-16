@@ -24,8 +24,8 @@ services:
     depends_on:
       - mysql
     environment:
-      MYSQL_URL: mysql://root:password@mysql:3306/tmdbDatabase
-      SEED_ONLY_EMPTY: "true"
+      - MYSQL_URL
+      - SEED_ONLY_EMPTY=true
     networks:
       - backend
 
@@ -36,10 +36,10 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - mysql
-    command: sh -c "sleep 10 && npm start" # Simple delay approach
+    command: sh -c "sleep 10 && npm start"
     environment:
-      DATABASE_URL: mysql://root:password@mysql:3306/tmdbDatabase
-      NODE_ENV: development # Add this for more verbose logging
+      - DATABASE_URL
+      - NODE_ENV=development
     ports:
       - "5000:5000"
     networks:
@@ -54,8 +54,8 @@ services:
       context: ./tmdb-client
       dockerfile: Dockerfile
     environment:
-      VITE_API_URL: http://localhost:5000
-      CHOKIDAR_USEPOLLING: true
+      - VITE_API_URL=http://localhost:5000
+      - CHOKIDAR_USEPOLLING=true
     depends_on:
       - tmdb-server
     ports:
@@ -89,7 +89,7 @@ services:
       - ./tmdb-server:/app
     environment:
       - NODE_ENV=test
-      - DATABASE_URL=mysql://root:password@mysql:3306/tmdbDatabase
+      - DATABASE_URL
     depends_on:
       - mysql
     networks:
