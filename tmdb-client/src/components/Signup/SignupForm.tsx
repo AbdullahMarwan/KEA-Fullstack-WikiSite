@@ -39,6 +39,8 @@ const SignupForm = () => {
 
     setIsLoading(true);
 
+    console.log("API URL:", import.meta.env.VITE_API_URL);
+
     try {
       console.log("Sending registration data:", {
         first_name: firstName,
@@ -56,6 +58,7 @@ const SignupForm = () => {
           password,
         }
       );
+      console.log("Registration response:", response);
 
       console.log("Registration response:", response.data);
 
@@ -69,6 +72,11 @@ const SignupForm = () => {
       // Redirect to login page
       navigate("/login");
     } catch (error) {
+      console.error("Registration error details:", {
+        message: error.message,
+        response: error.response,
+        request: error.request,
+      });
       toast({
         title: "Registration failed",
         description:

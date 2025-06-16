@@ -24,7 +24,7 @@ export class User {
   @Column()
   password: string;
 
-  @ManyToMany(() => Content, (content) => content.users)
+  @ManyToMany(() => Content)
   @JoinTable({
     name: "favorites",
     joinColumn: {
