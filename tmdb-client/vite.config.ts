@@ -14,5 +14,8 @@ export default defineConfig({
       ],
       credentials: true,
     },
+    allowedHosts: [
+      'tmdb-client-qoa6.onrender.com',
+    ],
   },
 });
