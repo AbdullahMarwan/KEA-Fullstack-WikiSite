@@ -6,7 +6,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 // Define your base URL and API key
-const API_KEY = process.env.VITE_API_KEY;
+const API_KEY = process.env.TMDB_API_KEY || process.env.VITE_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
 
 export const seedPeople = async (dataSource: DataSource) => {
@@ -87,6 +87,7 @@ export const seedPeople = async (dataSource: DataSource) => {
           newPerson.name = person.name || "Unknown";
           newPerson.known_for = person.known_for_department || "Unknown";
           newPerson.gender = person.gender || 0;
+          newPerson.profile_path = person.profile_path || null;
 
           // Handle birthday - make sure it's a valid date or null
           if (personDetail.birthday && personDetail.birthday !== "") {

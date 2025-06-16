@@ -18,6 +18,9 @@ export class People {
   @Column({ type: "date", nullable: true })
   birthday!: Date | null;
 
+  @Column({ type: "varchar", nullable: true })
+  profile_path!: string | null;
+
   @Column({ type: "varchar", length: 200, nullable: true })
   biography!: string;
 }
