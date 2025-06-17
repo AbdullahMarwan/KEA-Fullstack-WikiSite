@@ -11,5 +11,8 @@ export const AppDataSource = new DataSource({
   url: process.env.MYSQL_URL || "mysql://root:password@mysql:3306/tmdbDatabase",
   synchronize: true,
   logging: true,
-  entities: [User, Content, Category, CategoryLookup, People], // Add Category to the entities array
+  entities: [User, Content, Category, CategoryLookup, People],
+  ssl: {
+    rejectUnauthorized: false, // <- accepterer Aiven's certifikat
+  },
 });
