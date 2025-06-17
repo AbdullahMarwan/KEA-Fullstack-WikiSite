@@ -4,14 +4,7 @@ import { User } from "../entities/User";
 import { Content } from "../entities/Content";
 import { People } from "../entities/People";
 
-// Brug den rigtige env afhængigt af om du er i prod eller local
-const isProduction = process.env.NODE_ENV === "production";
-
-const mysqlUrl = isProduction
-  ? process.env.PROD_DATABASE_URL
-  : process.env.LOCAL_DATABASE_URL;
-
-const isRemoteDB = mysqlUrl?.includes("aivencloud");
+const mysqlUrl = process.env.DATABASE_URL;
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -19,5 +12,7 @@ export const AppDataSource = new DataSource({
   synchronize: true,
   logging: false,
   entities: [User, Content, People],
-  ssl: isRemoteDB ? { rejectUnauthorized: false } : undefined,
+  ssl: mysqlUrl?.includes("aivencloud")
+    ? { rejectUnauthorized: false }
+    : undefined,
 });
