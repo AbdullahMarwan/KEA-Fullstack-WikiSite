@@ -30,7 +30,10 @@ export const seedPeople = async (dataSource: DataSource) => {
 
     // We'll fetch multiple pages to get more people
     const totalPages = 2; // Reduced for testing, increase later
-    const allPeople: People[] = [];
+
+    // Batch variables for saving in chunks
+    let batch: People[] = [];
+    const batchSize = 20; // Adjust batch size as needed
 
     for (let page = 1; page <= totalPages; page++) {
       console.log(`Fetching people page ${page}/${totalPages}...`);
@@ -114,10 +117,15 @@ export const seedPeople = async (dataSource: DataSource) => {
             newPerson.biography = "";
           }
 
-          allPeople.push(newPerson);
-          console.log(
-            `Added ${person.name} to the queue. Total: ${allPeople.length}`
-          );
+          batch.push(newPerson);
+
+          if (batch.length === batchSize) {
+            await peopleRepository.save(batch);
+            console.log(
+              `Saved batch of ${batch.length} people.`
+            );
+            batch = [];
+          }
 
           // Add a small delay to avoid hitting rate limits
           await new Promise((resolve) => setTimeout(resolve, 300));
@@ -130,25 +138,15 @@ export const seedPeople = async (dataSource: DataSource) => {
       }
     }
 
-    // Save all people to the database in batches to avoid memory issues
-    if (allPeople.length > 0) {
-      console.log(`Saving ${allPeople.length} people to database...`);
-
-      const batchSize = 20;
-      for (let i = 0; i < allPeople.length; i += batchSize) {
-        const batch = allPeople.slice(i, i + batchSize);
-        await peopleRepository.save(batch);
-        console.log(
-          `Saved batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(
-            allPeople.length / batchSize
-          )}`
-        );
-      }
-
-      console.log("People data seeded successfully!");
-    } else {
-      console.log("No people data to save.");
+    // Save any remaining people in the last batch
+    if (batch.length > 0) {
+      await peopleRepository.save(batch);
+      console.log(
+        `Saved final batch of ${batch.length} people.`
+      );
     }
+
+    console.log("People data seeded successfully!");
   } catch (error: any) {
     console.error(
       "Error seeding people data:",
