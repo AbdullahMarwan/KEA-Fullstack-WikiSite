@@ -6,7 +6,7 @@ import { People } from "../entities/People";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
-  url: process.env.DATABASE_URL,
+  url: process.env.MYSQL_URL || "mysql://root:password@mysql:3306/tmdbDatabase",
   synchronize: true,
   entities: [User, Content, People],
   ssl: {

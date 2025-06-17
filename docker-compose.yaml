@@ -89,6 +89,8 @@ services:
     command: sh -c "npx wait-on tcp:mysql:3306 && npm test"
     volumes:
       - ./tmdb-server:/app
+    env_file:
+      - ./tmdb-server/.env
     environment:
       - NODE_ENV=test
       - DATABASE_URL
