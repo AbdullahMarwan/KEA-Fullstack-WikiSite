@@ -8,9 +8,8 @@
     "skipLibCheck": true,
     "strict": false,
     "outDir": "./dist",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
+    "types": ["jest", "node"]
   },
-  "include": ["*.ts"],
+  "include": ["*.ts", "**/*.ts"],
   "exclude": ["node_modules"]
 }
