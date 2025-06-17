@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AppDataSource } from "../startup/db";
+import { AppDataSource } from "../startup/data-source";
 import { Content } from "../entities/Content";
 
 const router = Router();

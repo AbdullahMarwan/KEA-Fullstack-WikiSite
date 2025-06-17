@@ -86,7 +86,7 @@ describe("Integration flow: user registration, login, favorite, unfavorite, logo
       .set("Authorization", `Bearer ${token}`);
     expect(res.statusCode).toBe(200);
     expect(res.body.message).toMatch(/Favorite removed/i);
-    // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console
     console.log(`Unfavorited movie ID: ${randomMovie.id}`);
   });
 
