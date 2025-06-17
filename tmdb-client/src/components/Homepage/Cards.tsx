@@ -27,7 +27,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 import ApiClient from "../../services/api-client";
-import VoteAverageRing from "./VoteAverageRing";
+import VoteAverageRing from "./voteAverageRing";
 
 // Create motion components
 const MotionCard = motion(Card);
