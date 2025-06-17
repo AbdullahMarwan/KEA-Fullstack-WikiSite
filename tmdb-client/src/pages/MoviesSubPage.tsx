@@ -27,7 +27,6 @@ import { sortByDate, sortByPopularity } from "../utils/sortingHelper";
 //import { createListCollection } from "@chakra-ui/select"; // Import from @chakra-ui/select
 
 import Cards from "../components/Homepage/Cards";
-import { fetchTemplate } from "../services/api";
 import ApiClient from "../services/api-client";
 
 interface Movie {
@@ -88,56 +87,6 @@ const MoviesSubPage = () => {
         default:
           return "Movies";
       }
-    }
-  };
-
-  const getFetchFunction = async () => {
-    console.log("Fetching data for:", { type, category });
-
-    if (type === "tv") {
-      switch (category) {
-        case "popular":
-          return await fetchTemplate("popular", "tv");
-        case "top-rated":
-          return await fetchTemplate("top-rated", "tv");
-        case "on-the-air":
-          return await fetchTemplate("on-the-air", "tv");
-        case "airing-today":
-          return await fetchTemplate("airing-today", "tv");
-        default:
-          return await fetchTemplate("popular", "tv");
-      }
-    } else if (type === "movie") {
-      switch (category) {
-        case "popular":
-          return await fetchTemplate("popular", "movie");
-        case "now-playing":
-          return await fetchTemplate("now-playing", "movie");
-        case "upcoming":
-          return await fetchTemplate("upcoming", "movie");
-        case "top-rated":
-          return await fetchTemplate("top-rated", "movie");
-        default:
-          return await fetchTemplate("popular", "movie");
-      }
-    } else {
-      throw new Error(`Invalid type: ${type}`);
-    }
-  };
-
-  const doSorting = (value: string) => {
-    switch (value) {
-      case "release_date.desc":
-        return sortByDate(items, "desc");
-      case "release_date.asc":
-        return sortByDate(items, "asc");
-      case "popularity.desc":
-        return sortByPopularity(items, "desc");
-      case "popularity.asc":
-        return sortByPopularity(items, "asc");
-      default:
-        console.warn("Invalid sorting option");
-        return items;
     }
   };
 
