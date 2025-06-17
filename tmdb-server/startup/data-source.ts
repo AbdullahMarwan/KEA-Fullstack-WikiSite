@@ -6,10 +6,10 @@ import { People } from "../entities/People";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
-  url: process.env.DATABASE_URL, // ✅ use environment variable
+  url: process.env.DATABASE_URL,
   synchronize: true,
   entities: [User, Content, People],
-  ssl: process.env.DATABASE_URL?.includes("aivencloud")
-    ? { rejectUnauthorized: true }
-    : undefined, // ✅ Enable SSL only for Aiven
+  ssl: {
+    rejectUnauthorized: false, // 👈 ALLOW self-signed certs
+  },
 });
