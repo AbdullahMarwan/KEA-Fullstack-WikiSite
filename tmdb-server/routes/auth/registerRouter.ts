@@ -30,9 +30,9 @@ function createRegisterRouter() {
         email,
         password: hashed,
       });
-      await userRepo.save(user);
+      const savedUser = await userRepo.save(user);
 
-      res.status(201).json({ message: "User created successfully" });
+      res.status(201).json({ message: "Registration successful", user: savedUser });
     } catch (error) {
       console.error("Registration error:", error);
       res.status(500).json({ message: error.message || "Server error" });
